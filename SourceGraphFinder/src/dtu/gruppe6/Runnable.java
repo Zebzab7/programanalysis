@@ -118,8 +118,13 @@ public class Runnable { //Calling main main is discouraged
 				}
 				line = line.replace("import ", "");
 				line = line.replace(";", "");
-				imports.add(line);
-
+				for(String l: lines){
+					if(l.contains(line)){
+						line = l;
+					}else{
+						imports.add(line);
+					}
+				}
 			}
 		}
 		return imports; 
