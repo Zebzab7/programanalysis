@@ -83,16 +83,4 @@ public class Runnable { //Calling main main is discouraged
 		}
 	}
 
-
-	//File stream reader (Oh boy) Based on : https://www.baeldung.com/reading-file-in-java
-	public String readFromInputFileStream(InputStream InputStream) throws IOException {
-		StringBuilder result = new StringBuilder();
-		try(BufferedReader br= new BufferedReader(new InputStreamReader(InputStream))){
-				String line;
-				while((line = br.readLine()) != null){
-					result.append(line + "\n");
-				}
-			}
-		return result.toString();
-	}
 }
