@@ -21,40 +21,10 @@ public class Runnable { //Calling main main is discouraged
 		
 		ArrayList<File> files = new ArrayList<File>();
 
-
 		HashMap<File, ArrayList<String>> map = new HashMap<>();
-
-<<<<<<< HEAD
-		//Finds all subfolders
-		while(findSubFolders(subfolders) != null) {
-			subfolders = findSubFolders(subfolders);
-			for(File folder : subfolders) {
-				allfolders.add(folder);
-			}
-		}
-
-		//Prints all folders found
-		//PrintFileFolder(allfolders);
-
-		//Finds all files in all folders
-		for(File folder : allfolders) {
-			File[] localFiles = new File(folder.getPath()).listFiles(File::isFile);
-			if(localFiles != null) {
-				for(File file : localFiles) {
-					//Finds all java files
-					if(file.getName().endsWith(".java")) {
-						files.add(file);
-						
-					}
-				}
-			}
-		}
-
-=======
 		
 		files = Folders.findFiles(Path);
 	
->>>>>>> 77d386ccd6b2d43ae51e40b9efeeace2171960ae
 		String data = null;
 		ArrayList<String> dependencies = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
@@ -65,6 +35,9 @@ public class Runnable { //Calling main main is discouraged
 			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
 					   .replaceAll("(?m)^\\s*$", "");
 			data = removeClass(data);
+
+			
+
 			dependencies = findDependencies(data);
 
 			map.put(file, dependencies);
@@ -109,7 +82,7 @@ public class Runnable { //Calling main main is discouraged
                 dependencies.add(className);
             }
         }
-		
+
 		return dependencies;
 	}
 	
