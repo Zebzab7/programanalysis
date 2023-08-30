@@ -20,41 +20,39 @@ public class Runnable { //Calling main main is discouraged
 		allfolders.add(new File(Path));
 		subfolders.add(new File(Path));
 
-			//Finds all subfolders
-			while(findSubFolders(subfolders) != null) {
-				subfolders = findSubFolders(subfolders);
-					for(File folder : subfolders) {
-						allfolders.add(folder);
-					}
-			}
+		//Finds all subfolders
+		while(findSubFolders(subfolders) != null) {
+			subfolders = findSubFolders(subfolders);
+				for(File folder : subfolders) {
+					allfolders.add(folder);
+				}
+		}
 
-			//Prints all folders found
-			//PrintFileFolder(allfolders);
+		//Prints all folders found
+		//PrintFileFolder(allfolders);
 
-			//Finds all files in all folders
-			for(File folder : allfolders) {
-				File[] localFiles = new File(folder.getPath()).listFiles(File::isFile);
-				if(localFiles != null) {
-					for(File file : localFiles) {
-						//Finds all java files
-						if(file.getName().endsWith(".java")) {
-							files.add(file);
-						}
+		//Finds all files in all folders
+		for(File folder : allfolders) {
+			File[] localFiles = new File(folder.getPath()).listFiles(File::isFile);
+			if(localFiles != null) {
+				for(File file : localFiles) {
+					//Finds all java files
+					if(file.getName().endsWith(".java")) {
+						files.add(file);
 					}
 				}
 			}
-			
+		}
 
-
-			//Prints all files
-			PrintFileFolder(files);
-			System.out.println("Files found: " + files.size());
-			String data;
-			data = getFileData(files.get(0));
-			//remove commented lines
-			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","");
-
-			System.out.println(data);
+		//Prints all files
+		PrintFileFolder(files);
+		System.out.println("Files found: " + files.size());
+		String data;
+		data = getFileData(files.get(0));
+		//remove commented lines
+		data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
+				   .replaceAll("(?m)^\\s*$", "");
+		System.out.println(data);
 	}
 	public static String getFileData(File file){
 		try {
