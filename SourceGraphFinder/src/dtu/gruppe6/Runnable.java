@@ -12,13 +12,13 @@ import java.util.ArrayList;
 public class Runnable { //Calling main main is discouraged
 
 	public static void main(String[] args) {
-		String Path = "C:\\Users\\Tobias Collin\\Documents\\GitHub\\programanalysis\\course-02242-examples-main"; //Starting path
+		String workingDirectory = System.getProperty("user.dir");
+		String Path = workingDirectory + "/course-02242-examples-main"; //Starting path
 		ArrayList<File> subfolders = new ArrayList<File>();
 		ArrayList<File> allfolders = new ArrayList<File>();
 		ArrayList<File> files = new ArrayList<File>();
 		allfolders.add(new File(Path));
 		subfolders.add(new File(Path));
-		
 
 			//Finds all subfolders
 			while(findSubFolders(subfolders) != null) {
@@ -50,8 +50,6 @@ public class Runnable { //Calling main main is discouraged
 			String data;
 			data = getFileData(files.get(0));
 			System.out.println(data);
-
-			
 	}
 	public static String getFileData(File file){
 		try {
