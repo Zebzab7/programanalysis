@@ -56,11 +56,6 @@ public class Runnable { //Calling main main is discouraged
 		System.out.println("Before: " + data);
 		data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
 				   .replaceAll("(?m)^\\s*$", "");
-		// try {
-		// 	System.out.println(findFullDependency("String"));
-		// } catch (ClassNotFoundException e) {
-		// 	e.printStackTrace();
-		// }
 		System.out.println(findOtherDependencies(data).toString());
 	}
 
@@ -84,28 +79,7 @@ public class Runnable { //Calling main main is discouraged
         }
 		return dependencies;
 	}
-
-	/**
-	 * Assumes input is an actual java file
-	 * @throws ClassNotFoundException
-	 */
-	public static String findFullDependency(String token) throws ClassNotFoundException {
-
-		// Convert token 
-		Class<?> targetClass = Class.forName(token);
-		Package classPackage = targetClass.getPackage();
-
-		String packagePath = "";
-
-        if (classPackage != null) {
-            packagePath = classPackage.getName();
-            System.out.println("Package Path: " + packagePath);
-        } else {
-            System.out.println("Package information not found.");
-        }
-		return packagePath;
-    }
-		
+	
 	public static String getFileData(File file){
 		try {
 			String content = Files.readString(file.toPath());
