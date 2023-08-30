@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,12 +23,14 @@ public class Runnable { //Calling main main is discouraged
 		allfolders.add(new File(Path));
 		subfolders.add(new File(Path));
 
+		HashMap<File, ArrayList<String>> map = new HashMap<>();
+
 		//Finds all subfolders
 		while(findSubFolders(subfolders) != null) {
 			subfolders = findSubFolders(subfolders);
-				for(File folder : subfolders) {
-					allfolders.add(folder);
-				}
+			for(File folder : subfolders) {
+				allfolders.add(folder);
+			}
 		}
 
 		//Prints all folders found
@@ -41,29 +44,38 @@ public class Runnable { //Calling main main is discouraged
 					//Finds all java files
 					if(file.getName().endsWith(".java")) {
 						files.add(file);
+						
 					}
 				}
 			}
-			// ?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)
-			// notCapture /* notCapture not *
+		}
 
-			//Prints all files
-			PrintFileFolder(files);
-			System.out.println("Files found: " + files.size());
-			String data;
-			ArrayList<String> imports = new ArrayList<String>();
+		
+		String data = null;
+		ArrayList<String> dependencies = new ArrayList<String>();
+		for (int i = 0; i < files.size(); i++) {
+			File file = files.get(i);
 
-			data = getFileData(files.get(0));
+			System.out.println(file.getName());
+
+			data = getFileData(file);
 			//remove commented lines
 			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
-				   .replaceAll("(?m)^\\s*$", "");
-			System.out.println(findOtherDependencies(data).toString());
-			imports = getImports(data);
+					   .replaceAll("(?m)^\\s*$", "");
 			data = RemoveClass(data);
-			System.out.println(data);
-			for(String imp : imports){
-				System.out.println(imp);
-			}
+			dependencies = findDependencies(data);
+
+			System.out.println(dependencies.toString());
+		}
+	}
+
+	public static ArrayList<String> findDependencies(String data) {
+		ArrayList<String> dependencies = new ArrayList<String>();
+
+		dependencies.addAll(getImports(data));
+		dependencies.addAll(findOtherDependencies(data));
+
+		return dependencies;
 	}
 
 	/**
