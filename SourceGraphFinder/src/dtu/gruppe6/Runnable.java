@@ -11,46 +11,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import dtu.gruppe6.Folders;
 
 public class Runnable { //Calling main main is discouraged
 
 	public static void main(String[] args) {
 		String workingDirectory = System.getProperty("user.dir");
 		String Path = workingDirectory + "/course-02242-examples-main"; //Starting path
-		ArrayList<File> subfolders = new ArrayList<File>();
-		ArrayList<File> allfolders = new ArrayList<File>();
+		
 		ArrayList<File> files = new ArrayList<File>();
-		allfolders.add(new File(Path));
-		subfolders.add(new File(Path));
+
 
 		HashMap<File, ArrayList<String>> map = new HashMap<>();
 
-		//Finds all subfolders
-		while(findSubFolders(subfolders) != null) {
-			subfolders = findSubFolders(subfolders);
-			for(File folder : subfolders) {
-				allfolders.add(folder);
-			}
-		}
-
-		//Prints all folders found
-		//PrintFileFolder(allfolders);
-
-		//Finds all files in all folders
-		for(File folder : allfolders) {
-			File[] localFiles = new File(folder.getPath()).listFiles(File::isFile);
-			if(localFiles != null) {
-				for(File file : localFiles) {
-					//Finds all java files
-					if(file.getName().endsWith(".java")) {
-						files.add(file);
-						
-					}
-				}
-			}
-		}
-
 		
+		files = Folders.findFiles(Path);
+	
 		String data = null;
 		ArrayList<String> dependencies = new ArrayList<String>();
 		for (int i = 0; i < files.size(); i++) {
@@ -151,11 +127,6 @@ public class Runnable { //Calling main main is discouraged
 		}
 		return folders;
 	}
-	//Prints files and folders for ease of use
-	public static void PrintFileFolder(ArrayList<File> files) {
-		for(File file : files){
-			System.out.println(file.getPath());
-		}
-	}
+
 
 }
