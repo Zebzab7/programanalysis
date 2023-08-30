@@ -36,13 +36,12 @@ public class Runnable { //Calling main main is discouraged
 					   .replaceAll("(?m)^\\s*$", "");
 			data = removeClass(data);
 
-			
+			System.out.println(data);
 
 			dependencies = findDependencies(data);
 
 			map.put(file, dependencies);
 		}
-
 		printDependencies(map);
 	}
 
@@ -80,6 +79,18 @@ public class Runnable { //Calling main main is discouraged
             while (matcher.find()) {
                 String className = matcher.group(1);
                 dependencies.add(className);
+            }
+        }
+
+		Pattern declarationPattern = Pattern.compile("(new\\s+)?(\\w+)\\s*(?:=|\\(|;)");
+
+        for (String line : lines) {
+            Matcher matcher = declarationPattern.matcher(line);
+            while (matcher.find()) {
+                String className = matcher.group(2);
+                if (Character.isUpperCase(className.charAt(0))) {
+                    dependencies.add(className);
+                }
             }
         }
 
