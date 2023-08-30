@@ -21,9 +21,7 @@ public class Runnable { //Calling main main is discouraged
 		
 		ArrayList<File> files = new ArrayList<File>();
 
-
 		HashMap<File, ArrayList<String>> map = new HashMap<>();
-
 		
 		files = Folders.findFiles(Path);
 	
@@ -32,19 +30,32 @@ public class Runnable { //Calling main main is discouraged
 		for (int i = 0; i < files.size(); i++) {
 			File file = files.get(i);
 
-			System.out.println(file.getName());
-
 			data = getFileData(file);
 			//remove commented lines
 			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
 					   .replaceAll("(?m)^\\s*$", "");
-			data = RemoveClass(data);
+			data = removeClass(data);
+
+			
+
 			dependencies = findDependencies(data);
 
-			System.out.println(dependencies.toString());
+			map.put(file, dependencies);
 		}
+
+		printDependencies(map);
 	}
 
+	public static void printDependencies(HashMap<File, ArrayList<String>> map) {
+		for (File file : map.keySet()) {
+			System.out.println(file.getName() + ":");
+			for (String dependency : map.get(file)) {
+				System.out.println("-> " + dependency);
+			}
+			System.out.println();
+		}
+	}
+		
 	public static ArrayList<String> findDependencies(String data) {
 		ArrayList<String> dependencies = new ArrayList<String>();
 
@@ -63,15 +74,15 @@ public class Runnable { //Calling main main is discouraged
 		ArrayList<String> dependencies = new ArrayList<>();
         String[] lines = input.split("\\r?\\n");
 
-        Pattern pattern = Pattern.compile("new\\s+(\\w+)\\s*\\(");
-
+        Pattern newPattern = Pattern.compile("new\\s+(\\w+)\\s*\\(");
         for (String line : lines) {
-            Matcher matcher = pattern.matcher(line);
+            Matcher matcher = newPattern.matcher(line);
             while (matcher.find()) {
                 String className = matcher.group(1);
                 dependencies.add(className);
             }
         }
+
 		return dependencies;
 	}
 	
@@ -85,7 +96,7 @@ public class Runnable { //Calling main main is discouraged
 		return null;
 	}
 
-	public static String RemoveClass(String data){
+	public static String removeClass(String data){
 		String[] lines = data.split("\n");
 		for(String line : lines){
 			if(line.startsWith("public class")||line.startsWith("private class")||line.startsWith("protected class")||line.startsWith("class")){
