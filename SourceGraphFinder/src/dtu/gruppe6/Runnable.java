@@ -119,19 +119,4 @@ public class Runnable { //Calling main main is discouraged
 		return imports; 
 	}
 
-	public static ArrayList<File> findSubFolders(ArrayList<File> subfolders) {
-		if(subfolders.size() == 0) {
-			return null;
-		}
-		ArrayList<File> folders = new ArrayList<File>();
-		for(File folder : subfolders) {
-			File[] subfolder = folder.listFiles(File::isDirectory);
-			for (File file : subfolder) {
-				folders.add(file);
-			}
-		}
-		return folders;
-	}
-
-
 }
