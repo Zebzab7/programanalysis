@@ -1,12 +1,18 @@
 package dtu.gruppe6;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Runnable { //Calling main main is discouraged
 
 	public static void main(String[] args) {
-		String Path = "D:\\programanalysis\\course-02242-examples-main"; //Starting path
+		String Path = "C:\\Users\\Tobias Collin\\Documents\\GitHub\\programanalysis\\course-02242-examples-main"; //Starting path
 		ArrayList<File> subfolders = new ArrayList<File>();
 		ArrayList<File> allfolders = new ArrayList<File>();
 		ArrayList<File> files = new ArrayList<File>();
@@ -23,7 +29,7 @@ public class Runnable { //Calling main main is discouraged
 			}
 
 			//Prints all folders found
-			PrintFileFolder(allfolders);
+			//PrintFileFolder(allfolders);
 
 			//Finds all files in all folders
 			for(File folder : allfolders) {
@@ -40,7 +46,23 @@ public class Runnable { //Calling main main is discouraged
 
 			//Prints all files
 			PrintFileFolder(files);
+			System.out.println("Files found: " + files.size());
+			String data;
+			data = getFileData(files.get(0));
+			System.out.println(data);
+
+			
 	}
+	public static String getFileData(File file){
+		try {
+			String content = Files.readString(file.toPath());
+			return content;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 
 	public static ArrayList<File> findSubFolders(ArrayList<File> subfolders) {
 		if(subfolders.size() == 0) {
@@ -63,5 +85,16 @@ public class Runnable { //Calling main main is discouraged
 		}
 	}
 
-}
 
+	//File stream reader (Oh boy) Based on : https://www.baeldung.com/reading-file-in-java
+	public String readFromInputFileStream(InputStream InputStream) throws IOException {
+		StringBuilder result = new StringBuilder();
+		try(BufferedReader br= new BufferedReader(new InputStreamReader(InputStream))){
+				String line;
+				while((line = br.readLine()) != null){
+					result.append(line + "\n");
+				}
+			}
+		return result.toString();
+	}
+}
