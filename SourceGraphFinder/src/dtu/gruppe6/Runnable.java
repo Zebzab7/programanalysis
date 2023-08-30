@@ -43,12 +43,17 @@ public class Runnable { //Calling main main is discouraged
 					}
 				}
 			}
+			
+
 
 			//Prints all files
 			PrintFileFolder(files);
 			System.out.println("Files found: " + files.size());
 			String data;
 			data = getFileData(files.get(0));
+			//remove commented lines
+			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","");
+
 			System.out.println(data);
 	}
 	public static String getFileData(File file){
@@ -78,7 +83,6 @@ public class Runnable { //Calling main main is discouraged
 	//Prints files and folders for ease of use
 	public static void PrintFileFolder(ArrayList<File> files) {
 		for(File file : files){
-			
 			System.out.println(file.getPath());
 		}
 	}
