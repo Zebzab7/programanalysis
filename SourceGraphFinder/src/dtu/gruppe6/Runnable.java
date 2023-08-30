@@ -43,18 +43,24 @@ public class Runnable { //Calling main main is discouraged
 					}
 				}
 			}
-			
-
+			// ?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)
+			// notCapture /* notCapture not *
 
 			//Prints all files
 			PrintFileFolder(files);
 			System.out.println("Files found: " + files.size());
 			String data;
+			ArrayList<String> imports = new ArrayList<String>();
+
 			data = getFileData(files.get(0));
 			//remove commented lines
 			data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","");
-
+			imports = getImports(data);
+			data = RemoveClass(data);
 			System.out.println(data);
+			for(String imp : imports){
+				System.out.println(imp);
+			}
 	}
 	public static String getFileData(File file){
 		try {
@@ -66,6 +72,34 @@ public class Runnable { //Calling main main is discouraged
 		return null;
 	}
 
+	public static String RemoveClass(String data){
+		String[] lines = data.split("\n");
+		for(String line : lines){
+			if(line.startsWith("public class")||line.startsWith("private class")||line.startsWith("protected class")||line.startsWith("class")){
+				data = data.replace(line, "");
+
+			}
+		}
+		return data;
+	}
+
+
+	public static ArrayList<String> getImports(String File){
+		ArrayList<String> imports = new ArrayList<String>();
+		String[] lines = File.split("\n");
+		for(String line : lines){
+			if(line.startsWith("import")){
+				if(line.endsWith(".*;")){
+					line = line.replace(".*;", "");
+				}
+				line = line.replace("import ", "");
+				line = line.replace(";", "");
+				imports.add(line);
+
+			}
+		}
+		return imports; 
+	}
 
 	public static ArrayList<File> findSubFolders(ArrayList<File> subfolders) {
 		if(subfolders.size() == 0) {
