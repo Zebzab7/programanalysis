@@ -8,6 +8,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Runnable { //Calling main main is discouraged
 
@@ -49,11 +51,61 @@ public class Runnable { //Calling main main is discouraged
 		System.out.println("Files found: " + files.size());
 		String data;
 		data = getFileData(files.get(0));
-		//remove commented lines
+
+		// remove commented lines
+		System.out.println("Before: " + data);
 		data = data.replaceAll("(?:/\\*(?:[^*]|(?:\\*+[^*/]))*\\*+/)|(?://.*)","")
 				   .replaceAll("(?m)^\\s*$", "");
-		System.out.println(data);
+		// try {
+		// 	System.out.println(findFullDependency("String"));
+		// } catch (ClassNotFoundException e) {
+		// 	e.printStackTrace();
+		// }
+		System.out.println(findOtherDependencies(data).toString());
 	}
+
+	/**
+	 * Find dependencies other beside imports
+	 * @param input
+	 * @return
+	 */
+	public static ArrayList<String> findOtherDependencies(String input) {
+		ArrayList<String> dependencies = new ArrayList<>();
+        String[] lines = input.split("\\r?\\n");
+
+        Pattern pattern = Pattern.compile("new\\s+(\\w+)\\s*\\(");
+
+        for (String line : lines) {
+            Matcher matcher = pattern.matcher(line);
+            while (matcher.find()) {
+                String className = matcher.group(1);
+                dependencies.add(className);
+            }
+        }
+		return dependencies;
+	}
+
+	/**
+	 * Assumes input is an actual java file
+	 * @throws ClassNotFoundException
+	 */
+	public static String findFullDependency(String token) throws ClassNotFoundException {
+
+		// Convert token 
+		Class<?> targetClass = Class.forName(token);
+		Package classPackage = targetClass.getPackage();
+
+		String packagePath = "";
+
+        if (classPackage != null) {
+            packagePath = classPackage.getName();
+            System.out.println("Package Path: " + packagePath);
+        } else {
+            System.out.println("Package information not found.");
+        }
+		return packagePath;
+    }
+		
 	public static String getFileData(File file){
 		try {
 			String content = Files.readString(file.toPath());
@@ -63,7 +115,6 @@ public class Runnable { //Calling main main is discouraged
 		}
 		return null;
 	}
-
 
 	public static ArrayList<File> findSubFolders(ArrayList<File> subfolders) {
 		if(subfolders.size() == 0) {
