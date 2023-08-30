@@ -129,15 +129,20 @@ public class Runnable { //Calling main main is discouraged
 				}
 				line = line.replace("import ", "");
 				line = line.replace(";", "");
-				for(String l: lines){
-					if(l.contains(line)){
-						line = l;
+				for(int i = 0; i<imports.size(); i++){
+					if(imports.get(i).equals(line)){
+						break;
 					}else{
 						imports.add(line);
 					}
 				}
 			}
 		}
+		for(String line : lines){
+			
+			System.out.println(line);
+		}
+
 		return imports; 
 	}
 
