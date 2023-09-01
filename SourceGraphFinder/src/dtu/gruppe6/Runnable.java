@@ -1,17 +1,16 @@
 package dtu.gruppe6;
 
-import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import dtu.gruppe6.Folders;
+
 
 public class Runnable { //Calling main main is discouraged
 
@@ -42,7 +41,41 @@ public class Runnable { //Calling main main is discouraged
 
 			map.put(file, dependencies);
 		}
+		try{
+			makeGraph(map);
+		}catch(IOException e){
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+		
 		printDependencies(map);
+	}
+	public static void makeGraph(HashMap<File, ArrayList<String>> map) throws IOException {
+		//Makes file and removes if exists
+		File myObj = new File("graph.dot");
+		if(myObj.createNewFile()){
+				System.out.println("File created: " + myObj.getName());
+		}else{
+			myObj.delete();
+			myObj.createNewFile();
+		}
+		
+		ArrayList<String> dependencies = new ArrayList<String>();
+		String start = "digraph G {\n";
+		Path fileName = Path.of("graph.dot");
+
+		Files.writeString(fileName, start);
+		//Foreach file in map find dependencies and write to file
+		for(File file: map.keySet()){
+			dependencies = map.get(file);
+			for(String dependency: dependencies){
+				String line = file.getName();
+				line = line.replace(".java", "");
+				line += " -> " + dependency + "\n";
+				Files.writeString(fileName, line, java.nio.file.StandardOpenOption.APPEND);
+			}
+		}
+		Files.writeString(fileName, "}", java.nio.file.StandardOpenOption.APPEND);
 	}
 
 	public static void printDependencies(HashMap<File, ArrayList<String>> map) {
