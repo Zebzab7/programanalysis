@@ -42,6 +42,8 @@ public class Runnable { //Calling main main is discouraged
 			map.put(file, dependencies);
 		}
 		try{
+			//RemoveDuplicates(map);
+			//RemoveSelfDependencies(map);
 			makeGraph(map);
 		}catch(IOException e){
 			System.out.println("An error occurred.");
@@ -50,6 +52,29 @@ public class Runnable { //Calling main main is discouraged
 		
 		printDependencies(map);
 	}
+	public static void RemoveDuplicates(HashMap<File, ArrayList<String>> map){
+		for(File file : map.keySet()){
+			ArrayList<String> dependencies = map.get(file);
+			for(int i = 0; i<dependencies.size(); i++){
+				for(int j = i+1; j<dependencies.size(); j++){
+					if(dependencies.get(i).equals(dependencies.get(j))){
+						dependencies.remove(j);
+					}
+				}
+			}
+		}
+	}
+	public static void RemoveSelfDependencies(HashMap<File, ArrayList<String>> map){
+		for(File file : map.keySet()){
+			ArrayList<String> dependencies = map.get(file);
+			for(int i = 0; i<dependencies.size(); i++){
+				if(dependencies.get(i).equals(file.getName().replace(".java", ""))){
+					dependencies.remove(i);
+				}
+			}
+		}
+	}
+
 	public static void makeGraph(HashMap<File, ArrayList<String>> map) throws IOException {
 		//Makes file and removes if exists
 		File myObj = new File("graph.dot");
