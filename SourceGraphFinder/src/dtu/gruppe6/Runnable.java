@@ -57,6 +57,9 @@ public class Runnable { //Calling main main is discouraged
 			ArrayList<String> dependencies = map.get(file);
 			for(int i = 0; i<dependencies.size(); i++){
 				for(int j = 0; j<dependencies.size(); j++){
+					if(i == j){
+						continue;
+					}
 					if(dependencies.get(i).equals(dependencies.get(j))){
 						dependencies.remove(j);
 					}
@@ -67,6 +70,7 @@ public class Runnable { //Calling main main is discouraged
 	public static void RemoveSelfDependencies(HashMap<File, ArrayList<String>> map){
 		for(File file : map.keySet()){
 			ArrayList<String> dependencies = map.get(file);
+			
 			for(int i = 0; i<dependencies.size(); i++){
 				if(dependencies.get(i).equals(file.getName().replace(".java", ""))){
 					dependencies.remove(i);
