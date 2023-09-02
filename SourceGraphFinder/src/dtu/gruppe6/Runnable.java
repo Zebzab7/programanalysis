@@ -42,8 +42,8 @@ public class Runnable { //Calling main main is discouraged
 			map.put(file, dependencies);
 		}
 		try{
-			//RemoveDuplicates(map);
-			//RemoveSelfDependencies(map);
+			RemoveDuplicates(map);
+			RemoveSelfDependencies(map);
 			makeGraph(map);
 		}catch(IOException e){
 			System.out.println("An error occurred.");
@@ -56,7 +56,7 @@ public class Runnable { //Calling main main is discouraged
 		for(File file : map.keySet()){
 			ArrayList<String> dependencies = map.get(file);
 			for(int i = 0; i<dependencies.size(); i++){
-				for(int j = i+1; j<dependencies.size(); j++){
+				for(int j = 0; j<dependencies.size(); j++){
 					if(dependencies.get(i).equals(dependencies.get(j))){
 						dependencies.remove(j);
 					}
