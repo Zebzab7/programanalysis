@@ -22,7 +22,7 @@ public class Example {
     }
     outer.Inner inn = new Inner(0);
 
-    public class Inner{
+    class Inner{
         int num;
         Inner(int num){
             this.num = num;
