@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -35,7 +37,7 @@ public class Runnable { //Calling main main is discouraged
 					   .replaceAll("(?m)^\\s*$", "");
 			data = removeClass(data);
 
-			System.out.println(data);
+			// System.out.println(data);
 
 			dependencies = findDependencies(data);
 
@@ -132,31 +134,41 @@ public class Runnable { //Calling main main is discouraged
 	 * @return
 	 */
 	public static ArrayList<String> findOtherDependencies(String input) {
-		ArrayList<String> dependencies = new ArrayList<>();
-        String[] lines = input.split("\\r?\\n");
 
-        Pattern newPattern = Pattern.compile("new\\s+(\\w+)\\s*\\(");
-        for (String line : lines) {
-            Matcher matcher = newPattern.matcher(line);
-            while (matcher.find()) {
-                String className = matcher.group(1);
-                dependencies.add(className);
-            }
-        }
+		HashSet<String> dependencies = new HashSet<>();
+		ArrayList<Pattern> patterns = new ArrayList<Pattern>();
 
-		Pattern declarationPattern = Pattern.compile("(new\\s+)?(\\w+)\\s*(?:=|\\(|;)");
+		// Matches declared objects
+		final String declaredObjectRegex = "([A-Z][a-z]*)(?= ([A-Za-z]*);)";
+		final Pattern declaredObjectPattern = Pattern.compile(declaredObjectRegex, Pattern.MULTILINE);
+		patterns.add(declaredObjectPattern);
 
-        for (String line : lines) {
-            Matcher matcher = declarationPattern.matcher(line);
-            while (matcher.find()) {
-                String className = matcher.group(2);
-                if (Character.isUpperCase(className.charAt(0))) {
-                    dependencies.add(className);
-                }
-            }
-        }
+		// Matches initialized objects
+		final String newObjectRegex = "(?<=new\\s)([A-Z][a-z]*)";
+		final Pattern newObjectPattern = Pattern.compile(newObjectRegex, Pattern.MULTILINE);
+		patterns.add(newObjectPattern);
 
-		return dependencies;
+		// Matches return types in function headers
+		final String returnTypeRegex = "((?<=public\\s)|(?<=private\\s)|(?<=public static\\s)|(?<=private\\sstatic\\s))(void|[A-Z][a-z]*)";
+        final Pattern returnTypePattern = Pattern.compile(returnTypeRegex, Pattern.MULTILINE);
+		patterns.add(returnTypePattern);
+
+		for (Pattern pattern : patterns) {
+			final Matcher matcher = pattern.matcher(input);
+			while (matcher.find()) {
+				// for (int i = 1; i <= matcher.groupCount(); i++) {
+				// 	System.out.println("Group " + i + ": " + matcher.group(i));
+				// }
+				dependencies.add(matcher.group(0));
+			}
+		}
+
+		if (dependencies.contains("void")) {
+			dependencies.remove("void");
+		}
+
+		System.out.println("dependencies: " + dependencies.toString());
+		return new ArrayList<>(dependencies);
 	}
 	
 	public static String getFileData(File file){
@@ -200,10 +212,9 @@ public class Runnable { //Calling main main is discouraged
 				}
 			}
 		}
-		for(String line : lines){
-			
-			System.out.println(line);
-		}
+		// for(String line : lines){
+		// 	System.out.println(line);
+		// }
 
 		return imports; 
 	}

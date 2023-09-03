@@ -1,6 +1,4 @@
 digraph G {
-Example -> Other
-Example -> Utils
 Tricky -> Example
-Tricky -> Other
+Example -> Other
 }
