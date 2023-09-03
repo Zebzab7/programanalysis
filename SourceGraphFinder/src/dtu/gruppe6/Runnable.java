@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Runnable { //Calling main main is discouraged
+public class RunnableMaster { //Calling main main is discouraged
 
 	public static void main(String[] args) {
 		String workingDirectory = System.getProperty("user.dir");
@@ -162,6 +162,12 @@ public class Runnable { //Calling main main is discouraged
 		final String returnTypeRegex = "((?<=public\\s)|(?<=private\\s)|(?<=public static\\s)|(?<=private\\sstatic\\s))(void|[A-Z][a-z]*)";
         final Pattern returnTypePattern = Pattern.compile(returnTypeRegex, Pattern.MULTILINE);
 		patterns.add(returnTypePattern);
+
+		//Matches the inner class in the outer class 
+		//eg:Runnable.FileAtrribute fa = outer.new FileAtrribute(keyword,file.getPath());
+		final String innerClassRegx = "^\\s*(\\w+\\.\\w+)\\s+(\\w+)\\s*=\\s+(\\w+)\\.new\\s+(\\w+)\\(([^)]*)\\)"; 
+		final Pattern innerClassPatter = Pattern.compile(innerClassRegx, Pattern.MULTILINE);
+		patterns.add(innerClassPatter);
 
 		for (Pattern pattern : patterns) {
 			final Matcher matcher = pattern.matcher(input);
