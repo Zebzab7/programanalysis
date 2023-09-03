@@ -20,5 +20,13 @@ public class Example {
     public static void main(String[] args) {
         Utils.printHello();
     }
+    outer.Inner inn = new Inner(0);
+
+    public class Inner{
+        int num;
+        Inner(int num){
+            this.num = num;
+        }
+    }
 
 }
