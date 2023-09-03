@@ -153,6 +153,11 @@ public class Runnable { //Calling main main is discouraged
 		final Pattern methodCallPattern = Pattern.compile(methodCallRegex, Pattern.MULTILINE);
 		patterns.add(methodCallPattern);
 
+		// Matches method calls with parameters and declarations with commas (e.g. "String a, b, c")
+		final String methodCallWithParametersRegex = "([A-Za-z]*)(?=(\\[\\])?\\s+([A-Za-z]*)(\\)|\\s*\\,))";
+		final Pattern methodCallWithParametersPattern = Pattern.compile(methodCallWithParametersRegex, Pattern.MULTILINE);
+		patterns.add(methodCallWithParametersPattern);
+
 		// Matches return types in function headers
 		final String returnTypeRegex = "((?<=public\\s)|(?<=private\\s)|(?<=public static\\s)|(?<=private\\sstatic\\s))(void|[A-Z][a-z]*)";
         final Pattern returnTypePattern = Pattern.compile(returnTypeRegex, Pattern.MULTILINE);
@@ -168,11 +173,14 @@ public class Runnable { //Calling main main is discouraged
 			}
 		}
 
+		// Remove empty strings and void
+		if (dependencies.contains("")) {
+			dependencies.remove("");
+		}
 		if (dependencies.contains("void")) {
 			dependencies.remove("void");
 		}
 
-		System.out.println("dependencies: " + dependencies.toString());
 		return new ArrayList<>(dependencies);
 	}
 	
@@ -197,7 +205,6 @@ public class Runnable { //Calling main main is discouraged
 		return data;
 	}
 
-
 	public static ArrayList<String> getImports(String File){
 		ArrayList<String> imports = new ArrayList<String>();
 		String[] lines = File.split("\n");
@@ -217,9 +224,6 @@ public class Runnable { //Calling main main is discouraged
 				}
 			}
 		}
-		// for(String line : lines){
-		// 	System.out.println(line);
-		// }
 
 		return imports; 
 	}

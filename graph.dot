@@ -1,7 +1,10 @@
 digraph G {
 Other -> Utils
+Other -> String
+Tricky -> Utils
 Tricky -> Example
 Utils -> System
 Example -> Utils
+Example -> String
 Example -> Other
 }
