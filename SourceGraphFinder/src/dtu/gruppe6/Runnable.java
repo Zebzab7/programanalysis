@@ -139,7 +139,7 @@ public class Runnable { //Calling main main is discouraged
 		ArrayList<Pattern> patterns = new ArrayList<Pattern>();
 
 		// Matches declared objects
-		final String declaredObjectRegex = "([A-Z][a-z]*)(?= ([A-Za-z]*);)";
+		final String declaredObjectRegex = "([A-Z][a-z]*)(?=\\s([A-Za-z]*);)";
 		final Pattern declaredObjectPattern = Pattern.compile(declaredObjectRegex, Pattern.MULTILINE);
 		patterns.add(declaredObjectPattern);
 
@@ -147,6 +147,11 @@ public class Runnable { //Calling main main is discouraged
 		final String newObjectRegex = "(?<=new\\s)([A-Z][a-z]*)";
 		final Pattern newObjectPattern = Pattern.compile(newObjectRegex, Pattern.MULTILINE);
 		patterns.add(newObjectPattern);
+
+		// Matches method calls
+		final String methodCallRegex = "([A-Z][a-z]*)(?=(\\.([A-Za-z]*))+\\()";
+		final Pattern methodCallPattern = Pattern.compile(methodCallRegex, Pattern.MULTILINE);
+		patterns.add(methodCallPattern);
 
 		// Matches return types in function headers
 		final String returnTypeRegex = "((?<=public\\s)|(?<=private\\s)|(?<=public static\\s)|(?<=private\\sstatic\\s))(void|[A-Z][a-z]*)";
