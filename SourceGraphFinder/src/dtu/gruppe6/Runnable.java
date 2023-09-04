@@ -40,11 +40,14 @@ public class Runnable { //Calling main main is discouraged
 			// System.out.println(data);
 
 			dependencies = findDependencies(data);
+			for(String dependency: dependencies){
+				System.out.println(dependency + " ");
+			}	
 
 			map.put(file, dependencies);
 		}
 		try{
-			RemoveDuplicates(map);
+			map = RemoveDuplicates(map);
 			RemoveSelfDependencies(map);
 			makeGraph(map);
 		}catch(IOException e){
@@ -54,9 +57,12 @@ public class Runnable { //Calling main main is discouraged
 		
 		printDependencies(map);
 	}
-	public static void RemoveDuplicates(HashMap<File, ArrayList<String>> map){
+	public static HashMap<File,ArrayList<String>> RemoveDuplicates(HashMap<File, ArrayList<String>> map){
 		for(File file : map.keySet()){
 			ArrayList<String> dependencies = map.get(file);
+			
+
+
 			for(int i = 0; i<dependencies.size(); i++){
 				for(int j = 0; j<dependencies.size(); j++){
 					if(i == j){
@@ -68,6 +74,7 @@ public class Runnable { //Calling main main is discouraged
 				}
 			}
 		}
+		return map;
 	}
 	public static void RemoveSelfDependencies(HashMap<File, ArrayList<String>> map){
 		for(File file : map.keySet()){
@@ -123,8 +130,7 @@ public class Runnable { //Calling main main is discouraged
 		HashSet<String> dependencies = new HashSet<String>();
 
 		dependencies.addAll(getImports(data));
-		dependencies.addAll(findOtherDependencies(data));
-
+		//dependencies.addAll(findOtherDependencies(data));
 		return new ArrayList<>(dependencies);
 	}
 
@@ -219,19 +225,18 @@ public class Runnable { //Calling main main is discouraged
 		ArrayList<String> imports = new ArrayList<String>();
 		String[] lines = File.split("\n");
 		for(String line : lines){
+			line.trim();
 			if(line.startsWith("import")){
-				if(line.endsWith(".*;")){
+				if(line.contains(".*")){
 					line = line.replace(".*;", "");
 				}
-				line = line.replace("import ", "");
+
+				line = line.replace("import", "");
 				line = line.replace(";", "");
-				for(int i = 0; i<imports.size(); i++){
-					if(imports.get(i).equals(line)){
-						break;
-					}else{
-						imports.add(line);
-					}
-				}
+				String[] split =line.split("\\.");
+				line = split[split.length-1];
+				System.out.println(line);
+				imports.add(line);
 			}
 		}
 

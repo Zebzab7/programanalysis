@@ -1,18 +1,9 @@
 digraph G {
-Primes -> PrimesIterator
-Primes -> Integer
-Primes -> ArrayList
 Primes -> Iterator
+Primes -> ArrayList
 Primes -> List
-Primes -> String
-Primes -> System
-Utils -> System
-Other -> Utils
-Other -> String
-Example -> Utils
-Example -> String
-Example -> Other
-Tricky -> Utils
-Tricky -> Example
+Tricky -> simple
+Tricky -> util
 Tricky -> Other
+Example -> Utils
 }
