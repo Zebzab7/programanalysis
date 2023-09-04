@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class RunnableMaster { //Calling main main is discouraged
+public class Runnable { //Calling main main is discouraged
 
 	public static void main(String[] args) {
 		String workingDirectory = System.getProperty("user.dir");
