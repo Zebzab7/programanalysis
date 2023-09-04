@@ -138,13 +138,17 @@ public class Runnable { //Calling main main is discouraged
 		HashSet<String> dependencies = new HashSet<>();
 		ArrayList<Pattern> patterns = new ArrayList<Pattern>();
 
+		final String declaredWithKeywords = "(?<=(private|final)\\s)([A-Z][A-Za-z]*)";
+		final Pattern declaredWithKeywordsPattern = Pattern.compile(declaredWithKeywords, Pattern.MULTILINE);
+		patterns.add(declaredWithKeywordsPattern);
+
 		// Matches declared objects
 		final String declaredObjectRegex = "([A-Z][a-z]*)(?=\\s([A-Za-z]*);)";
 		final Pattern declaredObjectPattern = Pattern.compile(declaredObjectRegex, Pattern.MULTILINE);
 		patterns.add(declaredObjectPattern);
 
 		// Matches initialized objects
-		final String newObjectRegex = "(?<=new\\s)([A-Z][a-z]*)";
+		final String newObjectRegex = "(?<=new\\s)([A-Za-z]*)";
 		final Pattern newObjectPattern = Pattern.compile(newObjectRegex, Pattern.MULTILINE);
 		patterns.add(newObjectPattern);
 
