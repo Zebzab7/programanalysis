@@ -120,12 +120,12 @@ public class Runnable { //Calling main main is discouraged
 	}
 		
 	public static ArrayList<String> findDependencies(String data) {
-		ArrayList<String> dependencies = new ArrayList<String>();
+		HashSet<String> dependencies = new HashSet<String>();
 
 		dependencies.addAll(getImports(data));
 		dependencies.addAll(findOtherDependencies(data));
 
-		return dependencies;
+		return new ArrayList<>(dependencies);
 	}
 
 	/**
