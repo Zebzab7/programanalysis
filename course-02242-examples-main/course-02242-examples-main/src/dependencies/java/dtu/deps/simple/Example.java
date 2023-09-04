@@ -20,13 +20,13 @@ public class Example {
     public static void main(String[] args) {
         Utils.printHello();
     }
-    outer.Inner inn = new Inner(0);
+    // outer.Inner inn = new Inner(0);
 
-    class Inner{
-        int num;
-        Inner(int num){
-            this.num = num;
-        }
-    }
+    // class Inner{
+    //     int num;
+    //     Inner(int num){
+    //         this.num = num;
+    //     }
+    // }
 
 }

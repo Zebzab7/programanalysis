@@ -11,7 +11,6 @@ import dtu.deps.util.*;
 // This is never used in the file.
 import dtu.deps.simple.Other;
 
-
 public class Tricky {
     Example /* System */ Other = new Example();
 
@@ -20,5 +19,8 @@ public class Tricky {
     private <Other> void hello(/*dtu.deps.simple.Other*/ Utils Other) {
         Tricky dtu = new Tricky();
         dtu.deps.simple.Other = new Example();
+    }
+    private <Other> void Other(Other Other) {
+        return;
     }
 }

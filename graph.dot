@@ -1,10 +1,16 @@
 digraph G {
+Primes -> Array
+Primes -> Integer
+Primes -> Iterator
+Primes -> String
+Primes -> System
+Utils -> System
 Other -> Utils
 Other -> String
-Tricky -> Utils
-Tricky -> Example
-Utils -> System
 Example -> Utils
 Example -> String
 Example -> Other
+Tricky -> Utils
+Tricky -> Example
+Tricky -> Other
 }
