@@ -1,6 +1,0 @@
-.gradle
-build
-*.o
-*.so
-*.dylib
-*.log
