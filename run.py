@@ -71,18 +71,24 @@ class SyntaxFold:
             print(" ")
             
         return
+    
+    def find_subtree_node(self, root_node_tree, type):
+        if not root_node_tree:
+            return None
+        if root_node_tree.type == type:
+            return root_node_tree
+        for child in root_node_tree.children:
+            node = self.find_subtree_node(child, type)
+            if node:
+                return node
             
-
-def print_tree(node, depth=0):
-    prefix = "  " * depth
-    if node.type == "identifier":
-        # Print both the type and the name of the identifier
-        print(f"{prefix}{node.type}: {node.text}")
-    else:
-        # Print only the type for non-identifier nodes
-        print(prefix + node.type)
-    for child in node.children:
-        print_tree(child, depth + 1)
+    def traverse(self, node):
+        if not node:
+            return None
+        print(node.type)
+        print(f'{node.text}')
+        for child in node.children:
+            self.traverse(child)
 
 folder_path = 'course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
@@ -96,5 +102,5 @@ Sf.visitFiles(folder_path)
 
 for i in range(len(trees)):
     print("File is:", files[i])
-    print_tree(trees[i])
+    Sf.traverse(Sf.find_subtree_node(trees[i],"package_declaration"))
     print("\n")
