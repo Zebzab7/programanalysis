@@ -114,7 +114,14 @@ for i in range(len(trees)):
             for node in nodes:
                 text = str(node.text)
                 text = text.split(" ")[1]
-                node_texts.append(text)
+
+                pattern = r'([^;]+);'
+                match = re.search(pattern, text)
+
+                if match:
+                    result = match.group(1)
+                    node_texts.append(result)
+
 
             # Initialize the key-value pair
             dictionary[subnode_type] = node_texts
@@ -129,3 +136,5 @@ for i in range(len(trees)):
     # print("\n")
 
 print(file_dictionaries)
+
+# file = re.sub(r'//.*', '', content) 
