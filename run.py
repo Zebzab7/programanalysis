@@ -97,10 +97,24 @@ Sf.visitFiles(folder_path)
 for i in range(len(trees)):
     print("File is:", files[i])
 
-    # Pass empty list of nodes
-    nodes = []
-    Sf.find_subtree_node(trees[i],"import_declaration", nodes)
-    print("Occurences:", len(nodes))
+    subnode_types = ["import_declaration", "package_declaration"]
+
+    # Create len(files) dictionaries
+    file_dictionaries = []
+
+    # Initialize and populate the dictionaries
+    for i in range(len(files)):  
+        dictionary = {}
+
+        for subnode_type in subnode_types:
+            nodes = []
+            Sf.find_subtree_node(trees[i],subnode_type, nodes)
+
+            # Initialize the key-value pair
+            dictionary[subnode_type] = nodes
+
+        # Add more key-value pairs as needed
+        file_dictionaries.append(dictionary)
 
     # For each node, traverse the tree
     for node in nodes:
