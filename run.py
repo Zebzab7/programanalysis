@@ -87,6 +87,59 @@ class SyntaxFold:
         print(f'{node.text}')
         for child in node.children:
             self.traverse(child)
+    
+    def legend(self,f):
+        f.write("subgraph cluster {\n")
+        f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
+        f.write("c->d[label=\" realization\",arrowhead=dot]\n")
+        f.write("e->f[label=\" aggregation\",arrowhead=odot]\n")
+        f.write("g->h[label=\" composition\",arrowhead=odiamond]\n")
+        f.write("j->k[label=\" dependency\",arrowhead=vee]\n")
+        f.write("}\n")
+    
+    def setup(self,f):
+        f.write("node [shape=record style=filled fillcolor = gray95]\n")
+        f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
+    
+
+    def makeNode(self,f,tree):
+        return
+
+    def makeEdge(self,f,tree):
+        return
+
+    def makeGraph(self,lists):
+        if os.path.exists("graph.dot"):
+            os.remove("graph.dot")
+        # Create a new file
+        f = open("graph.dot", "a")
+
+        #legend
+        f.write("digraph G {\n")
+        self.setup(f)
+        self.legend(f)
+        
+        
+        
+        # Write the graph in the file
+        #FileName()[label = <{<b>«FileName()</b> | + FieldName()<br align="left"/>FieldName()<br align="left"/>|+ functionName()<br align="left"/>functionName()<br align="left"/>}>]
+
+
+        # Needs more code
+        #if("inheritance")
+            #f.write("arrowhead=crow]")
+        #if("relization")
+            #f.write("arrowhead=dot]")
+        #if("aggregation")
+            #f.write("[arrowhead=odot]")
+        #if("composition")
+            #f.write("[arrowhead=odiamond]")
+        #if("dependency")
+            #f.write("[arrowhead=vee]")
+        
+        f.write("}") #End of file
+        f.close()
+
 
 folder_path = 'course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
@@ -129,3 +182,4 @@ for i in range(len(trees)):
     # print("\n")
 
 print(file_dictionaries)
+Sf.makeGraph(syntaxString);
