@@ -70,7 +70,7 @@ class SyntaxFold:
         return
             
 
-folder_path = '/mnt/c/Users/Tobias Collin/Documents/GitHub/programanalysis/course-02242-examples-main/course-02242-examples-main'
+folder_path = 'course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
 Sf = SyntaxFold()
 # Call the function using the instance
