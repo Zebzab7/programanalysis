@@ -96,10 +96,6 @@ Sf = SyntaxFold()
 # Call the function using the instance
 Sf.visitFiles(folder_path)
 
-# for i in range(len(syntaxString)):
-#     print("File is:", files[i])
-#     Sf.printTree(syntaxString[i])
-
 for i in range(len(trees)):
     print("File is:", files[i])
     Sf.traverse(Sf.find_subtree_node(trees[i],"package_declaration"))
