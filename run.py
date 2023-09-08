@@ -54,12 +54,21 @@ class SyntaxFold:
         parser.set_language(JAVA_LANGUAGE)      
         tree = parser.parse(byte_content)
         return tree.root_node.sexp()
+    
+    def printTree(self,string):
+        i=0
+        splitString = string.split("(")
+        
+        for i in range(len(splitString)):
+            add = ""
 
-
-
-
-   
-
+            add += "("
+            print(add + splitString[i])
+        for i in range(3):
+            print(" ")
+            
+        return
+            
 
 folder_path = '/mnt/c/Users/Tobias Collin/Documents/GitHub/programanalysis/course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
@@ -67,5 +76,6 @@ Sf = SyntaxFold()
 # Call the function using the instance
 Sf.visitFiles(folder_path)
 
-print(len(syntaxString))
-print(syntaxString[1])
+for i in range(len(syntaxString)):
+    Sf.printTree(syntaxString[i])
+
