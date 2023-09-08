@@ -71,7 +71,18 @@ class SyntaxFold:
             print(" ")
             
         return
-            
+    
+    def traverse(self, node):
+        # Handle different node types
+        if node.type == "package_declaration":
+            self.handle_package_declaration(node)
+        elif node.type == "class_declaration":
+            self.handle_class_declaration(node)
+        # Add more cases for other node types as needed
+        else:
+            # Default action: Traverse the children
+            for child in node.children:
+                self.traverse(child)
 
 def print_tree(node, depth=0):
     prefix = "  " * depth
@@ -90,11 +101,9 @@ Sf = SyntaxFold()
 # Call the function using the instance
 Sf.visitFiles(folder_path)
 
-# for i in range(len(syntaxString)):
-#     print("File is:", files[i])
-#     Sf.printTree(syntaxString[i])
-
 for i in range(len(trees)):
     print("File is:", files[i])
     print_tree(trees[i])
     print("\n")
+
+print(trees[1])
