@@ -10,6 +10,7 @@ import re
 ## read folds and files and make them into
 syntaxString = []
 files =[]
+trees = []
 class SyntaxFold:
     def delcomments(self,content):
         # Remove single-line comments
@@ -36,8 +37,9 @@ class SyntaxFold:
                 with open(file_path,"r") as file:
                     content = self.delcomments(file.read())
                     final_content = self.remove_empty_lines(content)
-                    contentTree = self.syntaxFiles(final_content)
+                    contentTree, class_tree = self.syntaxFiles(final_content)
                     syntaxString.append(contentTree)
+                    trees.append(class_tree)
             elif os.path.isfile(file_path)==False:
                 self.visitFiles(file_path)
                     # self.syntaxFiles(file_name, content)
@@ -54,7 +56,7 @@ class SyntaxFold:
         parser = Parser()
         parser.set_language(JAVA_LANGUAGE)      
         tree = parser.parse(byte_content)
-        return tree.root_node.sexp()
+        return tree.root_node.sexp(), tree.root_node
     
     def printTree(self,string):
         i=0
@@ -71,13 +73,23 @@ class SyntaxFold:
         return
             
 
+def print_tree(node, depth=0):
+    prefix = "  " * depth
+    print(prefix + node.type)
+    for child in node.children:
+        print_tree(child, depth + 1)
+
 folder_path = 'course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
 Sf = SyntaxFold()
 # Call the function using the instance
 Sf.visitFiles(folder_path)
 
-for i in range(len(syntaxString)):
-    print("File is:", files[i])
-    Sf.printTree(syntaxString[i])
+# for i in range(len(syntaxString)):
+#     print("File is:", files[i])
+#     Sf.printTree(syntaxString[i])
 
+for i in range(len(trees)):
+    print("File is:", files[i])
+    print_tree(trees[i])
+    print("\n")
