@@ -72,15 +72,13 @@ class SyntaxFold:
             
         return
     
-    def find_subtree_node(self, root_node_tree, type):
-        if not root_node_tree:
+    def find_subtree_node(self, root, type, nodes):
+        if not root:
             return None
-        if root_node_tree.type == type:
-            return root_node_tree
-        for child in root_node_tree.children:
-            node = self.find_subtree_node(child, type)
-            if node:
-                return node
+        if root.type == type:
+            nodes.append(root)
+        for child in root.children:
+            self.find_subtree_node(child, type, nodes)
             
     def traverse(self, node):
         if not node:
@@ -98,5 +96,14 @@ Sf.visitFiles(folder_path)
 
 for i in range(len(trees)):
     print("File is:", files[i])
-    Sf.traverse(Sf.find_subtree_node(trees[i],"package_declaration"))
+
+    # Pass empty list of nodes
+    nodes = []
+    Sf.find_subtree_node(trees[i],"import_declaration", nodes)
+    print("Occurences:", len(nodes))
+
+    # For each node, traverse the tree
+    for node in nodes:
+        Sf.traverse(node)
+
     print("\n")
