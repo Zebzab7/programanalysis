@@ -75,7 +75,12 @@ class SyntaxFold:
 
 def print_tree(node, depth=0):
     prefix = "  " * depth
-    print(prefix + node.type)
+    if node.type == "identifier":
+        # Print both the type and the name of the identifier
+        print(f"{prefix}{node.type}: {node.text}")
+    else:
+        # Print only the type for non-identifier nodes
+        print(prefix + node.type)
     for child in node.children:
         print_tree(child, depth + 1)
 
