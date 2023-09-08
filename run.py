@@ -9,6 +9,7 @@ import re
 
 ## read folds and files and make them into
 syntaxString = []
+files =[]
 class SyntaxFold:
     def delcomments(self,content):
         # Remove single-line comments
@@ -31,7 +32,7 @@ class SyntaxFold:
             file_path = os.path.join(path, file_name)
             # Check if it's a file (not a subfolder)
             if file_name.lower().endswith(".java"):
-                # print(file_name)
+                files.append(file_name)
                 with open(file_path,"r") as file:
                     content = self.delcomments(file.read())
                     final_content = self.remove_empty_lines(content)
@@ -77,5 +78,6 @@ Sf = SyntaxFold()
 Sf.visitFiles(folder_path)
 
 for i in range(len(syntaxString)):
+    print("File is:", files[i])
     Sf.printTree(syntaxString[i])
 
