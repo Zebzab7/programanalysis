@@ -112,7 +112,9 @@ for i in range(len(trees)):
 
             node_texts = []
             for node in nodes:
-                node_texts.append(node.text)
+                text = str(node.text)
+                text = text.split(" ")[1]
+                node_texts.append(text)
 
             # Initialize the key-value pair
             dictionary[subnode_type] = node_texts
