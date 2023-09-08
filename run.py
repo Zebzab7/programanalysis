@@ -110,14 +110,20 @@ for i in range(len(trees)):
             nodes = []
             Sf.find_subtree_node(trees[i],subnode_type, nodes)
 
+            node_texts = []
+            for node in nodes:
+                node_texts.append(node.text)
+
             # Initialize the key-value pair
-            dictionary[subnode_type] = nodes
+            dictionary[subnode_type] = node_texts
 
         # Add more key-value pairs as needed
         file_dictionaries.append(dictionary)
 
     # For each node, traverse the tree
-    for node in nodes:
-        Sf.traverse(node)
+    # for node in nodes:
+    #     Sf.traverse(node)
 
-    print("\n")
+    # print("\n")
+
+print(file_dictionaries)
