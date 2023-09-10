@@ -72,19 +72,29 @@ class SyntaxFold:
             
         return
     
-    def find_subtree_node(self, root, type, nodes):
+    def find_subtree_node_and_append_to_list(self, root, type, nodes):
         if not root:
             return None
         if root.type == type:
             nodes.append(root)
         for child in root.children:
-            self.find_subtree_node(child, type, nodes)
+            self.find_subtree_node_and_append_to_list(child, type, nodes)
+
+    def find_subtree_node(self, root, type):
+        if not root:
+            return None
+        if root.type == type:
+            return root
+        for child in root.children:
+            type_node = self.find_subtree_node(child, type)
+            if type_node:
+                return type_node
             
     def traverse(self, node):
         if not node:
             return None
-        print(node.type)
-        print(f'{node.text}')
+        print(node.type+'\t'+f'{node.text}')
+        #print(f'{node.text}')
         for child in node.children:
             self.traverse(child)
     
@@ -150,7 +160,7 @@ Sf.visitFiles(folder_path)
 for i in range(len(trees)):
     print("File is:", files[i])
 
-    subnode_types = ["import_declaration", "package_declaration"]
+    subnode_types = ["import_declaration", "package_declaration", "class_declaration"]
 
     # Create len(files) dictionaries
     file_dictionaries = []
@@ -160,24 +170,40 @@ for i in range(len(trees)):
         dictionary = {}
 
         for subnode_type in subnode_types:
-            nodes = []
-            Sf.find_subtree_node(trees[i],subnode_type, nodes)
+            if subnode_type == "import_declaration" or subnode_type == "package_declaration":
+                nodes = []
+                Sf.find_subtree_node_and_append_to_list(trees[i],subnode_type, nodes)
 
-            node_texts = []
-            for node in nodes:
-                text = str(node.text)
-                text = text.split(" ")[1]
+                node_texts = []
+                for node in nodes:
+                    text = str(node.text)
+                    text = text.split(" ")[1]
 
-                pattern = r'([^;]+);'
-                match = re.search(pattern, text)
+                    pattern = r'([^;]+);'
+                    match = re.search(pattern, text)
 
-                if match:
-                    result = match.group(1)
-                    node_texts.append(result)
+                    if match:
+                        result = match.group(1)
+                        node_texts.append(result)
 
 
-            # Initialize the key-value pair
-            dictionary[subnode_type] = node_texts
+                # Initialize the key-value pair
+                dictionary[subnode_type] = node_texts
+            
+            elif subnode_type == "class_declaration":
+                nodes = []
+                Sf.find_subtree_node_and_append_to_list(trees[i],subnode_type, nodes)
+                list_of_realisations = []
+                for node in nodes:
+                    super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
+                    if super_interfaces:
+                        identifier = str(Sf.find_subtree_node(node, "identifier").text)
+                        generic_type = str(Sf.find_subtree_node(node, "type_list").text)
+                        list_of_realisations.append(identifier + ' ' + generic_type)
+                # for node in nodes:
+                #     text = str(node.text)
+                #     node_texts.add(text)
+                dictionary[subnode_type] = list_of_realisations
 
         # Add more key-value pairs as needed
         file_dictionaries.append(dictionary)
@@ -191,4 +217,7 @@ for i in range(len(trees)):
 print(file_dictionaries)
 Sf.makeGraph(syntaxString);
 
+# n = Sf.find_subtree_node(trees[3],"class_declaration")
+# s = Sf.find_subtree_node(n,"super_interfaces")
+# print(s.text)
 # file = re.sub(r'//.*', '', content) 
