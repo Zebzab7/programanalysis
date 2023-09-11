@@ -100,16 +100,17 @@ class SyntaxFold:
     
     def legend(self,f):
         f.write("subgraph cluster {\n")
-        f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
-        f.write("c->d[label=\" realization\",arrowhead=dot]\n")
-        f.write("e->f[label=\" aggregation\",arrowhead=odot]\n")
-        f.write("g->h[label=\" composition\",arrowhead=odiamond]\n")
         f.write("j->k[label=\" dependency\",arrowhead=vee]\n")
+        f.write("g->h[label=\" composition\",arrowhead=odiamond]\n")
+        f.write("e->f[label=\" aggregation\",arrowhead=odot]\n")
+        f.write("c->d[label=\" realization\",arrowhead=dot]\n")
+        f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
         f.write("}\n")
     
     def setup(self,f):
         f.write("node [shape=record style=filled fillcolor = gray95]\n")
         f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
+    
 
     def makeNode(self,f,tree):
         return
@@ -117,7 +118,7 @@ class SyntaxFold:
     def makeEdge(self,f,tree):
         return
 
-    def makeGraph(self,lists):
+    def makeGraph(self,lists,files):
         if os.path.exists("graph.dot"):
             os.remove("graph.dot")
         # Create a new file
@@ -128,8 +129,37 @@ class SyntaxFold:
         self.setup(f)
         self.legend(f)
         
-        
-        
+        for i in range(len(lists)):
+            importDeclarations = []
+            #Write name of file
+            filename =files[i]
+            filename.replace(".java","")
+            f.write(filename + "= <{<b>"+filename+"</b> |")
+
+
+            classDeclarations = lists[i]["class_declaration"]
+            #gets imports
+            for j in range(len(lists[i]["import_declaration"])):
+                if lists[i]["import_declaration"][j] not in importDeclarations:
+                    importDeclarations.append(lists[i]["import_declaration"][j])
+
+            #gets class declarations
+            realizations = []
+            for j in range(len(classDeclarations)):
+                print(classDeclarations[j])
+                
+                if classDeclarations[j][1] == "REALIZATION":
+                    if classDeclarations[j][0] not in realizations:
+                        realizations.append(classDeclarations[j][0])
+
+                        
+            print("these are the realizations")
+            print(realizations)
+                
+
+            f.write("|")
+
+
         # Write the graph in the file
         #FileName()[label = <{<b>«FileName()</b> | + FieldName()<br align="left"/>FieldName()<br align="left"/>|+ functionName()<br align="left"/>functionName()<br align="left"/>}>]
 
@@ -155,6 +185,8 @@ folder_path = 'course-02242-examples-main/course-02242-examples-main'
 Sf = SyntaxFold()
 # Call the function using the instance
 Sf.visitFiles(folder_path)
+
+
 
 for i in range(len(trees)):
     print("File is:", files[i])
@@ -183,12 +215,13 @@ for i in range(len(trees)):
 
                     if match:
                         result = match.group(1)
-                        node_texts.append((result, "DEPENDENCY"))
+                        node_texts.append(result)
+
 
                 # Initialize the key-value pair
                 dictionary[subnode_type] = node_texts
             
-            elif subnode_type == "class_declaration":
+            if subnode_type == "class_declaration":
                 nodes = []
                 Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
                 list_of_matches = []
@@ -202,9 +235,7 @@ for i in range(len(trees)):
                             generic_type = str(Sf.find_subtree_node(node, "type_list").text)
                             list_of_matches.append((generic_type, "REALIZATION"))
 
-                    if "extends" in str(node.text):
 
-                        list_of_matches.append((identifier, "INHERITANCE"))
                     
                 dictionary[subnode_type] = list_of_matches
 
@@ -221,7 +252,7 @@ for dictionary in file_dictionaries:
     print(dictionary)
     print("\n")
 
-Sf.makeGraph(syntaxString);
+Sf.makeGraph(file_dictionaries,files)
 
 # n = Sf.find_subtree_node(trees[3],"class_declaration")
 # s = Sf.find_subtree_node(n,"super_interfaces")
