@@ -133,8 +133,8 @@ class SyntaxFold:
             importDeclarations = []
             #Write name of file
             filename =files[i]
-            filename.replace(".java","")
-            f.write(filename + "= <{<b>"+filename+"</b> |")
+            filename = filename.replace(".java","")
+            
 
 
             classDeclarations = lists[i]["class_declaration"]
@@ -145,20 +145,35 @@ class SyntaxFold:
 
             #gets class declarations
             realizations = []
+            inheritances = []
             for j in range(len(classDeclarations)):
                 print(classDeclarations[j])
                 
                 if classDeclarations[j][1] == "REALIZATION":
                     if classDeclarations[j][0] not in realizations:
                         realizations.append(classDeclarations[j][0])
-
-                        
-            print("these are the realizations")
-            print(realizations)
+                elif classDeclarations[j][1] == "INHERITANCE":
+                    if classDeclarations[j][0] not in inheritances:
+                        inheritances.append(classDeclarations[j][0])
+                       
                 
-
+            f.write(filename + "[label = <{<b>"+filename+"</b> |")
+            f.write("+ field1<br align=\"left\"/>")
             f.write("|")
-
+            f.write("+ methods()<br align=\"left\"/>")
+            f.write("}>]\n")
+            for i in realizations:
+                i=i.replace("b'","")
+                i=i.replace("'","")
+                i=i.replace("<","_")
+                i=i.replace(">","")
+                f.write(i + "->" + filename + "[arrowhead=dot]\n")
+            for i in inheritances:
+                i=i.replace("b'","")
+                i=i.replace("'","")
+                i=i.replace("<","_")
+                i=i.replace(">","")
+                f.write(i + "->" + filename + "[arrowhead=crow]\n")
 
         # Write the graph in the file
         #FileName()[label = <{<b>«FileName()</b> | + FieldName()<br align="left"/>FieldName()<br align="left"/>|+ functionName()<br align="left"/>functionName()<br align="left"/>}>]
