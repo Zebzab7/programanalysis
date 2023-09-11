@@ -72,6 +72,7 @@ class SyntaxFold:
             
         return
     
+
     def find_subtree_node_and_append_to_list(self, root, type, nodes):
         if not root:
             return None
@@ -127,7 +128,7 @@ class SyntaxFold:
         f.write("digraph G {\n")
         self.setup(f)
         self.legend(f)
-        
+
         
         
         # Write the graph in the file
@@ -149,6 +150,11 @@ class SyntaxFold:
         f.write("}") #End of file
         f.close()
 
+    def find_inner_classes(class_node):
+        inner_classes = []
+
+        Sf.find_subtree_node_and_append_to_list(class_node, "class_declaration", inner_classes)
+        return inner_classes
 
 folder_path = 'course-02242-examples-main/course-02242-examples-main'
 # Create an instance of SyntaxFold
@@ -194,7 +200,6 @@ for i in range(len(trees)):
                 list_of_matches = []
                 
                 for node in nodes:
-
                     # Extract class name
                     super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
                     if super_interfaces:
@@ -206,6 +211,14 @@ for i in range(len(trees)):
                         identifier = str(Sf.find_subtree_node(super_class, "type_identifier").text)
                         list_of_matches.append((identifier, "INHERITANCE"))
                     
+                    inner_classes = []
+                    Sf.find_subtree_node_and_append_to_list(node, "class_declaration", inner_classes)
+                    inner_classes.pop(0)
+                    if inner_classes:
+                        for inner_class in inner_classes:
+                            identifier = str(Sf.find_subtree_node(inner_class, "identifier").text)
+                            list_of_matches.append((identifier, "COMPOSITION"))
+                                    
                 dictionary[subnode_type] = list_of_matches
 
         # Add more key-value pairs as needed
@@ -214,7 +227,7 @@ for i in range(len(trees)):
     # For each node, traverse the tree
     # for node in nodes:
     #     Sf.traverse(trees[0])
-    
+
     # print("\n")
 
 #Print each dictionary in the dictionary list with a newline in between
