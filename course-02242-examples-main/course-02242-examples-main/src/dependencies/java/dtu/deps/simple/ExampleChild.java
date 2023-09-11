@@ -20,10 +20,6 @@ public class ExampleChild extends Example {
     public static void main(String[] args) {
         Utils.printHello();
     }
-
-    public void foo() {
-        System.out.println("Hello");
-    }
     // outer.Inner inn = new Inner(0);
 
     // class Inner{

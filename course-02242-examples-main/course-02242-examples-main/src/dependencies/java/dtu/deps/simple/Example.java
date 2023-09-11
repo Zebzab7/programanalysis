@@ -21,9 +21,6 @@ public class Example {
         Utils.printHello();
     }
 
-    public void foo() {
-        System.out.println("Hello");
-    }
     // outer.Inner inn = new Inner(0);
 
     // class Inner{

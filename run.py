@@ -164,8 +164,10 @@ Sf.visitFiles(folder_path)
 
 for i in range(len(trees)):
     print("File is:", files[i])
+    # if (i == 0):
+    #     Sf.traverse(trees[i])
 
-    subnode_types = ["import_declaration", "package_declaration", "class_declaration"]
+    subnode_types = ["import_declaration", "package_declaration", "class_declaration", "field_declaration"]
 
     # Create len(files) dictionaries
     file_dictionaries = []
@@ -218,7 +220,19 @@ for i in range(len(trees)):
                         for inner_class in inner_classes:
                             identifier = str(Sf.find_subtree_node(inner_class, "identifier").text)
                             list_of_matches.append((identifier, "COMPOSITION"))
-                                    
+                dictionary[subnode_type] = list_of_matches
+
+            elif subnode_type == "field_declaration":
+                nodes = []
+                Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
+                list_of_matches = []
+
+                for node in nodes:
+                    field = Sf.find_subtree_node(node, "field_declaration")
+                    if field:
+                        identifier = str(Sf.find_subtree_node(field, "identifier").text)
+                        list_of_matches.append((identifier, "FIELD"))
+
                 dictionary[subnode_type] = list_of_matches
 
         # Add more key-value pairs as needed
