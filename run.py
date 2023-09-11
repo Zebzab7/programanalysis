@@ -227,15 +227,17 @@ for i in range(len(trees)):
                 list_of_matches = []
                 
                 for node in nodes:
+
                     # Extract class name
-                    if "implements" in str(node.text):
-                        super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
-                        if super_interfaces:
-                            # identifier = str(Sf.find_subtree_node(node, "identifier").text)
-                            generic_type = str(Sf.find_subtree_node(node, "type_list").text)
-                            list_of_matches.append((generic_type, "REALIZATION"))
+                    super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
+                    if super_interfaces:
+                        generic_type = str(Sf.find_subtree_node(node, "type_list").text)
+                        list_of_matches.append((generic_type, "REALIZATION"))
 
-
+                    super_class = Sf.find_subtree_node(node, "superclass")
+                    if super_class:
+                        identifier = str(Sf.find_subtree_node(super_class, "type_identifier").text)
+                        list_of_matches.append((identifier, "INHERITANCE"))
                     
                 dictionary[subnode_type] = list_of_matches
 
@@ -245,6 +247,7 @@ for i in range(len(trees)):
     # For each node, traverse the tree
     # for node in nodes:
     #     Sf.traverse(trees[0])
+    
     # print("\n")
 
 #Print each dictionary in the dictionary list with a newline in between
