@@ -110,7 +110,6 @@ class SyntaxFold:
     def setup(self,f):
         f.write("node [shape=record style=filled fillcolor = gray95]\n")
         f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
-    
 
     def makeNode(self,f,tree):
         return
@@ -184,8 +183,7 @@ for i in range(len(trees)):
 
                     if match:
                         result = match.group(1)
-                        node_texts.append(result)
-
+                        node_texts.append((result, "DEPENDENCY"))
 
                 # Initialize the key-value pair
                 dictionary[subnode_type] = node_texts
@@ -199,11 +197,12 @@ for i in range(len(trees)):
                     if super_interfaces:
                         identifier = str(Sf.find_subtree_node(node, "identifier").text)
                         generic_type = str(Sf.find_subtree_node(node, "type_list").text)
-                        list_of_realisations.append(identifier + ' ' + generic_type)
+                        list_of_realisations.append((identifier + ' ' + generic_type, "REALIZATION"))
                 # for node in nodes:
                 #     text = str(node.text)
                 #     node_texts.add(text)
                 dictionary[subnode_type] = list_of_realisations
+            # elif subnode_type == "":
 
         # Add more key-value pairs as needed
         file_dictionaries.append(dictionary)
@@ -214,7 +213,10 @@ for i in range(len(trees)):
 
     # print("\n")
 
-print(file_dictionaries)
+#Print each dictionary in the dictionary list with a newline in between
+for dictionary in file_dictionaries:
+    print(dictionary)
+    print("\n")
 Sf.makeGraph(syntaxString);
 
 # n = Sf.find_subtree_node(trees[3],"class_declaration")

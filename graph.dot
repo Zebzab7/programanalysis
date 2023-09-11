@@ -1,18 +1,11 @@
 digraph G {
-Primes -> PrimesIterator
-Primes -> Integer
-Primes -> ArrayList
-Primes -> Iterator
-Primes -> List
-Primes -> String
-Primes -> System
-Utils -> System
-Other -> Utils
-Other -> String
-Example -> Utils
-Example -> String
-Example -> Other
-Tricky -> Utils
-Tricky -> Example
-Tricky -> Other
+node [shape=record style=filled fillcolor = gray95]
+edge [fontname="Helvetica,Arial,sans-serif"]
+subgraph cluster {
+a->b[label=" inheritance",arrowhead=crow]
+c->d[label=" realization",arrowhead=dot]
+e->f[label=" aggregation",arrowhead=odot]
+g->h[label=" composition",arrowhead=odiamond]
+j->k[label=" dependency",arrowhead=vee]
+}
 }
