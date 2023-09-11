@@ -14,7 +14,7 @@ import dtu.deps.util.Utils;
  *
  * Known dependencies:
  */
-public class Example {
+public class ExampleChild extends Example {
     Other other = new Other();
 
     public static void main(String[] args) {

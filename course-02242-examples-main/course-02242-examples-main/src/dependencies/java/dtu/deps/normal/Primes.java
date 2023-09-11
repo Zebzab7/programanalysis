@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 
 // A class to compute primes
-public class Primes implements Iterable<Integer> {
+public class Primes implements Iterable<Integer>  {
     private final List<Integer> primes = new ArrayList<>();
 
     @Override
