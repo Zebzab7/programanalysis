@@ -12,4 +12,3 @@ for file_name in os.listdir(full_path):
         for i in data:
             print(i)
             break
-        
