@@ -1,6 +1,7 @@
 from tree_sitter import Language, Parser
 import os
 import re
+import json
 
 # with open("java-tree-sitter/src/test/java/ai/serenade/treesitter/ParserTest.java", "rb") as f:
 #     tree = parser.parse(f.read())
@@ -136,8 +137,6 @@ class SyntaxFold:
             filename =files[i]
             filename = filename.replace(".java","")
             
-
-
             classDeclarations = lists[i]["class_declaration"]
             #gets imports
             for j in range(len(lists[i]["import_declaration"])):
@@ -201,105 +200,107 @@ class SyntaxFold:
         Sf.find_subtree_node_and_append_to_list(class_node, "class_declaration", inner_classes)
         return inner_classes
 
-folder_path = 'course-02242-examples-main/course-02242-examples-main'
-# Create an instance of SyntaxFold
-Sf = SyntaxFold()
-# Call the function using the instance
-Sf.visitFiles(folder_path)
+def main():
+    folder_path = 'course-02242-examples-main/course-02242-examples-main'
+    # Create an instance of SyntaxFold
+    Sf = SyntaxFold()
+    # Call the function using the instance
+    Sf.visitFiles(folder_path)
 
+    for i in range(len(trees)):
+        print("File is:", files[i])
+        if (i == 2):
+            Sf.traverse(trees[i])
 
+        subnode_types = ["import_declaration", "package_declaration", "class_declaration", "field_declaration"]
 
-for i in range(len(trees)):
-    print("File is:", files[i])
-    # if (i == 0):
-    #     Sf.traverse(trees[i])
+        # Create len(files) dictionaries
+        file_dictionaries = []
 
-    subnode_types = ["import_declaration", "package_declaration", "class_declaration", "field_declaration"]
+        # Initialize and populate the dictionaries
+        for i in range(len(files)):  
+            dictionary = {}
+    
+            for subnode_type in subnode_types:
+                if subnode_type == "import_declaration":
+                    nodes = []
+                    Sf.find_subtree_node_and_append_to_list(trees[i],subnode_type, nodes)
 
-    # Create len(files) dictionaries
-    file_dictionaries = []
+                    node_texts = []
+                    for node in nodes:
+                        text = str(node.text)
+                        text = text.split(" ")[1]
 
-    # Initialize and populate the dictionaries
-    for i in range(len(files)):  
-        dictionary = {}
+                        pattern = r'([^;]+);'
+                        match = re.search(pattern, text)
 
-        for subnode_type in subnode_types:
-            if subnode_type == "import_declaration":
-                nodes = []
-                Sf.find_subtree_node_and_append_to_list(trees[i],subnode_type, nodes)
+                        if match:
+                            result = match.group(1)
+                            node_texts.append((result, "DEPENDENCY"))
 
-                node_texts = []
-                for node in nodes:
-                    text = str(node.text)
-                    text = text.split(" ")[1]
-
-                    pattern = r'([^;]+);'
-                    match = re.search(pattern, text)
-
-                    if match:
-                        result = match.group(1)
-                        node_texts.append(result)
-
-
-                # Initialize the key-value pair
-                dictionary[subnode_type] = node_texts
-            
-            if subnode_type == "class_declaration":
-                nodes = []
-                Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
-                list_of_matches = []
+                    # Initialize the key-value pair
+                    dictionary[subnode_type] = node_texts
                 
-                for node in nodes:
-                    # Extract class name
-                    super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
-                    if super_interfaces:
-                        generic_type = str(Sf.find_subtree_node(node, "type_list").text)
-                        list_of_matches.append((generic_type, "REALIZATION"))
-
-                    super_class = Sf.find_subtree_node(node, "superclass")
-                    if super_class:
-                        identifier = str(Sf.find_subtree_node(super_class, "type_identifier").text)
-                        list_of_matches.append((identifier, "INHERITANCE"))
+                if subnode_type == "class_declaration":
+                    nodes = []
+                    Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
+                    list_of_matches = []
                     
-                    inner_classes = []
-                    Sf.find_subtree_node_and_append_to_list(node, "class_declaration", inner_classes)
-                    inner_classes.pop(0)
-                    if inner_classes:
-                        for inner_class in inner_classes:
-                            identifier = str(Sf.find_subtree_node(inner_class, "identifier").text)
-                            list_of_matches.append((identifier, "COMPOSITION"))
-                dictionary[subnode_type] = list_of_matches
+                    for node in nodes:
+                        # Extract class name
+                        super_interfaces = Sf.find_subtree_node(node, "super_interfaces")
+                        if super_interfaces:
+                            generic_type = str(Sf.find_subtree_node(node, "type_list").text)
+                            list_of_matches.append((generic_type, "REALIZATION"))
 
-            elif subnode_type == "field_declaration":
-                nodes = []
-                Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
-                list_of_matches = []
+                        super_class = Sf.find_subtree_node(node, "superclass")
+                        if super_class:
+                            identifier = str(Sf.find_subtree_node(super_class, "type_identifier").text)
+                            list_of_matches.append((identifier, "INHERITANCE"))
+                        
+                        inner_classes = []
+                        Sf.find_subtree_node_and_append_to_list(node, "class_declaration", inner_classes)
+                        inner_classes.pop(0)
+                        if inner_classes:
+                            for inner_class in inner_classes:
+                                identifier = str(Sf.find_subtree_node(inner_class, "identifier").text)
+                                list_of_matches.append((identifier, "COMPOSITION"))
+                    dictionary[subnode_type] = list_of_matches
 
-                for node in nodes:
-                    field = Sf.find_subtree_node(node, "field_declaration")
-                    if field:
-                        identifier = str(Sf.find_subtree_node(field, "identifier").text)
-                        list_of_matches.append((identifier, "FIELD"))
+                elif subnode_type == "field_declaration":
+                    nodes = []
+                    Sf.find_subtree_node_and_append_to_list(trees[i], subnode_type, nodes)
+                    list_of_matches = []
 
-                dictionary[subnode_type] = list_of_matches
+                    for node in nodes:
+                        field = Sf.find_subtree_node(node, "field_declaration")
+                        if field:
+                            identifier = str(Sf.find_subtree_node(field, "identifier").text)
+                            list_of_matches.append((identifier, "FIELD"))
 
-        # Add more key-value pairs as needed
-        file_dictionaries.append(dictionary)
+                    dictionary[subnode_type] = list_of_matches
 
-    # For each node, traverse the tree
-    # for node in nodes:
-    #     Sf.traverse(trees[0])
+            # Add more key-value pairs as needed
+            file_dictionaries.append(dictionary)
 
-    # print("\n")
+        # For each node, traverse the tree
+        # for node in nodes:
+        #     Sf.traverse(trees[0])
 
-#Print each dictionary in the dictionary list with a newline in between
-for dictionary in file_dictionaries:
-    print(dictionary)
-    print("\n")
+        # print("\n")
 
-Sf.makeGraph(file_dictionaries,files)
 
-# n = Sf.find_subtree_node(trees[3],"class_declaration")
-# s = Sf.find_subtree_node(n,"super_interfaces")
-# print(s.text)
-# file = re.sub(r'//.*', '', content) 
+
+    #Print each dictionary in the dictionary list with a newline in between
+    for dictionary in file_dictionaries:
+        print(dictionary)
+        print("\n")
+
+    Sf.makeGraph(file_dictionaries,files)
+
+    # n = Sf.find_subtree_node(trees[3],"class_declaration")
+    # s = Sf.find_subtree_node(n,"super_interfaces")
+    # print(s.text)
+    # file = re.sub(r'//.*', '', content) 
+
+main()
