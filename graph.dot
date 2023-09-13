@@ -2,10 +2,19 @@ digraph G {
 node [shape=record style=filled fillcolor = gray95]
 edge [fontname="Helvetica,Arial,sans-serif"]
 subgraph cluster {
-a->b[label=" inheritance",arrowhead=crow]
-c->d[label=" realization",arrowhead=dot]
-e->f[label=" aggregation",arrowhead=odot]
-g->h[label=" composition",arrowhead=odiamond]
 j->k[label=" dependency",arrowhead=vee]
+g->h[label=" composition",arrowhead=odiamond]
+e->f[label=" aggregation",arrowhead=odot]
+c->d[label=" realization",arrowhead=dot]
+a->b[label=" inheritance",arrowhead=crow]
 }
+Primes[label = <{<b>Primes</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
+Iterable_Integer->Primes[arrowhead=dot]
+Iterator_Integer->Primes[arrowhead=dot]
+Example[label = <{<b>Example</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
+ExampleChild[label = <{<b>ExampleChild</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
+Example->ExampleChild[arrowhead=crow]
+Other[label = <{<b>Other</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
+Tricky[label = <{<b>Tricky</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
+Utils[label = <{<b>Utils</b> |+ field1<br align="left"/>|+ methods()<br align="left"/>}>]
 }
