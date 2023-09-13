@@ -107,7 +107,7 @@ class SyntaxFold:
         f.write("c->d[label=\" realization\",arrowhead=dot]\n")
         f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
         f.write("}\n")
-    
+    /mnt/c/Users/Tobias Collin/Documents/GitHub/programanalysis/AI-assignments/Classes/student/dtu
     def setup(self,f):
         f.write("node [shape=record style=filled fillcolor = gray95]\n")
         f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
