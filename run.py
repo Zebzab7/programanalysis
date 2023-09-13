@@ -112,13 +112,13 @@ class SyntaxFold:
     def setup(self,f):
         f.write("node [shape=record style=filled fillcolor = gray95]\n")
         f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
-    
 
-    def makeNode(self,f,tree):
-        return
-
-    def makeEdge(self,f,tree):
-        return
+    def stringReplace(self,i):
+        i=i.replace("b'","")
+        i=i.replace("'","")
+        i=i.replace("<","_")
+        i=i.replace(">","")
+        return i
 
     def makeGraph(self,lists,files):
         if os.path.exists("graph.dot"):
@@ -130,13 +130,15 @@ class SyntaxFold:
         f.write("digraph G {\n")
         self.setup(f)
         self.legend(f)
-        
+        print(lists)
         for i in range(len(lists)):
             importDeclarations = []
             #Write name of file
             filename =files[i]
             filename = filename.replace(".java","")
             
+
+            fieldDeclaration = lists[i]["field_declaration"]
             classDeclarations = lists[i]["class_declaration"]
             #gets imports
             for j in range(len(lists[i]["import_declaration"])):
@@ -146,8 +148,10 @@ class SyntaxFold:
             #gets class declarations
             realizations = []
             inheritances = []
+            compositions = []
+            fields = []
+            imports = []
             for j in range(len(classDeclarations)):
-                print(classDeclarations[j])
                 
                 if classDeclarations[j][1] == "REALIZATION":
                     if classDeclarations[j][0] not in realizations:
@@ -155,26 +159,38 @@ class SyntaxFold:
                 elif classDeclarations[j][1] == "INHERITANCE":
                     if classDeclarations[j][0] not in inheritances:
                         inheritances.append(classDeclarations[j][0])
-                       
+                elif classDeclarations[j][1] == "COMPOSITION":
+                    if classDeclarations[j][0] not in compositions:
+                        compositions.append(classDeclarations[j][0])
+            for j in range(len(fieldDeclaration)):
+                if fieldDeclaration[j][1] == "FIELD":
+                    if fieldDeclaration[j][0] not in compositions:
+                        fields.append(fieldDeclaration[j][0])
+            for j in range(len(importDeclarations)):
+                imports.append(importDeclarations[j])
+            
                 
             f.write(filename + "[label = <{<b>"+filename+"</b> |")
-            f.write("+ field1<br align=\"left\"/>")
+            for i in range(len(fields)):
+                i=self.stringReplace(fields[i])
+                f.write("+ "+i+"<br align=\"left\"/>")
             f.write("|")
             f.write("+ methods()<br align=\"left\"/>")
             f.write("}>]\n")
             for i in realizations:
-                i=i.replace("b'","")
-                i=i.replace("'","")
-                i=i.replace("<","_")
-                i=i.replace(">","")
+                i=self.stringReplace(i)
                 f.write(i + "->" + filename + "[arrowhead=dot]\n")
             for i in inheritances:
-                i=i.replace("b'","")
-                i=i.replace("'","")
-                i=i.replace("<","_")
-                i=i.replace(">","")
+                i=self.stringReplace(i)                
                 f.write(i + "->" + filename + "[arrowhead=crow]\n")
-
+            for i in compositions:
+                i=self.stringReplace(i)
+                f.write(i + "->" + filename + "[arrowhead=odiamond]\n")
+            for i in imports: 
+                i=self.stringReplace(i)
+                i=i.replace(".","_")
+                i=i.replace("*","")
+                f.write(i + "->" + filename + "[arrowhead=vee]\n")
         # Write the graph in the file
         #FileName()[label = <{<b>«FileName()</b> | + FieldName()<br align="left"/>FieldName()<br align="left"/>|+ functionName()<br align="left"/>functionName()<br align="left"/>}>]
 
@@ -200,7 +216,7 @@ class SyntaxFold:
         Sf.find_subtree_node_and_append_to_list(class_node, "class_declaration", inner_classes)
         return inner_classes
 
-def main():
+def readAST():
     folder_path = 'course-02242-examples-main/course-02242-examples-main'
     # Create an instance of SyntaxFold
     Sf = SyntaxFold()
@@ -289,8 +305,6 @@ def main():
 
         # print("\n")
 
-
-
     #Print each dictionary in the dictionary list with a newline in between
     for dictionary in file_dictionaries:
         print(dictionary)
@@ -298,9 +312,7 @@ def main():
 
     Sf.makeGraph(file_dictionaries,files)
 
-    # n = Sf.find_subtree_node(trees[3],"class_declaration")
-    # s = Sf.find_subtree_node(n,"super_interfaces")
-    # print(s.text)
-    # file = re.sub(r'//.*', '', content) 
-
-main()
+# n = Sf.find_subtree_node(trees[3],"class_declaration")
+# s = Sf.find_subtree_node(n,"super_interfaces")
+# print(s.text)
+# file = re.sub(r'//.*', '', content) 
