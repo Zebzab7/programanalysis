@@ -16,16 +16,16 @@ def graphfields(self,fields):
     return
 
 def fieldType(field):
-    
-    if 'base' in field['type']:
-        return field['type']['base']
-    if 'kind' in field['type']:
-        if(field['type']['kind'] == 'class'):
+    field = field['type']
+    if 'base' in field:
+        return field['base']
+    if 'kind' in field:
+        if(field['kind'] == 'class'):
             
-            if 'inner' in field['type']:
-                if str(field['type']['inner']) == "None":
-                    return field['type']['name']
-                return field['type']['inner']['name']
+            if 'inner' in field:
+                if str(field['inner']) == "None":
+                    return field['name']
+                return field['inner']['name']
                 
         
         
@@ -87,14 +87,14 @@ for file_name in os.listdir(full_path):
                 returnType = returns['base']
             elif('kind' in returns):
                 if (returns['kind'] == 'class'):
-                    print(name)
-                    returnType = returns['inner']['name']
+                    print(returns['inner'])             
+                    if str(returns['inner']) == "None":
+                        print(str(returns))
+                        returnType = returns['name']
+                    else:
+                        returnType = returns['inner']['name']
         methods.append(access + name + '()' + ':' + returnType)
-       
-  
         fieldsjson = data['fields']
-        
-        
         if(len(fieldsjson) == 0):
             continue
         fields.append(simplefields(fieldsjson))
