@@ -108,20 +108,13 @@ def getObjectType(object):
 
     return result
 
-
-directory = os.path.dirname(__file__)
-# relative_path = "AI-assignments/Classes/student/dtu"
 project_name = "AI-assignments"
 path_to_class_files = project_name + "/KalahaAI/bin"
-
-full_path = os.path.join(directory, path_to_class_files)
 
 class_files = find_class_files(path_to_class_files)
 print(class_files)
 
 for file in class_files:
-    # find and remove last file in directory:
-    trimmed_class_path = file.rsplit('/', 1)[0] + "/"
     # find file name without .class
     file_name = file.rsplit('/', 1)[1].split('.')[0]
     # Remove dollar signs:
