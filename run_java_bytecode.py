@@ -56,6 +56,7 @@ def simplefields(fieldsjson):
         
     return fields
 
+# returns a string representation of the objects parameters
 def getObjectParameters(object):
     params_string = ''
     if ('params' in object):
