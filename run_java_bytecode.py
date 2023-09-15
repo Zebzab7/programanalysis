@@ -52,54 +52,53 @@ def simplefields(fieldsjson):
         
     return fields
 
+fields = []
+methods = []
+filenameArr = []
 
 for file_name in os.listdir(full_path):
-    if file_name.endswith('AI.json'):
-        file = open(os.path.join(full_path, file_name), 'r')
-        data = json.load(file)
-
-        # Finds methods
-        json_methods = data['methods']
-        methods = []
-        for method in json_methods:
-            name = method['name']
-            if (method['access'][0] == 'public'):
-                access = '+'
-            else:
-                access = '-'
-
-            if ('kind' in method['returns']):
+    if(file_name.endswith('.class')):
+        continue
+    filenameArr.append(file_name)
+    file = open(os.path.join(full_path, file_name), 'r',encoding='utf-8',errors='ignore')
+    data = json.load(file)
+    # Finds methods
+    json_methods = data['methods']
+    for method in json_methods:
+        name = method['name']
+        if (method['access'][0] == 'public'):
+            access = '+'
+        else:
+            access = '-'
+        if ('kind' in method['returns']):
+                print(name)
+                brackets = '[]'
+                current_level = method['returns']
+                while('kind' in current_level['type']):
+                    brackets += '[]'
+                    current_level = current_level['type']
+                returnType = current_level['type'] + brackets
+        else:
+            returns = method['returns']['type']
+            returnType = 'NAN'
+            if (returns == None):
+                returnType = 'void'
+            elif('base' in returns):
+                returnType = returns['base']
+            elif('kind' in returns):
+                if (returns['kind'] == 'class'):
                     print(name)
-                    brackets = '[]'
-                    current_level = method['returns']
-
-                    while('kind' in current_level['type']):
-                        brackets += '[]'
-                        current_level = current_level['type']
-
-                    returnType = current_level['type'] + brackets
-            else:
-                returns = method['returns']['type']
-                returnType = 'NAN'
-                if (returns == None):
-                    returnType = 'void'
-                elif('base' in returns):
-                    returnType = returns['base']
-                elif('kind' in returns):
-                    if (returns['kind'] == 'class'):
-                        print(name)
-                        returnType = returns['inner']['name']
-
-            methods.append(access + name + '()' + ':' + returnType)
-        print(methods)
+                    returnType = returns['inner']['name']
+        methods.append(access + name + '()' + ':' + returnType)
+       
   
         fieldsjson = data['fields']
-        print(file_name)
-        fields = {}
+        
+        
         if(len(fieldsjson) == 0):
             continue
-        fields = simplefields(fieldsjson)
-        print(fields)
+        fields.append(simplefields(fieldsjson))
+        
 
     
 
