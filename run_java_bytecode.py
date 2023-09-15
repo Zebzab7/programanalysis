@@ -56,6 +56,7 @@ def simplefields(fieldsjson):
         
     return fields
 
+# returns a string representation of the objects type
 def getObjectType(object):
     objectType = object['type']
     result = "NAN"
@@ -113,7 +114,8 @@ for file_name in os.listdir(full_path):
             access = '-'
         returns = method['returns']
         returnType = getObjectType(returns)
-        methods.append(access + name + '()' + ':' + returnType)
+        if (name != '<init>' and name != '<clinit>'): 
+            methods.append(access + name + '()' + ':' + returnType)
         fieldsjson = data['fields']
         if(len(fieldsjson) == 0):
             continue
