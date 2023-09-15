@@ -17,6 +17,7 @@ def graphfields(self,fields):
 
 def fieldType(field):
     field = field['type']
+
     if 'base' in field:
         return field['base']
     if 'kind' in field:
@@ -27,27 +28,30 @@ def fieldType(field):
                     return field['name']
                 return field['inner']['name']
                 
-        
+def checkname(name):
+    if(name == '$VALUES'):
+        return "JSONERROR"
+    return str(name)       
         
 
 def simplefields(fieldsjson):
-
+    
     fields = []
     for i in range(len(fieldsjson)):
 
         if(fieldsjson[i]['access'][0] == 'private'):
             name = fieldsjson[i]['name']
-            string = "-" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "-" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
             
         elif(fieldsjson[i]['access'] == 'public'):
             name = fieldsjson[i]['name']
-            string = "+" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "+" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
             
         elif(fieldsjson[i]['access'] == 'protected'):
             name = fieldsjson[i]['name']
-            string = "#" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "#" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
         
     return fields
@@ -62,6 +66,7 @@ for file_name in os.listdir(full_path):
     filenameArr.append(file_name)
     file = open(os.path.join(full_path, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
+
     # Finds methods
     json_methods = data['methods']
     for method in json_methods:
@@ -71,7 +76,6 @@ for file_name in os.listdir(full_path):
         else:
             access = '-'
         if ('kind' in method['returns']):
-                print(name)
                 brackets = '[]'
                 current_level = method['returns']
                 while('kind' in current_level['type']):
@@ -86,10 +90,8 @@ for file_name in os.listdir(full_path):
             elif('base' in returns):
                 returnType = returns['base']
             elif('kind' in returns):
-                if (returns['kind'] == 'class'):
-                    print(returns['inner'])             
+                if (returns['kind'] == 'class'):     
                     if str(returns['inner']) == "None":
-                        print(str(returns))
                         returnType = returns['name']
                     else:
                         returnType = returns['inner']['name']
@@ -98,13 +100,6 @@ for file_name in os.listdir(full_path):
         if(len(fieldsjson) == 0):
             continue
         fields.append(simplefields(fieldsjson))
-        
 
-    
-
-
-            
         
         
-        
-    
