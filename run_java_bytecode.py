@@ -85,6 +85,9 @@ def getObjectType(object):
                         if (i < len(args) - 1):
                             result += ','
                     result += '>'
+        elif(objectType['kind'] == 'array'):
+            result = getObjectType(objectType) + '[]'
+
     return result
 
 fields = []
