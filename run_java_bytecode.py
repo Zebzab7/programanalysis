@@ -1,16 +1,20 @@
 import json
 import os
+import subprocess
 
-directory = os.path.dirname(__file__)
-relative_path = "AI-assignments/Classes/student/dtu"
-full_path = os.path.join(directory, relative_path)
+def find_class_files(base_path):
+    class_files = []
+    for root, _, files in os.walk(base_path):
+        for file in files:
+            if file.endswith('.class'):
+                class_files.append(os.path.join(root, file))
+    return class_files
 
 def printGraph(graph):
     if os.path.exists("graph.dot"):
         os.remove("graph.dot")
     # Create a new file
     f = open("graph.dot", "a")
-
 
 def graphfields(self,fields):
     return
@@ -32,7 +36,6 @@ def checkname(name):
     if(name == '$VALUES'):
         return "JSONERROR"
     return str(name)       
-        
 
 def simplefields(fieldsjson):
     
@@ -105,14 +108,40 @@ def getObjectType(object):
 
     return result
 
+
+directory = os.path.dirname(__file__)
+# relative_path = "AI-assignments/Classes/student/dtu"
+project_name = "AI-assignments"
+path_to_class_files = project_name + "/KalahaAI/bin"
+
+full_path = os.path.join(directory, path_to_class_files)
+
+class_files = find_class_files(path_to_class_files)
+print(class_files)
+
+for file in class_files:
+    # find and remove last file in directory:
+    trimmed_class_path = file.rsplit('/', 1)[0] + "/"
+    # find file name without .class
+    file_name = file.rsplit('/', 1)[1].split('.')[0]
+    # Remove dollar signs:
+    file_name = file_name.replace('$', '')
+    # if directory does not exist, create it
+    path_to_json = "bin/" + project_name + "/json"
+    if not os.path.exists(path_to_json):
+        os.makedirs(path_to_json)
+    # run jvm2json on file
+    command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
 fields = []
 filenameArr = []
 
-for file_name in os.listdir(full_path):
+for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
     filenameArr.append(file_name)
-    file = open(os.path.join(full_path, file_name), 'r',encoding='utf-8',errors='ignore')
+    file = open(os.path.join(path_to_json, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
     
     methods = []
