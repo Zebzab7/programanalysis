@@ -27,8 +27,7 @@ def fieldType(field):
                     return field['name']
                 return field['inner']['name']
                 
-        
-        
+
 
 def simplefields(fieldsjson):
 
@@ -52,6 +51,38 @@ def simplefields(fieldsjson):
         
     return fields
 
+def getObjectType(object):
+    print(object)
+    objectType = object['type']
+    result = "NAN"
+    if (objectType == None):
+        result = 'void'
+    elif('base' in objectType):
+        result = objectType['base']
+    elif('kind' in objectType):
+        if (objectType['kind'] == 'class'):
+            if (objectType['inner'] == None):
+                #Trim away all '/' and only include last part of name
+                result = objectType['name'].split('/')[-1]
+            else:
+                currentLayer = objectType['inner']
+                result = currentLayer['name']
+                while (currentLayer['inner'] != None):
+                    currentLayer = currentLayer['inner']
+                    result += currentLayer['name']
+            args = objectType['args']
+            if (args != None and len(args) > 0):
+                if (len(args) == 1):
+                    result += '<' + getObjectType(args[0]) + '>' 
+                else: 
+                    result += '<'
+                    for i in range(len(args)):
+                        result += getObjectType(args[i])
+                        if (i < len(args) - 1):
+                            result += ','
+                    result += '>'
+    return result
+
 fields = []
 methods = []
 filenameArr = []
@@ -62,42 +93,26 @@ for file_name in os.listdir(full_path):
     filenameArr.append(file_name)
     file = open(os.path.join(full_path, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
-    # Finds methods
-    json_methods = data['methods']
-    for method in json_methods:
-        name = method['name']
-        if (method['access'][0] == 'public'):
-            access = '+'
-        else:
-            access = '-'
-        if ('kind' in method['returns']):
-                print(name)
-                brackets = '[]'
-                current_level = method['returns']
-                while('kind' in current_level['type']):
-                    brackets += '[]'
-                    current_level = current_level['type']
-                returnType = current_level['type'] + brackets
-        else:
-            returns = method['returns']['type']
-            returnType = 'NAN'
-            if (returns == None):
-                returnType = 'void'
-            elif('base' in returns):
-                returnType = returns['base']
-            elif('kind' in returns):
-                if (returns['kind'] == 'class'):
-                    print(returns['inner'])             
-                    if str(returns['inner']) == "None":
-                        print(str(returns))
-                        returnType = returns['name']
-                    else:
-                        returnType = returns['inner']['name']
-        methods.append(access + name + '()' + ':' + returnType)
-        fieldsjson = data['fields']
-        if(len(fieldsjson) == 0):
-            continue
-        fields.append(simplefields(fieldsjson))
+
+    if (file_name.endswith('AINode.json')):
+        # Finds methods
+        json_methods = data['methods']
+        for method in json_methods:
+            name = method['name']
+            print(name)
+            if (method['access'][0] == 'public'):
+                access = '+'
+            else:
+                access = '-'
+            returns = method['returns']
+            returnType = getObjectType(returns)
+            print(returnType)
+            methods.append(access + name + '()' + ':' + returnType)
+            fieldsjson = data['fields']
+            if(len(fieldsjson) == 0):
+                continue
+            fields.append(simplefields(fieldsjson))
+        print(methods)
         
 
     
