@@ -52,7 +52,6 @@ def simplefields(fieldsjson):
     return fields
 
 def getObjectType(object):
-    print(object)
     objectType = object['type']
     result = "NAN"
     if (objectType == None):
@@ -84,7 +83,6 @@ def getObjectType(object):
     return result
 
 fields = []
-methods = []
 filenameArr = []
 
 for file_name in os.listdir(full_path):
@@ -93,33 +91,24 @@ for file_name in os.listdir(full_path):
     filenameArr.append(file_name)
     file = open(os.path.join(full_path, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
-
-    if (file_name.endswith('AINode.json')):
-        # Finds methods
-        json_methods = data['methods']
-        for method in json_methods:
-            name = method['name']
-            print(name)
-            if (method['access'][0] == 'public'):
-                access = '+'
-            else:
-                access = '-'
-            returns = method['returns']
-            returnType = getObjectType(returns)
-            print(returnType)
-            methods.append(access + name + '()' + ':' + returnType)
-            fieldsjson = data['fields']
-            if(len(fieldsjson) == 0):
-                continue
-            fields.append(simplefields(fieldsjson))
-        print(methods)
-        
-
     
+    methods = []
+    print(file_name)
 
-
-            
+    # Finds methods
+    json_methods = data['methods']
+    for method in json_methods:
+        name = method['name']
+        if (method['access'][0] == 'public'):
+            access = '+'
+        else:
+            access = '-'
+        returns = method['returns']
+        returnType = getObjectType(returns)
+        methods.append(access + name + '()' + ':' + returnType)
+        fieldsjson = data['fields']
+        if(len(fieldsjson) == 0):
+            continue
+        fields.append(simplefields(fieldsjson))
+    print(methods)
         
-        
-        
-    
