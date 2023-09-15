@@ -56,6 +56,19 @@ def simplefields(fieldsjson):
         
     return fields
 
+def getObjectParameters(object):
+    params_string = ''
+    if ('params' in object):
+        params = object['params']
+        if (params != None and len(params) > 0):
+            params = object['params']
+            for i in range(len(params)):
+                params_string += getObjectType(params[i])
+                if (i < len(params) - 1):
+                    params_string += ','
+            return params_string
+    return ''
+
 # returns a string representation of the objects type
 def getObjectType(object):
     objectType = object['type']
@@ -108,17 +121,18 @@ for file_name in os.listdir(full_path):
     json_methods = data['methods']
     for method in json_methods:
         name = method['name']
-        if (method['access'][0] == 'public'):
-            access = '+'
-        else:
-            access = '-'
-        returns = method['returns']
-        returnType = getObjectType(returns)
         if (name != '<init>' and name != '<clinit>'): 
-            methods.append(access + name + '()' + ':' + returnType)
+            if (method['access'][0] == 'public'):
+                access = '+'
+            else:
+                access = '-'
+            params_string = getObjectParameters(method)
+            returns = method['returns']
+            returnType = getObjectType(returns)
+            methods.append(access + name + '(' + params_string + ')' + ':' + returnType)
         fieldsjson = data['fields']
         if(len(fieldsjson) == 0):
             continue
         fields.append(simplefields(fieldsjson))
-    print(methods)
+    print(methods, "\n")
         
