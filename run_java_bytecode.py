@@ -17,6 +17,7 @@ def graphfields(self,fields):
 
 def fieldType(field):
     field = field['type']
+
     if 'base' in field:
         return field['base']
     if 'kind' in field:
@@ -27,26 +28,30 @@ def fieldType(field):
                     return field['name']
                 return field['inner']['name']
                 
-
+def checkname(name):
+    if(name == '$VALUES'):
+        return "JSONERROR"
+    return str(name)       
+        
 
 def simplefields(fieldsjson):
-
+    
     fields = []
     for i in range(len(fieldsjson)):
 
         if(fieldsjson[i]['access'][0] == 'private'):
             name = fieldsjson[i]['name']
-            string = "-" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "-" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
             
         elif(fieldsjson[i]['access'] == 'public'):
             name = fieldsjson[i]['name']
-            string = "+" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "+" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
             
         elif(fieldsjson[i]['access'] == 'protected'):
             name = fieldsjson[i]['name']
-            string = "#" + str(name) + "() : " + str(fieldType(fieldsjson[i]))
+            string = "#" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
             fields.append(string)
         
     return fields
