@@ -20,7 +20,6 @@ public class Example {
     public static void main(String[] args) {
         Utils.printHello();
     }
-
     // outer.Inner inn = new Inner(0);
 
     // class Inner{
