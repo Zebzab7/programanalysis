@@ -108,6 +108,44 @@ def getObjectType(object):
 
     return result
 
+
+def legend(f):
+    f.write("subgraph cluster {\n")
+    f.write("j->k[label=\" dependency\",arrowhead=vee]\n")
+    f.write("g->h[label=\" composition\",arrowhead=odiamond]\n")
+    f.write("e->f[label=\" aggregation\",arrowhead=odot]\n")
+    f.write("c->d[label=\" realization\",arrowhead=dot]\n")
+    f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
+    f.write("}\n")
+    
+def setup(f):
+    f.write("node [shape=record style=filled fillcolor = gray95]\n")
+    f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
+
+def makeNode(f,methods,fields,file_name):
+    f.write(file_name + "[label = <{<b>" + file_name + "</b> |")
+    for i in range(len(fields)):
+        field=stringReplace(fields[i])
+        f.write("+ "+field+"<br align=\"left\"/>")
+    f.write("|")
+    for i in range(len(methods)):
+        method = stringReplace(method[i])
+        f.write("+"+ method+ "<br align=\"left\"/>")
+    f.write("}>]\n")
+
+
+def graphMake(f):
+    setup(f)
+    legend(f)
+
+def stringReplace(i):
+    i=i.replace("b'","")
+    i=i.replace("'","")
+    i=i.replace("<","_")
+    i=i.replace(">","")
+    return i
+
+
 project_name = "AI-assignments"
 path_to_class_files = project_name + "/KalahaAI/bin"
 
@@ -127,19 +165,22 @@ for file in class_files:
     command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
     result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
 
-fields = []
-filenameArr = []
+
+f= open("bytecodegraph.dot","w")
+graphMake(f)
+
+
 
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
-    filenameArr.append(file_name)
+
     file = open(os.path.join(path_to_json, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
-    
+    fields = []
     methods = []
     print(file_name)
-
+    
     # Finds methods
     json_methods = data['methods']
     for method in json_methods:
@@ -158,4 +199,8 @@ for file_name in os.listdir(path_to_json):
             continue
         fields.append(simplefields(fieldsjson))
     print(methods, "\n")
+    makeNode(f,methods,fields,file_name)
+
+f.write("}")
+f.close()
         

@@ -1,0 +1,9 @@
+node [shape=record style=filled fillcolor = gray95]
+edge [fontname="Helvetica,Arial,sans-serif"]
+subgraph cluster {
+j->k[label=" dependency",arrowhead=vee]
+g->h[label=" composition",arrowhead=odiamond]
+e->f[label=" aggregation",arrowhead=odot]
+c->d[label=" realization",arrowhead=dot]
+a->b[label=" inheritance",arrowhead=crow]
+}
