@@ -1,18 +1,29 @@
 digraph G {
-Primes -> PrimesIterator
-Primes -> Integer
-Primes -> ArrayList
-Primes -> Iterator
-Primes -> List
-Primes -> String
-Primes -> System
-Utils -> System
-Other -> Utils
-Other -> String
-Example -> Utils
-Example -> String
-Example -> Other
-Tricky -> Utils
-Tricky -> Example
-Tricky -> Other
+node [shape=record style=filled fillcolor = gray95]
+edge [fontname="Helvetica,Arial,sans-serif"]
+subgraph cluster {
+j->k[label=" dependency",arrowhead=vee]
+g->h[label=" composition",arrowhead=odiamond]
+e->f[label=" aggregation",arrowhead=odot]
+c->d[label=" realization",arrowhead=dot]
+a->b[label=" inheritance",arrowhead=crow]
+}
+Primes[label = <{<b>Primes</b> |+ primes<br align="left"/>+ current<br align="left"/>|+ methods()<br align="left"/>}>]
+Iterable_Integer->Primes[arrowhead=dot]
+Iterator_Integer->Primes[arrowhead=dot]
+PrimesIterator->Primes[arrowhead=odiamond]
+java_util_ArrayList->Primes[arrowhead=vee]
+java_util_Iterator->Primes[arrowhead=vee]
+java_util_List->Primes[arrowhead=vee]
+Example[label = <{<b>Example</b> |+ other<br align="left"/>|+ methods()<br align="left"/>}>]
+dtu_deps_util_Utils->Example[arrowhead=vee]
+ExampleChild[label = <{<b>ExampleChild</b> |+ other<br align="left"/>|+ methods()<br align="left"/>}>]
+Example->ExampleChild[arrowhead=crow]
+dtu_deps_util_Utils->ExampleChild[arrowhead=vee]
+Other[label = <{<b>Other</b> ||+ methods()<br align="left"/>}>]
+Tricky[label = <{<b>Tricky</b> |+ Other<br align="left"/>+ dtu<br align="left"/>|+ methods()<br align="left"/>}>]
+dtu_deps_simple_->Tricky[arrowhead=vee]
+dtu_deps_util_->Tricky[arrowhead=vee]
+dtu_deps_simple_Other->Tricky[arrowhead=vee]
+Utils[label = <{<b>Utils</b> ||+ methods()<br align="left"/>}>]
 }
