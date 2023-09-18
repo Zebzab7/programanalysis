@@ -133,6 +133,9 @@ legend(f)
 
 dependencies = []
 
+def replaceJson(name):
+    return name.replace(".json","")
+
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
@@ -208,6 +211,25 @@ for i in range(len(filenameArr)):
             f.write(str(filenameArr[i]) + "->" + str(filenameArr[j]) + "[arrowhead=odiamond]\n")
 
 print(dependencies)
+#Realization
+
+dependencies = list(set(dependencies))
+print()
+print(dependencies)
+for depedency in dependencies:
+    dep0 = replaceJson(depedency[0])
+    dep2 = replaceJson(depedency[2])
+    if(depedency[1] == "REALIZATION"):
+        
+        f.write(dep0 + "->" + str(dep2) + "[arrowhead=dot]\n")
+    if(depedency[1] == "INHERITANCE"):
+        f.write(str(dep0) + "->" + str(dep2) + "[arrowhead=crow]\n")
+    if(depedency[1] == "AGGREGATION"):
+        f.write(str(dep0) + "->" + str(dep2) + "[arrowhead=odot]\n")
+    if(depedency[1] == "DEPENDENCY"):
+        f.write(str(dep0) + "->" + str(dep2) + "[arrowhead=vee]\n")
+
+
 f.write("}\n")
 f.close()
         
