@@ -37,28 +37,6 @@ def checkname(name):
         return "JSONERROR"
     return str(name)       
 
-def simplefields(fieldsjson):
-    
-    fields = []
-    for i in range(len(fieldsjson)):
-
-        if(fieldsjson[i]['access'][0] == 'private'):
-            name = fieldsjson[i]['name']
-            string = "-" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-            
-        elif(fieldsjson[i]['access'] == 'public'):
-            name = fieldsjson[i]['name']
-            string = "+" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-            
-        elif(fieldsjson[i]['access'] == 'protected'):
-            name = fieldsjson[i]['name']
-            string = "#" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-        
-    return fields
-
 # returns a string representation of the objects parameters
 def getObjectParameters(object):
     params_string = ''
@@ -145,14 +123,15 @@ for file_name in os.listdir(path_to_json):
     json_fields = data['fields']
     for field in json_fields:
         name = field['name']
-        if(field['access'][0] == 'public'):
-            access = '+'
-        elif(field['access'] == 'protected'):
-            access = '#'
-        else:
-            access = '-'
-        fieldType = getObjectType(field)
-        fields.append(access + name + ':' + fieldType)
+        if (checkname(name) != "JSONERROR"):
+            if(field['access'][0] == 'public'):
+                access = '+'
+            elif(field['access'] == 'protected'):
+                access = '#'
+            else:
+                access = '-'
+            fieldType = getObjectType(field)
+            fields.append(access + name + ':' + fieldType)
         
     # Finds methods
     json_methods = data['methods']
