@@ -25,8 +25,11 @@ def setup(f):
 
 def stringReplace(name):
     name = name.replace("$","\"$\"")
-    name = name.replace("<","\"<\"")
-    name = name.replace(">","\">\"")
+    name = name.replace("<","")
+    name = name.replace(">", "")
+    name = name.replace("Node","\"Node\"")
+    name = name.replace("[]","\"[]\"")
+    name = name.replace("$","")
     return name
 
 def makeGraphNode(f,file_name,methods,fields):
