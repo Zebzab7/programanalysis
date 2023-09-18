@@ -23,14 +23,20 @@ def setup(f):
     f.write("node [shape=record style=filled fillcolor = gray95]\n")
     f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
 
+def stringReplace(name):
+    name = name.replace("$","\"$\"")
+    name = name.replace("<","\"<\"")
+    name = name.replace(">","\">\"")
+    return name
+
 def makeGraphNode(f,file_name,methods,fields):
     file_name = file_name.replace('.json', '')
     f.write(file_name + "[label= <{<b>" + file_name + "</b>|")
-    for i in range(len(fields)):
-        f.write(fields[i] + "<br align=\"left\"/>")
+    for field in fields:
+        f.write(stringReplace(str(field)) + "<br align=\"left\"/>")
     f.write("|")
-    for i in range(len(methods)):
-        f.write(methods[i] + "<br align=\"left\"/>")
+    for method in methods:
+        f.write(stringReplace(str(method)) + "<br align=\"left\"/>")
     f.write("}>]\n")
 
 def fieldType(field):
@@ -219,8 +225,9 @@ print(dependencies)
 for depedency in dependencies:
     dep0 = replaceJson(depedency[0])
     dep2 = replaceJson(depedency[2])
+    dep0 = stringReplace(dep0)
+    dep2 = stringReplace(dep2)
     if(depedency[1] == "REALIZATION"):
-        
         f.write(dep0 + "->" + str(dep2) + "[arrowhead=dot]\n")
     if(depedency[1] == "INHERITANCE"):
         f.write(str(dep0) + "->" + str(dep2) + "[arrowhead=crow]\n")
