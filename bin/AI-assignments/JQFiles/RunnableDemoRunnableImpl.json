@@ -135,7 +135,7 @@
         "annotations": []
       },
       "code": {
-        "max_stack": 3,
+        "max_stack": 2,
         "max_locals": 1,
         "exceptions": [],
         "stack_map": null,
@@ -295,6 +295,14 @@
   "enclosingmethod": null,
   "innerclasses": [
     {
+      "class": "student/dtu/RunnableDemo$RunnableImpl",
+      "outer": "student/dtu/RunnableDemo",
+      "name": "RunnableImpl",
+      "access": [
+        "private"
+      ]
+    },
+    {
       "class": "java/lang/invoke/MethodHandles$Lookup",
       "outer": "java/lang/invoke/MethodHandles",
       "name": "Lookup",
@@ -302,14 +310,6 @@
         "public",
         "static",
         "final"
-      ]
-    },
-    {
-      "class": "student/dtu/RunnableDemo$RunnableImpl",
-      "outer": "student/dtu/RunnableDemo",
-      "name": "RunnableImpl",
-      "access": [
-        "private"
       ]
     }
   ],

@@ -108,9 +108,10 @@ print(class_files)
 
 for file in class_files:
     # find file name without .class
-    file_name = file.rsplit('/', 1)[1].split('.')[0]
+    old_file_name = file.rsplit('/', 1)[1].split('.')[0]
     # Remove dollar signs:
-    file_name = file_name.replace('$', '')
+    file_name = old_file_name.replace('$', '')
+    
     # if directory does not exist, create it
     path_to_json = "bin/" + project_name + "/json"
     if not os.path.exists(path_to_json):
@@ -120,19 +121,15 @@ for file in class_files:
     jq_command = "cat " + path_to_json + "/" + file_name + ".json" + " | jq '.' > bin/" + project_name + "/JQFiles/" + file_name + ".json"
     subprocess.run(jvm2json_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     subprocess.run(jq_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)    
-    # print(jq_command)
-
-filenameArr = []
 
 if os.path.exists("graphbyte.dot"):
     os.remove("graphbyte.dot")
 
 f = open("graphbyte.dot", "w")
 f.write("digraph G {\n")
+filenameArr = []
 setup(f)
 legend(f)
-
-
 
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
@@ -176,8 +173,8 @@ for file_name in os.listdir(path_to_json):
             returnType = getObjectType(returns)
             methods.append(access + name + '(' + params_string + ')' + ':' + returnType)
             
-    # print(methods, "\n")
-    #print(fields, "\n")
+    print(methods)
+    print(fields, "\n")
     makeGraphNode(f,file_name,methods,fields)
 
 #Composition

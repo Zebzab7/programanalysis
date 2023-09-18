@@ -91,7 +91,7 @@
       "annotations": []
     },
     {
-      "name": "ENUM$VALUES",
+      "name": "$VALUES",
       "access": [
         "private",
         "static",
@@ -119,6 +119,439 @@
     }
   ],
   "methods": [
+    {
+      "name": "values",
+      "access": [
+        "public",
+        "static"
+      ],
+      "typeparams": [],
+      "params": [],
+      "returns": {
+        "type": {
+          "kind": "array",
+          "type": {
+            "kind": "class",
+            "name": "student/dtu/Game",
+            "inner": {
+              "name": "Player",
+              "inner": null,
+              "args": [],
+              "annotations": []
+            },
+            "args": [],
+            "annotations": []
+          }
+        },
+        "annotations": []
+      },
+      "code": {
+        "max_stack": 1,
+        "max_locals": 0,
+        "exceptions": [],
+        "stack_map": null,
+        "bytecode": [
+          {
+            "offset": 0,
+            "opr": "get",
+            "static": true,
+            "field": {
+              "class": "student/dtu/Game$Player",
+              "name": "$VALUES",
+              "type": {
+                "kind": "array",
+                "type": {
+                  "kind": "class",
+                  "name": "student/dtu/Game$Player"
+                }
+              }
+            }
+          },
+          {
+            "offset": 3,
+            "opr": "invoke",
+            "access": "virtual",
+            "method": {
+              "ref": {
+                "kind": "array",
+                "type": {
+                  "kind": "class",
+                  "name": "student/dtu/Game$Player"
+                }
+              },
+              "name": "clone",
+              "args": [],
+              "returns": {
+                "kind": "class",
+                "name": "java/lang/Object"
+              }
+            }
+          },
+          {
+            "offset": 6,
+            "opr": "checkcast",
+            "type": {
+              "kind": "array",
+              "type": {
+                "kind": "class",
+                "name": "student/dtu/Game$Player"
+              }
+            }
+          },
+          {
+            "offset": 9,
+            "opr": "return",
+            "type": "ref"
+          }
+        ]
+      },
+      "annotations": [],
+      "exceptions": [],
+      "default": null
+    },
+    {
+      "name": "valueOf",
+      "access": [
+        "public",
+        "static"
+      ],
+      "typeparams": [],
+      "params": [
+        {
+          "visible": true,
+          "type": {
+            "kind": "class",
+            "name": "java/lang/String",
+            "inner": null,
+            "args": [],
+            "annotations": []
+          },
+          "annotations": []
+        }
+      ],
+      "returns": {
+        "type": {
+          "kind": "class",
+          "name": "student/dtu/Game",
+          "inner": {
+            "name": "Player",
+            "inner": null,
+            "args": [],
+            "annotations": []
+          },
+          "args": []
+        },
+        "annotations": []
+      },
+      "code": {
+        "max_stack": 2,
+        "max_locals": 1,
+        "exceptions": [],
+        "stack_map": null,
+        "bytecode": [
+          {
+            "offset": 0,
+            "opr": "push",
+            "value": {
+              "type": "class",
+              "value": {
+                "kind": "class",
+                "name": "student/dtu/Game$Player"
+              }
+            }
+          },
+          {
+            "offset": 2,
+            "opr": "load",
+            "type": "ref",
+            "index": 0
+          },
+          {
+            "offset": 3,
+            "opr": "invoke",
+            "access": "static",
+            "method": {
+              "is_interface": false,
+              "ref": {
+                "kind": "class",
+                "name": "java/lang/Enum"
+              },
+              "name": "valueOf",
+              "args": [
+                {
+                  "kind": "class",
+                  "name": "java/lang/Class"
+                },
+                {
+                  "kind": "class",
+                  "name": "java/lang/String"
+                }
+              ],
+              "returns": {
+                "kind": "class",
+                "name": "java/lang/Enum"
+              }
+            }
+          },
+          {
+            "offset": 6,
+            "opr": "checkcast",
+            "type": {
+              "kind": "class",
+              "name": "student/dtu/Game$Player"
+            }
+          },
+          {
+            "offset": 9,
+            "opr": "return",
+            "type": "ref"
+          }
+        ]
+      },
+      "annotations": [],
+      "exceptions": [],
+      "default": null
+    },
+    {
+      "name": "<init>",
+      "access": [
+        "private"
+      ],
+      "typeparams": [],
+      "params": [
+        {
+          "visible": false,
+          "type": {
+            "kind": "class",
+            "name": "java/lang/String",
+            "inner": null,
+            "args": [],
+            "annotations": []
+          },
+          "annotations": []
+        },
+        {
+          "visible": false,
+          "type": {
+            "base": "int",
+            "annotations": []
+          },
+          "annotations": []
+        },
+        {
+          "visible": true,
+          "type": {
+            "base": "int",
+            "annotations": []
+          },
+          "annotations": []
+        }
+      ],
+      "returns": {
+        "type": null,
+        "annotations": []
+      },
+      "code": {
+        "max_stack": 3,
+        "max_locals": 4,
+        "exceptions": [],
+        "stack_map": null,
+        "bytecode": [
+          {
+            "offset": 0,
+            "opr": "load",
+            "type": "ref",
+            "index": 0
+          },
+          {
+            "offset": 1,
+            "opr": "load",
+            "type": "ref",
+            "index": 1
+          },
+          {
+            "offset": 2,
+            "opr": "load",
+            "type": "int",
+            "index": 2
+          },
+          {
+            "offset": 3,
+            "opr": "invoke",
+            "access": "special",
+            "method": {
+              "is_interface": false,
+              "ref": {
+                "kind": "class",
+                "name": "java/lang/Enum"
+              },
+              "name": "<init>",
+              "args": [
+                {
+                  "kind": "class",
+                  "name": "java/lang/String"
+                },
+                "int"
+              ],
+              "returns": null
+            }
+          },
+          {
+            "offset": 6,
+            "opr": "load",
+            "type": "ref",
+            "index": 0
+          },
+          {
+            "offset": 7,
+            "opr": "load",
+            "type": "int",
+            "index": 3
+          },
+          {
+            "offset": 8,
+            "opr": "put",
+            "static": false,
+            "field": {
+              "class": "student/dtu/Game$Player",
+              "name": "side",
+              "type": "int"
+            }
+          },
+          {
+            "offset": 11,
+            "opr": "return",
+            "type": null
+          }
+        ]
+      },
+      "annotations": [],
+      "exceptions": [],
+      "default": null
+    },
+    {
+      "name": "$values",
+      "access": [
+        "private",
+        "static",
+        "synthetic"
+      ],
+      "typeparams": [],
+      "params": [],
+      "returns": {
+        "type": {
+          "kind": "array",
+          "type": {
+            "kind": "class",
+            "name": "student/dtu/Game",
+            "inner": {
+              "name": "Player",
+              "inner": null,
+              "args": [],
+              "annotations": []
+            },
+            "args": [],
+            "annotations": []
+          }
+        },
+        "annotations": []
+      },
+      "code": {
+        "max_stack": 4,
+        "max_locals": 0,
+        "exceptions": [],
+        "stack_map": null,
+        "bytecode": [
+          {
+            "offset": 0,
+            "opr": "push",
+            "value": {
+              "type": "integer",
+              "value": 2
+            }
+          },
+          {
+            "offset": 1,
+            "opr": "newarray",
+            "dim": 1,
+            "type": {
+              "kind": "class",
+              "name": "student/dtu/Game$Player"
+            }
+          },
+          {
+            "offset": 4,
+            "opr": "dup",
+            "words": 1
+          },
+          {
+            "offset": 5,
+            "opr": "push",
+            "value": {
+              "type": "integer",
+              "value": 0
+            }
+          },
+          {
+            "offset": 6,
+            "opr": "get",
+            "static": true,
+            "field": {
+              "class": "student/dtu/Game$Player",
+              "name": "PlayerOne",
+              "type": {
+                "kind": "class",
+                "name": "student/dtu/Game$Player"
+              }
+            }
+          },
+          {
+            "offset": 9,
+            "opr": "array_store",
+            "type": "ref"
+          },
+          {
+            "offset": 10,
+            "opr": "dup",
+            "words": 1
+          },
+          {
+            "offset": 11,
+            "opr": "push",
+            "value": {
+              "type": "integer",
+              "value": 1
+            }
+          },
+          {
+            "offset": 12,
+            "opr": "get",
+            "static": true,
+            "field": {
+              "class": "student/dtu/Game$Player",
+              "name": "PlayerTwo",
+              "type": {
+                "kind": "class",
+                "name": "student/dtu/Game$Player"
+              }
+            }
+          },
+          {
+            "offset": 15,
+            "opr": "array_store",
+            "type": "ref"
+          },
+          {
+            "offset": 16,
+            "opr": "return",
+            "type": "ref"
+          }
+        ]
+      },
+      "annotations": [],
+      "exceptions": [],
+      "default": null
+    },
     {
       "name": "<clinit>",
       "access": [
@@ -276,489 +709,45 @@
           },
           {
             "offset": 28,
-            "opr": "push",
-            "value": {
-              "type": "integer",
-              "value": 2
+            "opr": "invoke",
+            "access": "static",
+            "method": {
+              "is_interface": false,
+              "ref": {
+                "kind": "class",
+                "name": "student/dtu/Game$Player"
+              },
+              "name": "$values",
+              "args": [],
+              "returns": {
+                "kind": "array",
+                "type": {
+                  "kind": "class",
+                  "name": "student/dtu/Game$Player"
+                }
+              }
             }
           },
           {
-            "offset": 29,
-            "opr": "newarray",
-            "dim": 1,
-            "type": {
-              "kind": "class",
-              "name": "student/dtu/Game$Player"
-            }
-          },
-          {
-            "offset": 32,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 33,
-            "opr": "push",
-            "value": {
-              "type": "integer",
-              "value": 0
+            "offset": 31,
+            "opr": "put",
+            "static": true,
+            "field": {
+              "class": "student/dtu/Game$Player",
+              "name": "$VALUES",
+              "type": {
+                "kind": "array",
+                "type": {
+                  "kind": "class",
+                  "name": "student/dtu/Game$Player"
+                }
+              }
             }
           },
           {
             "offset": 34,
-            "opr": "get",
-            "static": true,
-            "field": {
-              "class": "student/dtu/Game$Player",
-              "name": "PlayerOne",
-              "type": {
-                "kind": "class",
-                "name": "student/dtu/Game$Player"
-              }
-            }
-          },
-          {
-            "offset": 37,
-            "opr": "array_store",
-            "type": "ref"
-          },
-          {
-            "offset": 38,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 39,
-            "opr": "push",
-            "value": {
-              "type": "integer",
-              "value": 1
-            }
-          },
-          {
-            "offset": 40,
-            "opr": "get",
-            "static": true,
-            "field": {
-              "class": "student/dtu/Game$Player",
-              "name": "PlayerTwo",
-              "type": {
-                "kind": "class",
-                "name": "student/dtu/Game$Player"
-              }
-            }
-          },
-          {
-            "offset": 43,
-            "opr": "array_store",
-            "type": "ref"
-          },
-          {
-            "offset": 44,
-            "opr": "put",
-            "static": true,
-            "field": {
-              "class": "student/dtu/Game$Player",
-              "name": "ENUM$VALUES",
-              "type": {
-                "kind": "array",
-                "type": {
-                  "kind": "class",
-                  "name": "student/dtu/Game$Player"
-                }
-              }
-            }
-          },
-          {
-            "offset": 47,
             "opr": "return",
             "type": null
-          }
-        ]
-      },
-      "annotations": [],
-      "exceptions": [],
-      "default": null
-    },
-    {
-      "name": "<init>",
-      "access": [
-        "private"
-      ],
-      "typeparams": [],
-      "params": [
-        {
-          "visible": true,
-          "type": {
-            "kind": "class",
-            "name": "java/lang/String",
-            "inner": null,
-            "args": [],
-            "annotations": []
-          },
-          "annotations": []
-        },
-        {
-          "visible": true,
-          "type": {
-            "base": "int",
-            "annotations": []
-          },
-          "annotations": []
-        },
-        {
-          "visible": true,
-          "type": {
-            "base": "int",
-            "annotations": []
-          },
-          "annotations": []
-        }
-      ],
-      "returns": {
-        "type": null,
-        "annotations": []
-      },
-      "code": {
-        "max_stack": 3,
-        "max_locals": 4,
-        "exceptions": [],
-        "stack_map": null,
-        "bytecode": [
-          {
-            "offset": 0,
-            "opr": "load",
-            "type": "ref",
-            "index": 0
-          },
-          {
-            "offset": 1,
-            "opr": "load",
-            "type": "ref",
-            "index": 1
-          },
-          {
-            "offset": 2,
-            "opr": "load",
-            "type": "int",
-            "index": 2
-          },
-          {
-            "offset": 3,
-            "opr": "invoke",
-            "access": "special",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Enum"
-              },
-              "name": "<init>",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "java/lang/String"
-                },
-                "int"
-              ],
-              "returns": null
-            }
-          },
-          {
-            "offset": 6,
-            "opr": "load",
-            "type": "ref",
-            "index": 0
-          },
-          {
-            "offset": 7,
-            "opr": "load",
-            "type": "int",
-            "index": 3
-          },
-          {
-            "offset": 8,
-            "opr": "put",
-            "static": false,
-            "field": {
-              "class": "student/dtu/Game$Player",
-              "name": "side",
-              "type": "int"
-            }
-          },
-          {
-            "offset": 11,
-            "opr": "return",
-            "type": null
-          }
-        ]
-      },
-      "annotations": [],
-      "exceptions": [],
-      "default": null
-    },
-    {
-      "name": "values",
-      "access": [
-        "public",
-        "static"
-      ],
-      "typeparams": [],
-      "params": [],
-      "returns": {
-        "type": {
-          "kind": "array",
-          "type": {
-            "kind": "class",
-            "name": "student/dtu/Game",
-            "inner": {
-              "name": "Player",
-              "inner": null,
-              "args": [],
-              "annotations": []
-            },
-            "args": [],
-            "annotations": []
-          }
-        },
-        "annotations": []
-      },
-      "code": {
-        "max_stack": 5,
-        "max_locals": 3,
-        "exceptions": [],
-        "stack_map": null,
-        "bytecode": [
-          {
-            "offset": 0,
-            "opr": "get",
-            "static": true,
-            "field": {
-              "class": "student/dtu/Game$Player",
-              "name": "ENUM$VALUES",
-              "type": {
-                "kind": "array",
-                "type": {
-                  "kind": "class",
-                  "name": "student/dtu/Game$Player"
-                }
-              }
-            }
-          },
-          {
-            "offset": 3,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 4,
-            "opr": "store",
-            "type": "ref",
-            "index": 0
-          },
-          {
-            "offset": 5,
-            "opr": "push",
-            "value": {
-              "type": "integer",
-              "value": 0
-            }
-          },
-          {
-            "offset": 6,
-            "opr": "load",
-            "type": "ref",
-            "index": 0
-          },
-          {
-            "offset": 7,
-            "opr": "arraylength"
-          },
-          {
-            "offset": 8,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 9,
-            "opr": "store",
-            "type": "int",
-            "index": 1
-          },
-          {
-            "offset": 10,
-            "opr": "newarray",
-            "dim": 1,
-            "type": {
-              "kind": "class",
-              "name": "student/dtu/Game$Player"
-            }
-          },
-          {
-            "offset": 13,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 14,
-            "opr": "store",
-            "type": "ref",
-            "index": 2
-          },
-          {
-            "offset": 15,
-            "opr": "push",
-            "value": {
-              "type": "integer",
-              "value": 0
-            }
-          },
-          {
-            "offset": 16,
-            "opr": "load",
-            "type": "int",
-            "index": 1
-          },
-          {
-            "offset": 17,
-            "opr": "invoke",
-            "access": "static",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/System"
-              },
-              "name": "arraycopy",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "java/lang/Object"
-                },
-                "int",
-                {
-                  "kind": "class",
-                  "name": "java/lang/Object"
-                },
-                "int",
-                "int"
-              ],
-              "returns": null
-            }
-          },
-          {
-            "offset": 20,
-            "opr": "load",
-            "type": "ref",
-            "index": 2
-          },
-          {
-            "offset": 21,
-            "opr": "return",
-            "type": "ref"
-          }
-        ]
-      },
-      "annotations": [],
-      "exceptions": [],
-      "default": null
-    },
-    {
-      "name": "valueOf",
-      "access": [
-        "public",
-        "static"
-      ],
-      "typeparams": [],
-      "params": [
-        {
-          "visible": true,
-          "type": {
-            "kind": "class",
-            "name": "java/lang/String",
-            "inner": null,
-            "args": [],
-            "annotations": []
-          },
-          "annotations": []
-        }
-      ],
-      "returns": {
-        "type": {
-          "kind": "class",
-          "name": "student/dtu/Game",
-          "inner": {
-            "name": "Player",
-            "inner": null,
-            "args": [],
-            "annotations": []
-          },
-          "args": []
-        },
-        "annotations": []
-      },
-      "code": {
-        "max_stack": 2,
-        "max_locals": 1,
-        "exceptions": [],
-        "stack_map": null,
-        "bytecode": [
-          {
-            "offset": 0,
-            "opr": "push",
-            "value": {
-              "type": "class",
-              "value": {
-                "kind": "class",
-                "name": "student/dtu/Game$Player"
-              }
-            }
-          },
-          {
-            "offset": 2,
-            "opr": "load",
-            "type": "ref",
-            "index": 0
-          },
-          {
-            "offset": 3,
-            "opr": "invoke",
-            "access": "static",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Enum"
-              },
-              "name": "valueOf",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "java/lang/Class"
-                },
-                {
-                  "kind": "class",
-                  "name": "java/lang/String"
-                }
-              ],
-              "returns": {
-                "kind": "class",
-                "name": "java/lang/Enum"
-              }
-            }
-          },
-          {
-            "offset": 6,
-            "opr": "checkcast",
-            "type": {
-              "kind": "class",
-              "name": "student/dtu/Game$Player"
-            }
-          },
-          {
-            "offset": 9,
-            "opr": "return",
-            "type": "ref"
           }
         ]
       },
