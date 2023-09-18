@@ -142,6 +142,13 @@ for file_name in os.listdir(path_to_json):
     fields = []
     print(file_name)
 
+    # Finds extends relation 
+    if ('super' in data and data['super'] != None):
+        superclass = data['super']
+        super_name = superclass['name'].split('/')[-1]
+        if (super_name != 'Object'):
+            dependencies = (file_name, "INHERITANCE", super_name)
+
     # Finds implements relation
     if ('interfaces' in data and len(data['interfaces']) > 0):
         interfaces = data['interfaces']
