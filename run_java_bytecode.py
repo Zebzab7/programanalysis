@@ -127,6 +127,7 @@ if os.path.exists("graphbyte.dot"):
 
 f = open("graphbyte.dot", "w")
 f.write("digraph G {\n")
+filenameArr = []
 setup(f)
 legend(f)
 
@@ -135,6 +136,8 @@ dependencies = []
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
+    filenameArr.append(file_name.replace('.json', ''))
+    print(path_to_json)
     file = open(os.path.join(path_to_json, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
     
@@ -191,6 +194,17 @@ for file_name in os.listdir(path_to_json):
     print(dependencies)
 
     makeGraphNode(f,file_name,methods,fields)
+
+#Composition
+for i in range(len(filenameArr)):
+    for j in range(len(filenameArr)):
+        if i==j:
+            continue
+        if(str(filenameArr[i]).startswith(str(filenameArr[j]))):
+            f.write(str(filenameArr[i]) + "->" + str(filenameArr[j]) + "[arrowhead=odiamond]\n")
+
+            
+
 f.write("}\n")
 f.close()
         
