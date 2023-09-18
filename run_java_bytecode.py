@@ -28,7 +28,7 @@ def stringReplace(name):
     name = name.replace("<","")
     name = name.replace(">", "")
     name = name.replace("Node","\"Node\"")
-    name = name.replace("[]","\"[]\"")
+    #name = name.replace("[]","\"[]\"")
     name = name.replace("$","")
     return name
 
