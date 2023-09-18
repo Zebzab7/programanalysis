@@ -1,5 +1,3 @@
-package student.dtu;
-
 public class RunnableDemo {
  
     public static void main(String[] args)

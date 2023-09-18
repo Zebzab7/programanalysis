@@ -10,14 +10,28 @@ def find_class_files(base_path):
                 class_files.append(os.path.join(root, file))
     return class_files
 
-def printGraph(graph):
-    if os.path.exists("graph.dot"):
-        os.remove("graph.dot")
-    # Create a new file
-    f = open("graph.dot", "a")
+def legend(f):
+    f.write("subgraph cluster {\n")
+    f.write("j->k[label=\" dependency\",arrowhead=vee]\n")
+    f.write("g->h[label=\" composition\",arrowhead=odiamond]\n")
+    f.write("e->f[label=\" aggregation\",arrowhead=odot]\n")
+    f.write("c->d[label=\" realization\",arrowhead=dot]\n")
+    f.write("a->b[label=\" inheritance\",arrowhead=crow]\n")
+    f.write("}\n")
 
-def graphfields(self,fields):
-    return
+def setup(f):
+    f.write("node [shape=record style=filled fillcolor = gray95]\n")
+    f.write("edge [fontname=\"Helvetica,Arial,sans-serif\"]\n")
+
+def makeGraphNode(f,file_name,methods,fields):
+    file_name = file_name.replace('.json', '')
+    f.write(file_name + "[label= <{<b>" + file_name + "</b>|")
+    for i in range(len(fields)):
+        f.write(fields[i] + "<br align=\"left\"/>")
+    f.write("|")
+    for i in range(len(methods)):
+        f.write(methods[i] + "<br align=\"left\"/>")
+    f.write("}>]\n")
 
 def fieldType(field):
     field = field['type']
@@ -110,6 +124,16 @@ for file in class_files:
 
 filenameArr = []
 
+if os.path.exists("graphbyte.dot"):
+    os.remove("graphbyte.dot")
+
+f = open("graphbyte.dot", "w")
+f.write("digraph G {\n")
+setup(f)
+legend(f)
+
+
+
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
@@ -153,5 +177,8 @@ for file_name in os.listdir(path_to_json):
             methods.append(access + name + '(' + params_string + ')' + ':' + returnType)
             
     # print(methods, "\n")
-    print(fields, "\n")
+    #print(fields, "\n")
+    makeGraphNode(f,file_name,methods,fields)
+f.write("}\n")
+f.close()
         
