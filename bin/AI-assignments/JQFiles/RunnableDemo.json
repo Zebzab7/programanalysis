@@ -230,33 +230,6 @@
           },
           {
             "offset": 32,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 33,
-            "opr": "invoke",
-            "access": "virtual",
-            "method": {
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Object"
-              },
-              "name": "getClass",
-              "args": [],
-              "returns": {
-                "kind": "class",
-                "name": "java/lang/Class"
-              }
-            }
-          },
-          {
-            "offset": 36,
-            "opr": "pop",
-            "words": 1
-          },
-          {
-            "offset": 37,
             "opr": "invoke",
             "access": "special",
             "method": {
@@ -276,7 +249,7 @@
             }
           },
           {
-            "offset": 40,
+            "offset": 35,
             "opr": "invoke",
             "access": "special",
             "method": {
@@ -296,19 +269,19 @@
             }
           },
           {
-            "offset": 43,
+            "offset": 38,
             "opr": "store",
             "type": "ref",
             "index": 1
           },
           {
-            "offset": 44,
+            "offset": 39,
             "opr": "load",
             "type": "ref",
             "index": 1
           },
           {
-            "offset": 45,
+            "offset": 40,
             "opr": "invoke",
             "access": "virtual",
             "method": {
@@ -322,7 +295,7 @@
             }
           },
           {
-            "offset": 48,
+            "offset": 43,
             "opr": "return",
             "type": null
           }
@@ -390,6 +363,14 @@
   "enclosingmethod": null,
   "innerclasses": [
     {
+      "class": "student/dtu/RunnableDemo$RunnableImpl",
+      "outer": "student/dtu/RunnableDemo",
+      "name": "RunnableImpl",
+      "access": [
+        "private"
+      ]
+    },
+    {
       "class": "java/lang/invoke/MethodHandles$Lookup",
       "outer": "java/lang/invoke/MethodHandles",
       "name": "Lookup",
@@ -397,14 +378,6 @@
         "public",
         "static",
         "final"
-      ]
-    },
-    {
-      "class": "student/dtu/RunnableDemo$RunnableImpl",
-      "outer": "student/dtu/RunnableDemo",
-      "name": "RunnableImpl",
-      "access": [
-        "private"
       ]
     }
   ],

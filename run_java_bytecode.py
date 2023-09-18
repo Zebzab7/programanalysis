@@ -94,9 +94,10 @@ print(class_files)
 
 for file in class_files:
     # find file name without .class
-    file_name = file.rsplit('/', 1)[1].split('.')[0]
+    old_file_name = file.rsplit('/', 1)[1].split('.')[0]
     # Remove dollar signs:
-    file_name = file_name.replace('$', '')
+    file_name = old_file_name.replace('$', '')
+    
     # if directory does not exist, create it
     path_to_json = "bin/" + project_name + "/json"
     if not os.path.exists(path_to_json):
@@ -106,15 +107,10 @@ for file in class_files:
     jq_command = "cat " + path_to_json + "/" + file_name + ".json" + " | jq '.' > bin/" + project_name + "/JQFiles/" + file_name + ".json"
     subprocess.run(jvm2json_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     subprocess.run(jq_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)    
-    # print(jq_command)
-
-filenameArr = []
 
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
-    filenameArr.append(file_name)
-    print(path_to_json)
     file = open(os.path.join(path_to_json, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
     
@@ -152,6 +148,5 @@ for file_name in os.listdir(path_to_json):
             returnType = getObjectType(returns)
             methods.append(access + name + '(' + params_string + ')' + ':' + returnType)
             
-    # print(methods, "\n")
+    print(methods)
     print(fields, "\n")
-        
