@@ -17,4 +17,7 @@ main[label= <{<b>main</b>||+main(String[]):void<br align="left"/>}>]
 RunnableDemo[label= <{<b>RunnableDemo</b>||+main(String[]):void<br align="left"/>}>]
 RunnableDemoRunnableImpl[label= <{<b>RunnableDemoRunnableImpl</b>|-this$0:RunnableDemo<br align="left"/>|+run():void<br align="left"/>}>]
 Vehicle[label= <{<b>Vehicle</b>|-brand:String<br align="left"/>|+honk():void<br align="left"/>}>]
+AINode->AI[arrowhead=odiamond]
+GamePlayer->Game[arrowhead=odiamond]
+RunnableDemoRunnableImpl->RunnableDemo[arrowhead=odiamond]
 }

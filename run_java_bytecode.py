@@ -150,14 +150,14 @@ for file_name in os.listdir(path_to_json):
         superclass = data['super']
         super_name = superclass['name'].split('/')[-1]
         if (super_name != 'Object'):
-            dependencies = (file_name, "INHERITANCE", super_name)
+            dependencies.append((file_name, "INHERITANCE", super_name))
 
     # Finds implements relation
     if ('interfaces' in data and len(data['interfaces']) > 0):
         interfaces = data['interfaces']
         for interface in interfaces:
             interface = interface['name'].split('/')[-1]
-            dependencies = (file_name, "REALIZATION", interface)
+            dependencies.append((file_name, "REALIZATION", interface))
 
     # Finds fields
     json_fields = data['fields']
@@ -171,6 +171,11 @@ for file_name in os.listdir(path_to_json):
             else:
                 access = '-'
             fieldType = getObjectType(field)
+
+            # If field type starts with a capital letter, its an aggregation
+            if (fieldType[0].isupper()):
+                dependencies.append((file_name, "AGGREGATION", fieldType))
+
             fields.append(access + name + ':' + fieldType)
         
     # Finds methods
@@ -191,7 +196,6 @@ for file_name in os.listdir(path_to_json):
             
     print(methods)
     print(fields, "\n")
-    print(dependencies)
 
     makeGraphNode(f,file_name,methods,fields)
 
@@ -203,8 +207,7 @@ for i in range(len(filenameArr)):
         if(str(filenameArr[i]).startswith(str(filenameArr[j]))):
             f.write(str(filenameArr[i]) + "->" + str(filenameArr[j]) + "[arrowhead=odiamond]\n")
 
-            
-
+print(dependencies)
 f.write("}\n")
 f.close()
         
