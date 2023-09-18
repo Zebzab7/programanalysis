@@ -130,6 +130,8 @@ f.write("digraph G {\n")
 setup(f)
 legend(f)
 
+dependencies = []
+
 for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
@@ -139,6 +141,13 @@ for file_name in os.listdir(path_to_json):
     methods = []
     fields = []
     print(file_name)
+
+    # Finds implements relation
+    if ('interfaces' in data and len(data['interfaces']) > 0):
+        interfaces = data['interfaces']
+        for interface in interfaces:
+            interface = interface['name'].split('/')[-1]
+            dependencies = (file_name, "REALIZATION", interface)
 
     # Finds fields
     json_fields = data['fields']
@@ -172,6 +181,8 @@ for file_name in os.listdir(path_to_json):
             
     print(methods)
     print(fields, "\n")
+    print(dependencies)
+
     makeGraphNode(f,file_name,methods,fields)
 f.write("}\n")
 f.close()

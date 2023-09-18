@@ -1,3 +1,5 @@
+package student.dtu;
+
 class Vehicle {
   protected String brand = "Ford";         // Vehicle attribute
   public void honk() {                     // Vehicle method
