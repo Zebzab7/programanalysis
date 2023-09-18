@@ -102,10 +102,12 @@ for file in class_files:
     if not os.path.exists(path_to_json):
         os.makedirs(path_to_json)
     # run jvm2json on file
-    command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    jvm2json_command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
+    jq_command = "cat " + path_to_json + "/" + file_name + ".json" + " | jq '.' > bin/" + project_name + "/JQFiles/" + file_name + ".json"
+    subprocess.run(jvm2json_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(jq_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)    
+    # print(jq_command)
 
-fields = []
 filenameArr = []
 
 for file_name in os.listdir(path_to_json):
@@ -117,6 +119,7 @@ for file_name in os.listdir(path_to_json):
     data = json.load(file)
     
     methods = []
+    fields = []
     print(file_name)
 
     # Finds fields
