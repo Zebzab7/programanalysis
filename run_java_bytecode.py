@@ -134,12 +134,26 @@ for file_name in os.listdir(path_to_json):
     if(file_name.endswith('.class')):
         continue
     filenameArr.append(file_name)
+    print(path_to_json)
     file = open(os.path.join(path_to_json, file_name), 'r',encoding='utf-8',errors='ignore')
     data = json.load(file)
     
     methods = []
     print(file_name)
 
+    # Finds fields
+    json_fields = data['fields']
+    for field in json_fields:
+        name = field['name']
+        if(field['access'][0] == 'public'):
+            access = '+'
+        elif(field['access'] == 'protected'):
+            access = '#'
+        else:
+            access = '-'
+        fieldType = getObjectType(field)
+        fields.append(access + name + ':' + fieldType)
+        
     # Finds methods
     json_methods = data['methods']
     for method in json_methods:
@@ -147,15 +161,15 @@ for file_name in os.listdir(path_to_json):
         if (name != '<init>' and name != '<clinit>'): 
             if (method['access'][0] == 'public'):
                 access = '+'
+            elif(method['access'][0] == 'protected'):
+                access = '#'
             else:
                 access = '-'
             params_string = getObjectParameters(method)
             returns = method['returns']
             returnType = getObjectType(returns)
             methods.append(access + name + '(' + params_string + ')' + ':' + returnType)
-        fieldsjson = data['fields']
-        if(len(fieldsjson) == 0):
-            continue
-        fields.append(simplefields(fieldsjson))
-    print(methods, "\n")
+            
+    # print(methods, "\n")
+    print(fields, "\n")
         
