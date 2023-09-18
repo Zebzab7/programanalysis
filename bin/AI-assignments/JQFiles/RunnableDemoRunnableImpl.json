@@ -1,7 +1,6 @@
 {
-  "name": "student/dtu/RunnableDemo",
+  "name": "student/dtu/RunnableDemo$RunnableImpl",
   "access": [
-    "public",
     "super"
   ],
   "typeparams": [],
@@ -11,23 +10,59 @@
     "args": [],
     "annotations": []
   },
-  "interfaces": [],
-  "fields": [],
+  "interfaces": [
+    {
+      "name": "java/lang/Runnable",
+      "inner": null,
+      "args": [],
+      "annotations": []
+    }
+  ],
+  "fields": [
+    {
+      "name": "this$0",
+      "access": [
+        "final",
+        "synthetic"
+      ],
+      "type": {
+        "kind": "class",
+        "name": "student/dtu/RunnableDemo",
+        "inner": null,
+        "args": [],
+        "annotations": []
+      },
+      "value": null,
+      "annotations": []
+    }
+  ],
   "methods": [
     {
       "name": "<init>",
       "access": [
-        "public"
+        "private"
       ],
       "typeparams": [],
-      "params": [],
+      "params": [
+        {
+          "visible": true,
+          "type": {
+            "kind": "class",
+            "name": "student/dtu/RunnableDemo",
+            "inner": null,
+            "args": [],
+            "annotations": []
+          },
+          "annotations": []
+        }
+      ],
       "returns": {
         "type": null,
         "annotations": []
       },
       "code": {
-        "max_stack": 1,
-        "max_locals": 1,
+        "max_stack": 2,
+        "max_locals": 2,
         "exceptions": [],
         "stack_map": null,
         "bytecode": [
@@ -39,6 +74,31 @@
           },
           {
             "offset": 1,
+            "opr": "load",
+            "type": "ref",
+            "index": 1
+          },
+          {
+            "offset": 2,
+            "opr": "put",
+            "static": false,
+            "field": {
+              "class": "student/dtu/RunnableDemo$RunnableImpl",
+              "name": "this$0",
+              "type": {
+                "kind": "class",
+                "name": "student/dtu/RunnableDemo"
+              }
+            }
+          },
+          {
+            "offset": 5,
+            "opr": "load",
+            "type": "ref",
+            "index": 0
+          },
+          {
+            "offset": 6,
             "opr": "invoke",
             "access": "special",
             "method": {
@@ -53,7 +113,7 @@
             }
           },
           {
-            "offset": 4,
+            "offset": 9,
             "opr": "return",
             "type": null
           }
@@ -64,36 +124,19 @@
       "default": null
     },
     {
-      "name": "main",
+      "name": "run",
       "access": [
-        "public",
-        "static"
+        "public"
       ],
       "typeparams": [],
-      "params": [
-        {
-          "visible": true,
-          "type": {
-            "kind": "array",
-            "type": {
-              "kind": "class",
-              "name": "java/lang/String",
-              "inner": null,
-              "args": [],
-              "annotations": []
-            },
-            "annotations": []
-          },
-          "annotations": []
-        }
-      ],
+      "params": [],
       "returns": {
         "type": null,
         "annotations": []
       },
       "code": {
-        "max_stack": 6,
-        "max_locals": 2,
+        "max_stack": 3,
+        "max_locals": 1,
         "exceptions": [],
         "stack_map": null,
         "bytecode": [
@@ -185,144 +228,6 @@
           },
           {
             "offset": 17,
-            "opr": "new",
-            "class": "java/lang/Thread"
-          },
-          {
-            "offset": 20,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 21,
-            "opr": "new",
-            "class": "student/dtu/RunnableDemo$RunnableImpl"
-          },
-          {
-            "offset": 24,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 25,
-            "opr": "new",
-            "class": "student/dtu/RunnableDemo"
-          },
-          {
-            "offset": 28,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 29,
-            "opr": "invoke",
-            "access": "special",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "student/dtu/RunnableDemo"
-              },
-              "name": "<init>",
-              "args": [],
-              "returns": null
-            }
-          },
-          {
-            "offset": 32,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 33,
-            "opr": "invoke",
-            "access": "virtual",
-            "method": {
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Object"
-              },
-              "name": "getClass",
-              "args": [],
-              "returns": {
-                "kind": "class",
-                "name": "java/lang/Class"
-              }
-            }
-          },
-          {
-            "offset": 36,
-            "opr": "pop",
-            "words": 1
-          },
-          {
-            "offset": 37,
-            "opr": "invoke",
-            "access": "special",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "student/dtu/RunnableDemo$RunnableImpl"
-              },
-              "name": "<init>",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "student/dtu/RunnableDemo"
-                }
-              ],
-              "returns": null
-            }
-          },
-          {
-            "offset": 40,
-            "opr": "invoke",
-            "access": "special",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Thread"
-              },
-              "name": "<init>",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "java/lang/Runnable"
-                }
-              ],
-              "returns": null
-            }
-          },
-          {
-            "offset": 43,
-            "opr": "store",
-            "type": "ref",
-            "index": 1
-          },
-          {
-            "offset": 44,
-            "opr": "load",
-            "type": "ref",
-            "index": 1
-          },
-          {
-            "offset": 45,
-            "opr": "invoke",
-            "access": "virtual",
-            "method": {
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/Thread"
-              },
-              "name": "start",
-              "args": [],
-              "returns": null
-            }
-          },
-          {
-            "offset": 48,
             "opr": "return",
             "type": null
           }
@@ -381,7 +286,7 @@
         "args": [
           {
             "type": "string",
-            "value": "Main thread is- \u0001"
+            "value": "\u0001, executing run() method!"
           }
         ]
       }

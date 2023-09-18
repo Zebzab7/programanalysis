@@ -37,28 +37,6 @@ def checkname(name):
         return "JSONERROR"
     return str(name)       
 
-def simplefields(fieldsjson):
-    
-    fields = []
-    for i in range(len(fieldsjson)):
-
-        if(fieldsjson[i]['access'][0] == 'private'):
-            name = fieldsjson[i]['name']
-            string = "-" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-            
-        elif(fieldsjson[i]['access'] == 'public'):
-            name = fieldsjson[i]['name']
-            string = "+" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-            
-        elif(fieldsjson[i]['access'] == 'protected'):
-            name = fieldsjson[i]['name']
-            string = "#" + checkname(name) + "() : " + str(fieldType(fieldsjson[i]))
-            fields.append(string)
-        
-    return fields
-
 # returns a string representation of the objects parameters
 def getObjectParameters(object):
     params_string = ''
@@ -124,10 +102,12 @@ for file in class_files:
     if not os.path.exists(path_to_json):
         os.makedirs(path_to_json)
     # run jvm2json on file
-    command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
-    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    jvm2json_command = "jvm2json -s " + file + " -t " + path_to_json + "/" + file_name + ".json"
+    jq_command = "cat " + path_to_json + "/" + file_name + ".json" + " | jq '.' > bin/" + project_name + "/JQFiles/" + file_name + ".json"
+    subprocess.run(jvm2json_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    subprocess.run(jq_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)    
+    # print(jq_command)
 
-fields = []
 filenameArr = []
 
 for file_name in os.listdir(path_to_json):
@@ -139,20 +119,22 @@ for file_name in os.listdir(path_to_json):
     data = json.load(file)
     
     methods = []
+    fields = []
     print(file_name)
 
     # Finds fields
     json_fields = data['fields']
     for field in json_fields:
         name = field['name']
-        if(field['access'][0] == 'public'):
-            access = '+'
-        elif(field['access'] == 'protected'):
-            access = '#'
-        else:
-            access = '-'
-        fieldType = getObjectType(field)
-        fields.append(access + name + ':' + fieldType)
+        if (checkname(name) != "JSONERROR"):
+            if(field['access'][0] == 'public'):
+                access = '+'
+            elif(field['access'] == 'protected'):
+                access = '#'
+            else:
+                access = '-'
+            fieldType = getObjectType(field)
+            fields.append(access + name + ':' + fieldType)
         
     # Finds methods
     json_methods = data['methods']

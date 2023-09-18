@@ -2240,7 +2240,7 @@
         "annotations": []
       },
       "code": {
-        "max_stack": 4,
+        "max_stack": 3,
         "max_locals": 7,
         "exceptions": [],
         "stack_map": [
@@ -2571,78 +2571,20 @@
           },
           {
             "offset": 72,
-            "opr": "new",
-            "class": "java/lang/StringBuilder"
-          },
-          {
-            "offset": 75,
-            "opr": "dup",
-            "words": 1
-          },
-          {
-            "offset": 76,
-            "opr": "push",
-            "value": {
-              "type": "string",
-              "value": "Evaluation: "
-            }
-          },
-          {
-            "offset": 78,
-            "opr": "invoke",
-            "access": "special",
-            "method": {
-              "is_interface": false,
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/StringBuilder"
-              },
-              "name": "<init>",
-              "args": [
-                {
-                  "kind": "class",
-                  "name": "java/lang/String"
-                }
-              ],
-              "returns": null
-            }
-          },
-          {
-            "offset": 81,
             "opr": "load",
             "type": "int",
             "index": 2
           },
           {
-            "offset": 82,
+            "offset": 73,
             "opr": "invoke",
-            "access": "virtual",
+            "access": "dynamic",
+            "index": 0,
             "method": {
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/StringBuilder"
-              },
-              "name": "append",
+              "name": "makeConcatWithConstants",
               "args": [
                 "int"
               ],
-              "returns": {
-                "kind": "class",
-                "name": "java/lang/StringBuilder"
-              }
-            }
-          },
-          {
-            "offset": 85,
-            "opr": "invoke",
-            "access": "virtual",
-            "method": {
-              "ref": {
-                "kind": "class",
-                "name": "java/lang/StringBuilder"
-              },
-              "name": "toString",
-              "args": [],
               "returns": {
                 "kind": "class",
                 "name": "java/lang/String"
@@ -2650,7 +2592,7 @@
             }
           },
           {
-            "offset": 88,
+            "offset": 78,
             "opr": "invoke",
             "access": "virtual",
             "method": {
@@ -2669,13 +2611,13 @@
             }
           },
           {
-            "offset": 91,
+            "offset": 81,
             "opr": "load",
             "type": "int",
             "index": 3
           },
           {
-            "offset": 92,
+            "offset": 82,
             "opr": "return",
             "type": "int"
           }
@@ -5972,9 +5914,72 @@
       "default": null
     }
   ],
-  "bootstrapmethods": [],
+  "bootstrapmethods": [
+    {
+      "index": 0,
+      "method": {
+        "handle": {
+          "handletype": "method",
+          "kind": "static",
+          "method": {
+            "is_interface": false,
+            "ref": {
+              "kind": "class",
+              "name": "java/lang/invoke/StringConcatFactory"
+            },
+            "name": "makeConcatWithConstants",
+            "args": [
+              {
+                "kind": "class",
+                "name": "java/lang/invoke/MethodHandles$Lookup"
+              },
+              {
+                "kind": "class",
+                "name": "java/lang/String"
+              },
+              {
+                "kind": "class",
+                "name": "java/lang/invoke/MethodType"
+              },
+              {
+                "kind": "class",
+                "name": "java/lang/String"
+              },
+              {
+                "kind": "array",
+                "type": {
+                  "kind": "class",
+                  "name": "java/lang/Object"
+                }
+              }
+            ],
+            "returns": {
+              "kind": "class",
+              "name": "java/lang/invoke/CallSite"
+            }
+          }
+        },
+        "args": [
+          {
+            "type": "string",
+            "value": "Evaluation: \u0001"
+          }
+        ]
+      }
+    }
+  ],
   "enclosingmethod": null,
   "innerclasses": [
+    {
+      "class": "java/lang/invoke/MethodHandles$Lookup",
+      "outer": "java/lang/invoke/MethodHandles",
+      "name": "Lookup",
+      "access": [
+        "public",
+        "static",
+        "final"
+      ]
+    },
     {
       "class": "student/dtu/AI$Node",
       "outer": "student/dtu/AI",
@@ -5998,7 +6003,7 @@
   ],
   "annotations": [],
   "version": [
-    55,
+    61,
     0
   ]
 }
