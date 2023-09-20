@@ -40,6 +40,7 @@ def interpreter(am):
     for i in range(len(bytecode)):
         (ls, os, (am_, i)) = stack[-1]
         b = bytecode[i]
+        # TODO 
         # handle_operation(b, stack)
 
 cn = "dtu/compute/exec/Simple"
