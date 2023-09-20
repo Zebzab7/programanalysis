@@ -224,6 +224,8 @@ print(dependencies)
 
 dependencies = list(set(dependencies))
 print()
+print(methods)
+print(fields)
 print(dependencies)
 for depedency in dependencies:
     dep0 = replaceJson(depedency[0])
