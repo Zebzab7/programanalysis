@@ -1,12 +1,6 @@
 from pathlib import Path
 import json
 
-# Memory as a dictionary
-mem = {}
-
-# Locals, operational stack, program counter
-stack = ([], [], 0)
-
 # The program
 path = Path("bin/course-examples/json")
 cases = []
@@ -34,10 +28,21 @@ for cls in classes.values():
                 cases.append(method)
                 bytecodes.append(method["code"]["bytecode"])
 
-# for method in cases:
-#     print(method["name"])
-#     print(method["code"]["bytecode"])
+def interpreter(am):
+    # Memory as a dictionary
+    mem = {}
+    # Locals, operational stack, program counter
+    stack = [([], [], (am, 0))]
 
-# print(classes["dtu/compute/exec/Simple"]["name"])
+    print(am)
+    method = find_method(am)
+    bytecode = method["code"]["bytecode"]
+    for i in range(len(bytecode)):
+        (ls, os, (am_, i)) = stack[-1]
+        b = bytecode[i]
+        print("yoo")
+        # handle_operation(b, stack)
 
-print(find_method(("dtu/compute/exec/Simple", "noop")))
+cn = "dtu/compute/exec/Simple"
+func = cases[0]
+interpreter((cn, func["name"]))
