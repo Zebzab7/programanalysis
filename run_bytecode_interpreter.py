@@ -50,20 +50,25 @@ for cls in classes.values():
             if annotation["type"] == "dtu/compute/exec/Case":
                 cases.append(method)
 
-for method in cases:
-    print(method["name"])
-    #print(method["code"]["bytecode"])
-    b = method["code"]["bytecode"]
-    for i in range(len(b)):
-        if(checkNOOP(b[i])):#TODO: PUSH PC by 1 maybe
+
+
+def interpreter(am):
+    # Memory as a dictionary
+    mem = {}
+    # Locals, operational stack, program counter
+    stack = [([], [], (am, 0))]
+
+    print(am)
+    method = find_method(am)
+    bytecode = method["code"]["bytecode"]
+    for i in range(len(bytecode)):
+        (ls, os, (am_, i)) = stack[-1]
+        b = bytecode[i]
+        if(checkNOOP(b)):#TODO: PUSH PC by 1 maybe
             print("NOOP at " + str(i))
+        # TODO 
+        # handle_operation(b, stack)
 
-
-
-# for method in cases:
-#     print(method["name"])
-#     print(method["code"]["bytecode"])
-
-# print(classes["dtu/compute/exec/Simple"]["name"])
-
-print(find_method(("dtu/compute/exec/Simple", "noop")))
+cn = "dtu/compute/exec/Simple"
+func = cases[0]
+interpreter((cn, func["name"]))
