@@ -32,6 +32,13 @@ class Interpreter:
                 annotations[annotation["type"]] = annotation
         return annotations
     
+    def get_classes_methods(self, classes, methods):
+        classes_methods = set()
+        for clas in classes.values():
+            for method in clas["methods"]:
+                classes_methods.add((clas["name"], method["name"]))
+        return classes_methods
+    
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
@@ -47,5 +54,7 @@ def main():
         classes = interpreter.get_classes(data)
         methods = interpreter.get_methods(classes)
         annotations = interpreter.get_annotations(methods)
+
+        classes_methods = interpreter.get_classes_methods(classes, methods)
 
 main()
