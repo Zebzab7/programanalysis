@@ -1,10 +1,12 @@
 from pathlib import Path
+from logging import log
 import json
 
 class Interpreter:
     def __init__(self, json_file):
         self.json_file = json_file
         self.classes = None
+        self.memory = {}
 
     def get_json(self):
         with open(self.json_file) as f:
@@ -49,88 +51,59 @@ class Interpreter:
                         bytecode[method["name"]] = method["code"]["bytecode"]
         return bytecode
     
-    def get_bytecode(self, absolute_method, methods):
-        #absolute_method: (class name, method name)
-        name = absolute_method[1]
-        for method in methods:
-            if method["name"] == name:
-                return method["code"]["bytecode"]
-    
     def find_method(self, absolute_method):
         methods = self.classes[absolute_method[0]]["methods"]
         for method in methods:
             if method["name"] == absolute_method[1]:
                 return method
     
-    def interpret_function(self, absolute_method):
-        bytecode = self.get_bytecode(self, absolute_method)
-        return
-        # (lv, os, (absolute_method_,pc)) = stack[-1]
-        # for i, v in enumerate(bytecode):
-        #     (l, s, (am1,i)) = methods_stack[-1]
-        #     # the operation that index of i
-        #     # different operation {load,return,push,binary,if,goto,store,incr...}
-        #     # basic key in bytecode {offset,opr,type}
-        #     if v["opr"] == "return":
-        #         if v["type"] == "null":
-        #             log("return")
-        #         else:
-        #             log("return "+ v["type"])
-        #     elif v["opr"] == "push":
-        #         log("push")
-        #         methods_stack.append(l,s.append(v["value"]),(am,i+1))
-        #     elif v["opr"] == "load":
-        #         log("load parameter"+ v["type"])
-        #     elif "target" in v:
-        #         l[v["target"]]
-
-    # bytecode_info("offset","opr","type")
-    def interpret_bytecodes(self, methods):
-        absolute_method = self.find_method(self, ("dtu/compute/exec/Simple", "noop"))
+    def interpret(self, absolute_method, pc, log):
         
-        memory = {}
-        stack = [([],[],(absolute_method, 0))]
-
-        #{"name": bytecodes}
-        bytecodes = self.get_bytecodes(self, methods)
+        print("Absolute method: ", absolute_method)
         
-        for name, bytecode in bytecodes:
-            for opr in bytecodes[name]:
-                self.interpret(self, absolute_method)
-        return
-        
-    def interpret(self, absolute_method, log):
-        memory = {}
-        stack = [([],[],(absolute_method, 0))]
+        # λ,σ,ι
+        local_stack = ([],[],(absolute_method, pc))
+        # stack_list = [([],[],(absolute_method, pc))] 
         method = self.find_method(absolute_method)
-        bytecodes = method["code"]["bytecode"]
-        for i in range(len(bytecodes)):
-            (lv, os, (absolute_method_,pc)) = stack[-1]
-            bytecode = bytecodes[i]
+        bytecode_statements = method["code"]["bytecode"]
+
+        for i, bytecode in enumerate(bytecode_statements): #(i,seq[0])
             if bytecode["opr"] == "return":
                 if bytecode["type"] == None:
-                    log("(return)")
+                    log("(return) None")
                     return None
-       
-    def traverse_files():
-        path = Path("bin/course-examples/json")
-        files = []
-        for f in path.glob("**/Simple.json"):
-            files.append(f)
-        return files
-        
-    def main():
-        files = traverse_files()
-        for f in files:
-            interpreter = Interpreter(f)
-            data = interpreter.get_json()
-            classes = interpreter.get_classes(data)
-            methods = interpreter.get_methods(classes)
-            annotations = interpreter.get_annotations(methods)
-            cases = [("dtu/compute/exec/Simple", "noop")]
-            for case in cases:
-                statement = interpreter.interpret(case, print)
-                print(statement)
-            classes_methods = interpreter.get_classes_methods(classes, methods)
+                else:
+                    log("return "+ bytecode["type"])
+            elif bytecode["opr"] == "push":
+                log("(push)")
+                local_stack[1].append(bytecode["value"])
+                local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+            elif bytecode["opr"] == "load":
+                local_stack[0].append((bytecode["type"], bytecode["index"], local_stack[0][2]))
+            
+        return local_stack
 
+def traverse_files():
+    path = Path("bin/course-examples/json")
+    files = []
+    for f in path.glob("**/Simple.json"):
+        files.append(f)
+    return files
+    
+def main():
+    files = traverse_files()
+    for f in files:
+        interpreter = Interpreter(f)
+        data = interpreter.get_json()
+        classes = interpreter.get_classes(data)
+        methods = interpreter.get_methods(classes)
+        annotations = interpreter.get_annotations(methods)
+        cases = [("dtu/compute/exec/Simple", "noop"), ("dtu/compute/exec/Simple", "zero"), 
+                 ("dtu/compute/exec/Simple", "hundredAndTwo"), ("dtu/compute/exec/Simple", "identity")]
+        for case in cases:
+            stack = interpreter.interpret(case, 0, print)
+            print(stack)
+            print()
+        classes_methods = interpreter.get_classes_methods(classes, methods)
 main()
+
