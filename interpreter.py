@@ -49,16 +49,24 @@ class Interpreter:
                         bytecode[method["name"]] = method["code"]["bytecode"]
         return bytecode
     
-    def find_method_method(self, absolute_method):
+    def find_method(self, absolute_method):
         methods = self.classes[absolute_method[0]]["methods"]
         for method in methods:
             if method["name"] == absolute_method[1]:
                 return method
 
-    def interpret(self, absoulte_method):
+    def interpret(self, absolute_method, log):
         memory = {}
         stack = [([],[],(absolute_method, 0))]
-        (lv, os, (absolute_method,pc)) = stack[0]
+        method = self.find_method(absolute_method)
+        bytecodes = method["code"]["bytecode"]
+        for i in range(len(bytecodes)):
+            (lv, os, (absolute_method_,pc)) = stack[-1]
+            bytecode = bytecodes[i]
+            if bytecode["opr"] == "return":
+                if bytecode["type"] == None:
+                    log("(return)")
+                    return None
        
 
 def traverse_files():
@@ -76,9 +84,10 @@ def main():
         classes = interpreter.get_classes(data)
         methods = interpreter.get_methods(classes)
         annotations = interpreter.get_annotations(methods)
-        print(interpreter.get_bytecode(methods))
         cases = [("dtu/compute/exec/Simple", "noop")]
-        interpreter.interpret(("dtu/compute/exec/Simple", "noop"))
+        for case in cases:
+            statement = interpreter.interpret(case, print)
+            print(statement)
         classes_methods = interpreter.get_classes_methods(classes, methods)
 
 main()
