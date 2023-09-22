@@ -10,6 +10,8 @@ mem = {}
 
 
 
+
+
 for f in path.glob("Simple.json"):
     with open(f) as json_file:
         doc = json.load(json_file)
@@ -45,13 +47,27 @@ def find_bytecode(am):
 
 
 # interpreter
+bytecode_info = ("offset","opr","type")
 def bytecode_interpreter(am):     
-   # Locals, operational stack, program counter
+    # Locals, operational stack, program counter
     methods_stack = ([], [], (am,0))
     bytecode = find_methods(am)["code"]["bytecode"]
+    
+    # store all the local variables in an array --lambda
+    # not sure--not clear about "localVariables"
+    method_code = find_methods(am)['code']
+    if  method_code["stack_map"] is not None and "locals" in method_code["stack_map"]:
+        methods_stack = list(methods_stack)
+        for local in method_code["stack_map"]["locals"]:
+            methods_stack[0].append(local)
+        methods_stack = tuple(methods_stack)
+        
+
     for i, v in enumerate(bytecode):
         (l, s, (am1,i)) = methods_stack[-1]
         # the operation that index of i
+        # different operation {load,return,push,binary,if,goto,store,incr...}
+        # basic key in bytecode {offset,opr,type}
         if v["opr"] == "return":
             if v["type"] == "null":
                 log("return")
@@ -59,7 +75,17 @@ def bytecode_interpreter(am):
                 log("return "+ v["type"])
         elif v["opr"] == "push":
             log("push")
-            methods_stack.append(l,s.append(v),(am,i+1))
+            methods_stack.append(l,s.append(v["value"]),(am,i+1))
+        elif v["opr"] == "load":
+            log("load parameter"+ v["type"])
+        elif "target" in v:
+            l[v["target"]]
+           
+            
+            
+        
+
+        
         
 
 
