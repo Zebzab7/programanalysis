@@ -62,12 +62,13 @@ class Interpreter:
         print("Absolute method: ", absolute_method)
         
         # λ,σ,ι
-        local_stack = ([],[],(absolute_method, pc))
+        local_stack = ([(None, None)],[],(absolute_method, pc))
         # stack_list = [([],[],(absolute_method, pc))] 
         method = self.find_method(absolute_method)
         bytecode_statements = method["code"]["bytecode"]
 
         for i, bytecode in enumerate(bytecode_statements): #(i,seq[0])
+            
             if bytecode["opr"] == "return":
                 if bytecode["type"] == None:
                     log("(return) None")
@@ -78,9 +79,32 @@ class Interpreter:
                 log("(push)")
                 local_stack[1].append(bytecode["value"])
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
-            elif bytecode["opr"] == "load":
-                local_stack[0].append((bytecode["type"], bytecode["index"], local_stack[0][2]))
-            
+            elif bytecode["opr"] == "load":    #Shreyas
+                log("(load)")
+                val = local_stack[0][bytecode["index"]][1]
+                local_stack[0].pop(bytecode["index"])
+                local_stack[0].append((bytecode["type"], val))
+            elif bytecode["opr"] == "binary":    #Shreyas
+                if bytecode["operant"] == 'add':
+                    log("(add)")
+                    local_stack.append((local_stack[-2][0], local_stack[-1])[1] + local_stack[-2][1])
+                elif bytecode["operant"] == 'mul':
+                    pass
+            elif bytecode["opr"] == "store":   # Sebastian
+                pass #TODO:
+            elif bytecode["opr"] == "incr":   #Shreyas
+                pass
+            elif bytecode["opr"] == "goto": # Sebastian
+                pass
+            elif bytecode["opr"] == "if": #Collin
+                pass
+            elif bytecode["opr"] == "get":
+                pass
+            elif bytecode["opr"] == 'ifz': #Collin
+                pass
+            elif bytecode["opr"] == "invoke":
+                pass
+
         return local_stack
 
 def traverse_files():
@@ -99,7 +123,8 @@ def main():
         methods = interpreter.get_methods(classes)
         annotations = interpreter.get_annotations(methods)
         cases = [("dtu/compute/exec/Simple", "noop"), ("dtu/compute/exec/Simple", "zero"), 
-                 ("dtu/compute/exec/Simple", "hundredAndTwo"), ("dtu/compute/exec/Simple", "identity")]
+                 ("dtu/compute/exec/Simple", "hundredAndTwo"), ("dtu/compute/exec/Simple", "identity"),
+                 ("dtu/compute/exec/Simple", "add")]
         for case in cases:
             stack = interpreter.interpret(case, 0, print)
             print(stack)
