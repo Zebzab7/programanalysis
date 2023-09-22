@@ -41,7 +41,7 @@ class Interpreter:
                 classes_methods.add((clas["name"], method["name"]))
         return classes_methods
     
-    def get_bytecode(self, methods):
+    def get_bytecodes(self, methods):
         bytecode = {}
         for method in methods.values():
             for annotation in method["annotations"]:
@@ -49,16 +49,56 @@ class Interpreter:
                         bytecode[method["name"]] = method["code"]["bytecode"]
         return bytecode
     
-    def find_method_method(self, absolute_method):
+    def get_bytecode(self, absolute_method, methods):
+        #absolute_method: (class name, method name)
+        name = absolute_method[1]
+        for method in methods:
+            if method["name"] == name:
+                return method["code"]["bytecode"]
+    
+    def find_method(self, absolute_method):
         methods = self.classes[absolute_method[0]]["methods"]
         for method in methods:
             if method["name"] == absolute_method[1]:
                 return method
-
-    def interpret(self, absoulte_method):
+    
+    # bytecode_info("offset","opr","type")
+    def interpret_bytecodes(self, methods):
+        absolute_method = self.find_method(self, ("dtu/compute/exec/Simple", "noop")))
+        
         memory = {}
         stack = [([],[],(absolute_method, 0))]
-        (lv, os, (absolute_method,pc)) = stack[0]
+
+        #{"name": bytecodes}
+        bytecodes = self.get_bytecodes(self, methods)
+        
+        for name, bytecode in bytecodes:
+            for opr in bytecodes[name]:
+                self.interpret(self, absolute_method)
+        return
+
+        
+    def interpret(self, absolute_method):
+        bytecode = self.get_bytecode(self, absolute_method)
+        return
+        # (lv, os, (absolute_method_,pc)) = stack[-1]
+        # for i, v in enumerate(bytecode):
+        #     (l, s, (am1,i)) = methods_stack[-1]
+        #     # the operation that index of i
+        #     # different operation {load,return,push,binary,if,goto,store,incr...}
+        #     # basic key in bytecode {offset,opr,type}
+        #     if v["opr"] == "return":
+        #         if v["type"] == "null":
+        #             log("return")
+        #         else:
+        #             log("return "+ v["type"])
+        #     elif v["opr"] == "push":
+        #         log("push")
+        #         methods_stack.append(l,s.append(v["value"]),(am,i+1))
+        #     elif v["opr"] == "load":
+        #         log("load parameter"+ v["type"])
+        #     elif "target" in v:
+        #         l[v["target"]]
        
 
 def traverse_files():
@@ -76,9 +116,8 @@ def main():
         classes = interpreter.get_classes(data)
         methods = interpreter.get_methods(classes)
         annotations = interpreter.get_annotations(methods)
-        print(interpreter.get_bytecode(methods))
         cases = [("dtu/compute/exec/Simple", "noop")]
-        interpreter.interpret(("dtu/compute/exec/Simple", "noop"))
+        # interpreter.interpret(("dtu/compute/exec/Simple", "noop"))
         classes_methods = interpreter.get_classes_methods(classes, methods)
 
 main()
