@@ -4,6 +4,7 @@ import json
 class Interpreter:
     def __init__(self, json_file):
         self.json_file = json_file
+        self.classes = None
 
     def get_json(self):
         with open(self.json_file) as f:
@@ -14,6 +15,7 @@ class Interpreter:
     def get_classes(self, data):
         classes = {}
         classes[data["name"]] = data
+        self.classes = classes
         return classes
     
     # Get methods in classes for a particular class
@@ -46,8 +48,14 @@ class Interpreter:
                     if annotation["type"] == "dtu/compute/exec/Case":
                         bytecode[method["name"]] = method["code"]["bytecode"]
         return bytecode
+    
+    def find_method_method(self, absolute_method):
+        methods = self.classes[absolute_method[0]]["methods"]
+        for method in methods:
+            if method["name"] == absolute_method[1]:
+                return method
 
-    def interpret(self, cases):
+    def interpret(self, absoulte_method):
         memory = {}
         stack = [([],[],(absolute_method, 0))]
         (lv, os, (absolute_method,pc)) = stack[0]
