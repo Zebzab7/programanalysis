@@ -39,6 +39,20 @@ class Interpreter:
                 classes_methods.add((clas["name"], method["name"]))
         return classes_methods
     
+    def get_bytecode(self, methods):
+        bytecode = {}
+        for method in methods.values():
+            for annotation in method["annotations"]:
+                    if annotation["type"] == "dtu/compute/exec/Case":
+                        bytecode[method["name"]] = method["code"]["bytecode"]
+        return bytecode
+
+    def interpret(self, cases):
+        memory = {}
+        stack = [([],[],(absolute_method, 0))]
+        (lv, os, (absolute_method,pc)) = stack[0]
+       
+
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
@@ -54,7 +68,9 @@ def main():
         classes = interpreter.get_classes(data)
         methods = interpreter.get_methods(classes)
         annotations = interpreter.get_annotations(methods)
-
+        print(interpreter.get_bytecode(methods))
+        cases = [("dtu/compute/exec/Simple", "noop")]
+        interpreter.interpret(("dtu/compute/exec/Simple", "noop"))
         classes_methods = interpreter.get_classes_methods(classes, methods)
 
 main()
