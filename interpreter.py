@@ -72,6 +72,8 @@ class Interpreter:
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
 
+        # TODO Read parameters of function and put them in the stack 
+
         while local_stack[2][1]<length: #(i,seq[0])
 
             bytecode = bytecode_statements[local_stack[2][1]]
@@ -98,11 +100,16 @@ class Interpreter:
                     # local_stack.append((local_stack[-2][0], local_stack[-1])[1] + local_stack[-2][1])
                 elif bytecode["operant"] == 'mul':
                     pass
-            elif bytecode["opr"] == "store":   # Sebastian
-                pass #TODO:
+            elif bytecode["opr"] == "store":
+                log("(store)")
+                var = local_stack[1].pop(-1)
+                local_stack[0][bytecode["index"]] = var
+                pass
             elif bytecode["opr"] == "incr":   #Shreyas
                 pass
-            elif bytecode["opr"] == "goto": # Sebastian
+            elif bytecode["opr"] == "goto": 
+                log("(goto)")
+                local_stack = (local_stack[0], local_stack[1], (absolute_method, bytecode["target"]))
                 pass
             elif bytecode["opr"] == "if": #Collin
                 log("(if)")
