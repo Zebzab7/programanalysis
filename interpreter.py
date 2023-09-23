@@ -87,10 +87,12 @@ class Interpreter:
                 log("(push)")
                 local_stack[1].append(bytecode["value"])
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                log(local_stack)
             elif bytecode["opr"] == "load":   #Shreyas
                 log("(load)")
                 local_stack[0][bytecode["index"]] = bytecode["type"]
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                log(local_stack)
             elif bytecode["opr"] == "binary":    #Shreyas
                 if bytecode["operant"] == 'add':
                     pass
