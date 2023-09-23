@@ -56,7 +56,8 @@ class Interpreter:
         for method in methods:
             if method["name"] == absolute_method[1]:
                 return method
-    def ifstack(self, boolean,target):
+    
+    def ifstack(self, boolean, target):
         if boolean:
             return 1
         return target
@@ -65,14 +66,14 @@ class Interpreter:
         print("Absolute method: ", absolute_method)
         
         # λ,σ,ι
-        local_stack = ([(None, None)],[],(absolute_method, pc))
+        local_stack = ([None, None],[],(absolute_method, pc))
         # stack_list = [([],[],(absolute_method, pc))] 
         method = self.find_method(absolute_method)
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
 
         while local_stack[2][1]<length: #(i,seq[0])
-            
+
             bytecode = bytecode_statements[local_stack[2][1]]
             if bytecode["opr"] == "return":
                 if bytecode["type"] == None:
@@ -86,18 +87,15 @@ class Interpreter:
                 log("(push)")
                 local_stack[1].append(bytecode["value"])
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
-            elif bytecode["opr"] == "load":    #Shreyas
+            elif bytecode["opr"] == "load":   #Shreyas
                 log("(load)")
-
-                val = local_stack[0][bytecode["index"]][1]
-                local_stack[0].pop(bytecode["index"])
-                local_stack[0].append((bytecode["type"], val))
+                local_stack[0][bytecode["index"]] = bytecode["type"]
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
             elif bytecode["opr"] == "binary":    #Shreyas
                 if bytecode["operant"] == 'add':
-                    log("(add)")
-                    local_stack.append((local_stack[-2][0], local_stack[-1])[1] + local_stack[-2][1])
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                    pass
+                    # log("(add)")
+                    # local_stack.append((local_stack[-2][0], local_stack[-1])[1] + local_stack[-2][1])
                 elif bytecode["operant"] == 'mul':
                     pass
             elif bytecode["opr"] == "store":   # Sebastian
