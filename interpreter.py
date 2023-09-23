@@ -69,11 +69,13 @@ class Interpreter:
         local_stack = ([None, None],[],(absolute_method, pc))
         # stack_list = [([],[],(absolute_method, pc))] 
         method = self.find_method(absolute_method)
+
+        params = method["params"]
+        for param in params:
+            local_stack[0].append((param["type"], None))
+
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
-
-        # TODO Read parameters of function and put them in the stack 
-
         while local_stack[2][1]<length: #(i,seq[0])
 
             bytecode = bytecode_statements[local_stack[2][1]]
