@@ -108,9 +108,11 @@ class Interpreter:
                     log("(return) None")
                     return None
                 elif bytecode["type"] == "int":
+                    log("(return) int: ", local_stack[1][-1])
                     return local_stack[1][-1] #Returns the last element in the opr. stack
                 else:
                     log("return type not implemented "+ bytecode["type"])
+                log(local_stack)
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack[1].append((bytecode["value"]["type"], bytecode["value"]["value"]))
@@ -169,6 +171,7 @@ class Interpreter:
                 log(local_stack)
             elif bytecode["opr"] == "if": #Collin
                 log("(if)")
+                log(bytecode["condition"])
                 left,left_val = local_stack[1][-2]
                 right,right_val = local_stack[1][-1]
                 if bytecode["condition"] == "gt":
