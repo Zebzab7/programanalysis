@@ -130,6 +130,13 @@ class Interpreter:
                     print("if type not implemented" + str(bytecode["condition"]))
                 pass
             elif bytecode["opr"] == "get":
+                log("(get)")
+                get_field = bytecode["field"]
+                if "type" in get_field:
+                    local_stack[1].append(get_field["type"]["name"] + get_field["name"])
+                else:
+                    local_stack[1].append(get_field["name"])
+                local_stack = (local_stack[0],local_stack[1],(absolute_method, local_stack[2][1]+1))
                 pass
             elif bytecode["opr"] == 'ifz': #if zero
                 if bytecode["condition"] == "lz":
