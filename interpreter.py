@@ -3,6 +3,8 @@ from logging import log
 import random
 import json
 import sys
+import math
+import sympy
 
 class Interpreter:
     def __init__(self, json_file):
@@ -99,8 +101,8 @@ class Interpreter:
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
         while local_stack[2][1]<length: #(i,seq[0])
-
-            bytecode = bytecode_statements[local_stack[2][1]]
+            pc = local_stack[2][1] #PC
+            bytecode = bytecode_statements[pc]
             if bytecode["opr"] == "return":
                 if bytecode["type"] == None:
                     log("(return) None")
@@ -116,23 +118,30 @@ class Interpreter:
                 log(local_stack)
             elif bytecode["opr"] == "load":  
                 log("(load)")
-                print(local_stack[0])
                 lv_type, value = local_stack[0][bytecode["index"]]
                 local_stack[1].append((lv_type, value))
                 local_stack = self.incrementPc(local_stack)
                 log(local_stack)
             elif bytecode["opr"] == "binary": 
-                log("(add)")
                 if bytecode["operant"] == 'add':
+                    log("(add)")
                     lv_type1, var1 = local_stack[1].pop()
                     lv_type2, var2 = local_stack[1].pop()
                     local_stack[1].append((lv_type1, var1 + var2))
                     local_stack = self.incrementPc(local_stack)
                     log(local_stack)
                 elif bytecode["operant"] == 'mul':
+                    log("(mul)")
                     lv_type1, var1 = local_stack[1].pop()
                     lv_type2, var2 = local_stack[1].pop()
                     local_stack[1].append((lv_type1, var1 * var2))
+                    local_stack = self.incrementPc(local_stack)
+                    log(local_stack)
+                elif bytecode["operant"] == 'sub':
+                    log("(sub)")
+                    lv_type1, var1 = local_stack[1].pop()
+                    lv_type2, var2 = local_stack[1].pop()
+                    local_stack[1].append((lv_type1, var1 - var2))
                     local_stack = self.incrementPc(local_stack)
                     log(local_stack)
                 else:
@@ -140,13 +149,14 @@ class Interpreter:
             elif bytecode["opr"] == "store":
                 log("(store)")
                 lv_type, val = local_stack[1].pop()
-                if len(local_stack[0]) < bytecode["index"]:
-                    local_stack[0][bytecode["index"]] = val
-                    local_stack = self.incrementPc(local_stack)
-                else:
+                
+                if bytecode["index"] < len(local_stack[0]):
+                    local_stack[0][bytecode["index"]] = (lv_type, val)
+                else: 
                     local_stack[0].append((lv_type, val))
-                    local_stack = self.incrementPc(local_stack)
+                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
+                
             elif bytecode["opr"] == "incr":   
                 log("(incr)")
                 lv_type, value = local_stack[0][bytecode["index"]]
@@ -173,10 +183,16 @@ class Interpreter:
                     eq = left_val == right_val
                     local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(eq, bytecode["target"],pc)))  
                     log(local_stack)
+                elif bytecode["condition"] == "ge":
+                    ge = left_val >= right_val
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(ge, bytecode["target"],pc)))  
+                    log(local_stack)
                 else:
                     print("if type not implemented" + str(bytecode["condition"]))
+                local_stack[1].pop()
+                local_stack[1].pop()
             elif bytecode["opr"] == 'ifz': #if zero
-                log("(if)")
+                log("(ifz)")
                 lv_type,val = local_stack[1][-1]
                 if bytecode["condition"] == "lz":
                     lz = (val == 0)
@@ -188,7 +204,7 @@ class Interpreter:
                     log(local_stack)
                 else:
                     print("ifz type not implemented" + str(bytecode["condition"]))
-                pass
+                local_stack[1].pop()
             elif bytecode["opr"] == "get":
                 log("(get)")
                 if 'Array' in str(bytecode["field"]["class"]):
@@ -238,7 +254,7 @@ class Interpreter:
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
-    for f in path.glob("**/Simple.json"):
+    for f in path.glob("**/Calls.json"):
         files.append(f)
     return files
 
@@ -247,9 +263,18 @@ def tests(f):
     interpreter = Interpreter(f)
     data = interpreter.get_json()
     interpreter.get_classes(data)
-    testadd(interpreter)
+    #testadd(interpreter)
+    #testfactorial(interpreter)
+    testfibonaci(interpreter)
     print("all tests fine :D")
     return
+
+def testfibonaci(interpreter):
+    case = ("dtu/compute/exec/Calls", "fib")
+    testint = random.randint(1,400)
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res=interpreter.interpret(case, 0, print, memory, [("int", testint)])
+    assert sympy.fibonacci(testint+1)==res
 
 def testadd(interpreter):
     case = ("dtu/compute/exec/Simple", "add")
@@ -258,8 +283,22 @@ def testadd(interpreter):
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
     assert testint1 +testint2 == res
-def factorial(interpreter):
-    
+
+def testfactorial(interpreter):
+    case = ("dtu/compute/exec/Simple", "factorial")
+    # testint1 = random.randint(1,5)
+    testint1 = 3
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
+    assert math.factorial(testint1) == res
+
+def Fibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1 or n == 2:
+        return 1
+    else:
+        return Fibonacci(n-1) + Fibonacci(n-2)
 
 def main():
     files = traverse_files()
@@ -276,23 +315,23 @@ def main():
         #          ("dtu/compute/exec/Simple", "add"), 
         #          ("dtu/compute/exec/Simple", "factorial"), ("dtu/compute/exec/Calls", "fib")]
 
-        cases = [("dtu/compute/exec/Simple", "factorial")]
+        # cases = [("dtu/compute/exec/Simple", "factorial")]
         tests(f)
-        for case in cases:
+        # for case in cases:
             
-            method = interpreter.find_method(case)
-            params = method["params"]
-            args = []
+        #     method = interpreter.find_method(case)
+        #     params = method["params"]
+        #     args = []
             
-            for param in params:
-                if "base" in param["type"] and param["type"]["base"] == "int":
-                    # Generate random int
-                    random_int = random.randint(0, 3)
-                    args.append(("integer", random_int))
+        #     for param in params:
+        #         if "base" in param["type"] and param["type"]["base"] == "int":
+        #             # Generate random int
+        #             random_int = random.randint(0, 3)
+        #             args.append(("integer", random_int))
                     
-            print("args: ", args)                      
-            res = interpreter.interpret(case, 0, print, memory, args)
-            print("returns: ", res)
-        classes_methods = interpreter.get_classes_methods(classes, methods)
+        #     print("args: ", args)                      
+        #     res = interpreter.interpret(case, 0, print, memory, args)
+        #     print("returns: ", res)
+        # classes_methods = interpreter.get_classes_methods(classes, methods)
 main()
 
