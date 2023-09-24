@@ -57,22 +57,22 @@ class Interpreter:
             if method["name"] == absolute_method[1]:
                 return method
     
-    def ifstack(self, boolean, target):
+    def ifstack(self, boolean, target,pc):
         if boolean:
-            return 1
-        return target
+            return target
+        return pc+1
+    
+    def incrementPc(self,local_stack):
+        absolute_method = local_stack[2][0]
+        return (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
 
-    def interpret(self, absolute_method, pc,log):
+    def interpret(self, absolute_method, pc, log):
         print("Absolute method: ", absolute_method)
         
         # λ,σ,ι
-        local_stack = ([None, None],[],(absolute_method, pc))
+        local_stack = ([],[],(absolute_method, pc))
         # stack_list = [([],[],(absolute_method, pc))] 
         method = self.find_method(absolute_method)
-
-        params = method["params"]
-        for param in params:
-            local_stack[0].append((param["type"], None))
 
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
@@ -84,50 +84,72 @@ class Interpreter:
                     log("(return) None")
                     return None
                 elif bytecode["type"] == "int":
-                    return local_stack[0][-1] #Returns the last element in the stack
+                    return local_stack[1][-1] #Returns the last element in the opr. stack
                 else:
-                    log("return "+ bytecode["type"])
+                    log("return type not implemented "+ bytecode["type"])
             elif bytecode["opr"] == "push":
                 log("(push)")
-                local_stack[1].append(bytecode["value"])
-                local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                local_stack[1].append((bytecode["value"]["type"], bytecode["value"]["value"]))
+                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
-            elif bytecode["opr"] == "load":   #Shreyas
+            elif bytecode["opr"] == "load":  
                 log("(load)")
-                local_stack[0][bytecode["index"]] = bytecode["type"]
-                local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                lv_type, value = local_stack[0][bytecode["index"]]
+                local_stack[1].append((lv_type, value))
+                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
-            elif bytecode["opr"] == "binary":    #Shreyas
+            elif bytecode["opr"] == "binary": 
+                log("(add)")
                 if bytecode["operant"] == 'add':
-                    pass
-                    # log("(add)")
-                    # local_stack.append((local_stack[-2][0], local_stack[-1])[1] + local_stack[-2][1])
+                    lv_type1, var1 = local_stack[1].pop()
+                    lv_type2, var2 = local_stack[1].pop()
+                    local_stack[1].append((lv_type1, var1 + var2))
+                    local_stack = self.incrementPc(local_stack)
                 elif bytecode["operant"] == 'mul':
-                    pass
+                    lv_type1, var1 = local_stack[1].pop()
+                    lv_type2, var2 = local_stack[1].pop()
+                    local_stack[1].append((lv_type1, var1 * var2))
+                    local_stack = self.incrementPc(local_stack)
+                else:
+                    print("operant not supported " + bytecode["operant"])
             elif bytecode["opr"] == "store":
                 log("(store)")
-                var = local_stack[1].pop(-1)
+                lv_type, var = local_stack[1].pop()
                 local_stack[0][bytecode["index"]] = var
-                pass
-            elif bytecode["opr"] == "incr":   #Shreyas
-                pass
+            elif bytecode["opr"] == "incr":   
+                log("(incr)")
+                lv_type, value = local_stack[0][bytecode["index"]]
+                local_stack[0][bytecode["index"]] = (lv_type, value + bytecode["amount"])
+                local_stack = self.incrementPc(local_stack)
             elif bytecode["opr"] == "goto": 
                 log("(goto)")
                 local_stack = (local_stack[0], local_stack[1], (absolute_method, bytecode["target"]))
-                pass
             elif bytecode["opr"] == "if": #Collin
                 log("(if)")
+                left,left_val = local_stack[1][-2]
+                right,right_val = local_stack[1][-1]
                 if bytecode["condition"] == "gt":
-                    gt = local_stack[-2][1] > local_stack[-1][1]
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(gt, bytecode["target"])))
-                if bytecode["condition"] == "lt":
-                    lt = local_stack[-2][1] < local_stack[-1][1]
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lt, bytecode["target"])))
-                if bytecode["condition"] == "eq":
-                    eq = local_stack[-2][1] == local_stack[-1][1]
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(eq, bytecode["target"])))  
+                    gt = left_val > right_val
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(gt, bytecode["target"],pc)))
+                elif bytecode["condition"] == "lt":
+                    lt = left_val < right_val
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lt, bytecode["target"],pc)))
+                elif bytecode["condition"] == "eq":
+                    eq = left_val == right_val
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(eq, bytecode["target"],pc)))  
                 else:
                     print("if type not implemented" + str(bytecode["condition"]))
+            elif bytecode["opr"] == 'ifz': #if zero
+                log("(if)")
+                lv_type,val = local_stack[1][-1]
+                if bytecode["condition"] == "lz":
+                    lz = (val == 0)
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lz, bytecode["target"],pc)))
+                elif bytecode["condition"] == "le":
+                    le = (val <= 0)
+                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(le, bytecode["target"],pc)))
+                else:
+                    print("ifz type not implemented" + str(bytecode["condition"]))
                 pass
             elif bytecode["opr"] == "get":
                 log("(get)")
@@ -136,18 +158,9 @@ class Interpreter:
                     local_stack[1].append(get_field["type"]["name"] + get_field["name"])
                 else:
                     local_stack[1].append(get_field["name"])
-                local_stack = (local_stack[0],local_stack[1],(absolute_method, local_stack[2][1]+1))
-                pass
-            elif bytecode["opr"] == 'ifz': #if zero
-                if bytecode["condition"] == "lz":
-                    lz = local_stack[-1][1] == 0
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lz, bytecode["target"])))
-                else:
-                    print("ifz type not implemented" + str(bytecode["condition"]))
+                local_stack = self.incrementPc(local_stack)
                 pass
             elif bytecode["opr"] == "invoke":
-                pass
-            elif bytecode["opr"] == "binary":
                 pass
             else:
                 print("bytecode opr not implemented" + str(bytecode["opr"]))
