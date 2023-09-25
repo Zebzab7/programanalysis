@@ -257,7 +257,7 @@ class Interpreter:
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
-    for f in path.glob("**/Simple.json"):
+    for f in path.glob("**/Calls.json"):
         files.append(f)
     return files
 
@@ -268,23 +268,30 @@ def tests(f):
     classes = interpreter.get_classes(data)
     methods = interpreter.get_methods(classes)
     annotations = interpreter.get_annotations(methods)
+    testfibonaci(interpreter)
     testadd(interpreter)
     testfactorial(interpreter)
-    #testfibonaci(interpreter)
     testNoop(interpreter)
     testZero(interpreter)
     testHundredAndTwo(interpreter)
     testIdentity(interpreter)
-    
+    testmin(interpreter)
     print("all tests fine :D")
     return
+def testmin(interpreter):
+    case = ("dtu/compute/exec/Calls", "min")
+    testint1 = random.randint(-sys.maxsize,sys.maxsize)
+    testint2 = random.randint(-sys.maxsize,sys.maxsize)
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])    
+    assert min(testint1,testint2) == res
 
 def testfibonaci(interpreter):
     case = ("dtu/compute/exec/Calls", "fib")
     testint = 4
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res=interpreter.interpret(case, 0, print, memory, [("int", testint)])
-    assert sympy.fibonacci(testint+1)==res, print(str(testint+1) + " " + str(res))
+    assert sympy.fibonacci(testint+1)==res , str(testint+1) + " " + str(res)
 
 def testadd(interpreter):
     case = ("dtu/compute/exec/Simple", "add")
@@ -323,14 +330,6 @@ def testIdentity(interpreter):
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
     assert res == testint1
 
-def Fibonacci(n):
-    if n == 0:
-        return 0
-    elif n == 1 or n == 2:
-        return 1
-    else:
-        return Fibonacci(n-1) + Fibonacci(n-2)
-
 def main():
     files = traverse_files()
    
@@ -346,23 +345,23 @@ def main():
         #          ("dtu/compute/exec/Simple", "add"), 
         #          ("dtu/compute/exec/Simple", "factorial"), ("dtu/compute/exec/Calls", "fib")]
 
-        # cases = [("dtu/compute/exec/Simple", "factorial")]
+        #cases = [("dtu/compute/exec/Simple", "min")]
         tests(f)
-        # for case in cases:
-            
-        #     method = interpreter.find_method(case)
-        #     params = method["params"]
-        #     args = []
-            
-        #     for param in params:
-        #         if "base" in param["type"] and param["type"]["base"] == "int":
-        #             # Generate random int
-        #             random_int = random.randint(0, 3)
-        #             args.append(("integer", random_int))
-                    
-        #     print("args: ", args)                      
-        #     res = interpreter.interpret(case, 0, print, memory, args)
-        #     print("returns: ", res)
-        # classes_methods = interpreter.get_classes_methods(classes, methods)
+        #for case in cases:
+        #    
+        #    method = interpreter.find_method(case)
+        #    params = method["params"]
+        #    args = []
+        #    
+        #    for param in params:
+        #        if "base" in param["type"] and param["type"]["base"] == "int":
+        #            # Generate random int
+        #            random_int = random.randint(0, 3)
+        #            args.append(("integer", random_int))
+        #            
+        #    print("args: ", args)                      
+        #    res = interpreter.interpret(case, 0, print, memory, args)
+        #    print("returns: ", res)
+        #classes_methods = interpreter.get_classes_methods(classes, methods)
 main()
 
