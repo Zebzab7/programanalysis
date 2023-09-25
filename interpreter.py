@@ -92,12 +92,12 @@ class Interpreter:
         method = self.find_method(absolute_method)
         if method == absolute_method[1]:
             log("executing method: ", absolute_method[1], " with arguments: ", args)
-            return None
-
+        else:
+            raise Exception("no method found")
         # Load in arguments
         for arg in args:
             local_stack[0].append(arg)
-
+        
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
         while local_stack[2][1]<length: #(i,seq[0])
@@ -262,13 +262,20 @@ def traverse_files():
     return files
 
 def tests(f):
-    #("dtu/compute/exec/Simple", "add")
+    
     interpreter = Interpreter(f)
     data = interpreter.get_json()
-    interpreter.get_classes(data)
-    #testadd(interpreter)
-    #testfactorial(interpreter)
+    classes = interpreter.get_classes(data)
+    methods = interpreter.get_methods(classes)
+    annotations = interpreter.get_annotations(methods)
+    testadd(interpreter)
+    testfactorial(interpreter)
     testfibonaci(interpreter)
+    testNoop(interpreter)
+    testZero(interpreter)
+    testHundredAndTwo(interpreter)
+    testIdentity(interpreter)
+    
     print("all tests fine :D")
     return
 
@@ -294,6 +301,27 @@ def testfactorial(interpreter):
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
     assert math.factorial(testint1) == res
+def testNoop(interpreter):
+    case = ("dtu/compute/exec/Simple", "noop")
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [])
+    assert res == None
+def testZero(interpreter):
+    case = ("dtu/compute/exec/Simple", "zero")
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [])
+    assert res == 0
+def testHundredAndTwo(interpreter):
+    case = ("dtu/compute/exec/Simple", "hundredAndTwo")
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [])
+    assert res == 102
+def testIdentity(interpreter):
+    case = ("dtu/compute/exec/Simple", "identity")
+    testint1 = random.randint(-sys.maxsize,sys.maxsize)
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
+    assert res == testint1
 
 def Fibonacci(n):
     if n == 0:
