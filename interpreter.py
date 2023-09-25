@@ -65,8 +65,8 @@ class Interpreter:
     
     def ifstack(self, boolean, target,pc):
         if boolean:
-            return target
-        return pc+1
+            return target-1 #Get's the one before and then incremented
+        return pc
     
     def incrementPc(self,local_stack):
         absolute_method = local_stack[2][0]
@@ -80,8 +80,6 @@ class Interpreter:
             local_stack[1].append(get_field["type"]["name"] + get_field["name"])
         else:
             local_stack[1].append(get_field["name"])
-        local_stack = self.incrementPc(local_stack)
-
         return result
 
     def interpret(self, absolute_method, pc, log, memory, args):
@@ -116,13 +114,11 @@ class Interpreter:
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack[1].append((bytecode["value"]["type"], bytecode["value"]["value"]))
-                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
             elif bytecode["opr"] == "load":  
                 log("(load)")
                 lv_type, value = local_stack[0][bytecode["index"]]
                 local_stack[1].append((lv_type, value))
-                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
             elif bytecode["opr"] == "binary": 
                 if bytecode["operant"] == 'add':
@@ -130,21 +126,18 @@ class Interpreter:
                     lv_type1, var1 = local_stack[1].pop()
                     lv_type2, var2 = local_stack[1].pop()
                     local_stack[1].append((lv_type1, var1 + var2))
-                    local_stack = self.incrementPc(local_stack)
                     log(local_stack)
                 elif bytecode["operant"] == 'mul':
                     log("(mul)")
                     lv_type1, var1 = local_stack[1].pop()
                     lv_type2, var2 = local_stack[1].pop()
                     local_stack[1].append((lv_type1, var1 * var2))
-                    local_stack = self.incrementPc(local_stack)
                     log(local_stack)
                 elif bytecode["operant"] == 'sub':
                     log("(sub)")
                     lv_type1, var1 = local_stack[1].pop()
                     lv_type2, var2 = local_stack[1].pop()
                     local_stack[1].append((lv_type1, var2 - var1))
-                    local_stack = self.incrementPc(local_stack)
                     log(local_stack)
                 else:
                     print("operant not supported " + bytecode["operant"])
@@ -156,14 +149,12 @@ class Interpreter:
                     local_stack[0][bytecode["index"]] = (lv_type, val)
                 else: 
                     local_stack[0].append((lv_type, val))
-                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
                 
             elif bytecode["opr"] == "incr":   
                 log("(incr)")
                 lv_type, value = local_stack[0][bytecode["index"]]
                 local_stack[0][bytecode["index"]] = (lv_type, value + bytecode["amount"])
-                local_stack = self.incrementPc(local_stack)
                 log(local_stack)
             elif bytecode["opr"] == "goto": 
                 log("(goto)")
@@ -236,22 +227,18 @@ class Interpreter:
                         local_stack[1].append(returned_element)
                         log(local_stack)
                 # elif bytecode["access"]=="dynamic":
-                #     if bytecode["method"]["args"] is not None:
-                        
+                #     if bytecode["method"]["args"] is not None:  
                 elif bytecode["access"] == "special":
-                    # init method
-                    # stored in stack
-                    # when all functions have been execuated, it also need to be released
                     if bytecode["method"]["name"] == "<init>":
                         local_stack[1].append(bytecode["method"]["name"])
                         log(local_stack)
-                    pass
                 else:
                     print("Invoke type not supported" + bytecode["access"])
             else:
                 print("bytecode opr not implemented" + str(bytecode["opr"]))
-                local_stack = (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+                
                 log(local_stack)
+            local_stack=self.incrementPc(local_stack)
         return None
 
 def traverse_files():
@@ -262,7 +249,6 @@ def traverse_files():
     return files
 
 def tests(f):
-    
     interpreter = Interpreter(f)
     data = interpreter.get_json()
     classes = interpreter.get_classes(data)
@@ -278,6 +264,7 @@ def tests(f):
     testmin(interpreter)
     print("all tests fine :D")
     return
+
 def testmin(interpreter):
     case = ("dtu/compute/exec/Calls", "min")
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
