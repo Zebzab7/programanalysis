@@ -106,7 +106,7 @@ class Interpreter:
             if bytecode["opr"] == "return":
                 if bytecode["type"] == None:
                     log("(return) None")
-                    return None
+                    return None,None
                 elif bytecode["type"] == "int":
                     log("(return) int: ", local_stack[1][-1])
                     return local_stack[1][-1] #Returns the last element in the opr. stack
@@ -257,7 +257,7 @@ class Interpreter:
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
-    for f in path.glob("**/Calls.json"):
+    for f in path.glob("**/Simple.json"):
         files.append(f)
     return files
 
@@ -268,13 +268,13 @@ def tests(f):
     classes = interpreter.get_classes(data)
     methods = interpreter.get_methods(classes)
     annotations = interpreter.get_annotations(methods)
-    #testadd(interpreter)
-    #testfactorial(interpreter)
-    testfibonaci(interpreter)
-    #testNoop(interpreter)
-    #testZero(interpreter)
-    #testHundredAndTwo(interpreter)
-    #testIdentity(interpreter)
+    testadd(interpreter)
+    testfactorial(interpreter)
+    #testfibonaci(interpreter)
+    testNoop(interpreter)
+    testZero(interpreter)
+    testHundredAndTwo(interpreter)
+    testIdentity(interpreter)
     
     print("all tests fine :D")
     return
