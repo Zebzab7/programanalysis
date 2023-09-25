@@ -1,0 +1,5 @@
+\frac{\begin{gather}b =bc[\iota] \quad b.opr=\texttt{"if"} \quad b.target = target \\ 
+    \quad b.condition = condition  \\
+    \end{gather}}{\begin{gather} if \quad \sigma s_2 \quad condition \quad \sigma s_1 \quad do \\
+    bc \vdash (\lambda,\sigma,\iota) \rightarrow (\lambda,\sigma,target)\quad else\\ 
+    bc \vdash (\lambda,\sigma,\iota)\rightarrow (\lambda,\sigma,\iota+1) \end{gather}} (if)
