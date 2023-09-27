@@ -1,10 +1,9 @@
 from pathlib import Path
 from logging import log
-import random
+
 import json
-import sys
-import math
-import sympy
+from interpretertest import *
+
 
 class Interpreter:
     def __init__(self, json_file):
@@ -254,68 +253,10 @@ def tests(f):
     classes = interpreter.get_classes(data)
     methods = interpreter.get_methods(classes)
     annotations = interpreter.get_annotations(methods)
-    testfibonaci(interpreter)
-    testadd(interpreter)
-    testfactorial(interpreter)
-    testNoop(interpreter)
-    testZero(interpreter)
-    testHundredAndTwo(interpreter)
-    testIdentity(interpreter)
-    testmin(interpreter)
+    runConcrete(interpreter)
     print("all tests fine :D")
     return
 
-def testmin(interpreter):
-    case = ("dtu/compute/exec/Calls", "min")
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    testint2 = random.randint(-sys.maxsize,sys.maxsize)
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])    
-    assert min(testint1,testint2) == res
-
-def testfibonaci(interpreter):
-    case = ("dtu/compute/exec/Calls", "fib")
-    testint = 4
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res=interpreter.interpret(case, 0, print, memory, [("int", testint)])
-    assert sympy.fibonacci(testint+1)==res , str(testint+1) + " " + str(res)
-
-def testadd(interpreter):
-    case = ("dtu/compute/exec/Simple", "add")
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    testint2 = random.randint(-sys.maxsize,sys.maxsize)
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert testint1 +testint2 == res
-
-def testfactorial(interpreter):
-    case = ("dtu/compute/exec/Simple", "factorial")
-    # testint1 = random.randint(1,5)
-    testint1 = 3
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert math.factorial(testint1) == res
-def testNoop(interpreter):
-    case = ("dtu/compute/exec/Simple", "noop")
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == None
-def testZero(interpreter):
-    case = ("dtu/compute/exec/Simple", "zero")
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == 0
-def testHundredAndTwo(interpreter):
-    case = ("dtu/compute/exec/Simple", "hundredAndTwo")
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == 102
-def testIdentity(interpreter):
-    case = ("dtu/compute/exec/Simple", "identity")
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert res == testint1
 
 def main():
     files = traverse_files()
