@@ -6,27 +6,24 @@ from interpretertest import *
 
 
 class Interpreter:
-    def __init__(self, json_file):
-        self.json_file = json_file
-        self.classes = None
+    def __init__(self):
+        self.classes = {}
         self.memory = {}
 
-    def get_json(self):
-        with open(self.json_file) as f:
+    def get_json(self, json_file):
+        with open(json_file) as f:
             data = json.load(f)
         return data
     
     #Get all class names 
-    def get_classes(self, data):
-        classes = {}
-        classes[data["name"]] = data
-        self.classes = classes
-        return classes
+    def get_class(self, data):
+        self.classes[data["name"]] = data
+        self.classes = self.classes
     
     # Get methods in classes for a particular class
-    def get_methods(self, classes):
+    def get_methods(self):
         methods = {}
-        for clas in classes.values():
+        for clas in self.classes.values():
             for method in clas["methods"]:
                 methods[method["name"]] = method
         return methods
@@ -59,6 +56,7 @@ class Interpreter:
             return absolute_method[1]
         methods = self.classes[absolute_method[0]]["methods"]
         for method in methods:
+            print("method name: ", method["name"])
             if method["name"] == absolute_method[1]:
                 return method
     
@@ -83,17 +81,17 @@ class Interpreter:
 
     def interpret(self, absolute_method, pc, log, memory, args):
         print("Absolute method: ", absolute_method)
-        
         # λ,σ,ι
         local_stack = ([],[],(absolute_method, pc))
         method = self.find_method(absolute_method)
         if method == absolute_method[1]:
             log("executing method: ", absolute_method[1], " with arguments: ", args)
-            return None,None
+            # return None,None
+
         # Load in arguments
         for arg in args:
             local_stack[0].append(arg)
-        
+
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
         while local_stack[2][1]<length: #(i,seq[0])
@@ -157,7 +155,7 @@ class Interpreter:
                 log(local_stack)
             elif bytecode["opr"] == "goto": 
                 log("(goto)")
-                local_stack = (local_stack[0], local_stack[1], (absolute_method, bytecode["target"]))
+                local_stack = (local_stack[0], local_stack[1], (absolute_method, bytecode["target"]-1))
                 log(local_stack)
             elif bytecode["opr"] == "if": #Collin
                 log("(if)")
@@ -243,53 +241,23 @@ class Interpreter:
 def traverse_files():
     path = Path("bin/course-examples/json")
     files = []
-    for f in path.glob("**/Calls.json"):
+    for f in path.glob("**/*.json"):
         files.append(f)
     return files
 
-def tests(f):
-    interpreter = Interpreter(f)
-    data = interpreter.get_json()
-    classes = interpreter.get_classes(data)
-    methods = interpreter.get_methods(classes)
-    annotations = interpreter.get_annotations(methods)
+def tests(interpreter):
     runConcrete(interpreter)
     print("all tests fine :D")
     return
 
-
 def main():
     files = traverse_files()
-   
+    interpreter = Interpreter()
     for f in files:
+        data = interpreter.get_json(f)
+        interpreter.get_class(data)
         memory = {'class': [], 'array': [], 'int': [], 'float': []}
-        interpreter = Interpreter(f)
-        data = interpreter.get_json()
-        classes = interpreter.get_classes(data)
-        methods = interpreter.get_methods(classes)
-        annotations = interpreter.get_annotations(methods)
-        # cases = [("dtu/compute/exec/Simple", "noop"), ("dtu/compute/exec/Simple", "zero"), 
-        #          ("dtu/compute/exec/Simple", "hundredAndTwo"), ("dtu/compute/exec/Simple", "identity"),
-        #          ("dtu/compute/exec/Simple", "add"), 
-        #          ("dtu/compute/exec/Simple", "factorial"), ("dtu/compute/exec/Calls", "fib")]
+    tests(interpreter)
 
-        #cases = [("dtu/compute/exec/Simple", "min")]
-        tests(f)
-        #for case in cases:
-        #    
-        #    method = interpreter.find_method(case)
-        #    params = method["params"]
-        #    args = []
-        #    
-        #    for param in params:
-        #        if "base" in param["type"] and param["type"]["base"] == "int":
-        #            # Generate random int
-        #            random_int = random.randint(0, 3)
-        #            args.append(("integer", random_int))
-        #            
-        #    print("args: ", args)                      
-        #    res = interpreter.interpret(case, 0, print, memory, args)
-        #    print("returns: ", res)
-        #classes_methods = interpreter.get_classes_methods(classes, methods)
 main()
 

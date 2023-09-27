@@ -3,7 +3,7 @@ import math
 import sympy
 import random
 def testmin(interpreter):
-    case = ("dtu/compute/exec/Calls", "min")
+    case = ("dtu/compute/exec/Simple", "min")
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
