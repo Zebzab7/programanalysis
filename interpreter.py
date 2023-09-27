@@ -251,12 +251,12 @@ def tests(interpreter):
     return
 
 def main():
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
     files = traverse_files()
     interpreter = Interpreter()
     for f in files:
         data = interpreter.get_json(f)
         interpreter.get_class(data)
-        memory = {'class': [], 'array': [], 'int': [], 'float': []}
     tests(interpreter)
 
 main()
