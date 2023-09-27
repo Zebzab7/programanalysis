@@ -8,7 +8,7 @@ def testmin(interpreter):
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])    
-    assert min(testint1,testint2) == res
+    assert min(testint1,testint2) == res, str(testint1) + " " + str(testint2) + " " + str(res)
 
 def testfibonaci(interpreter):
     case = ("dtu/compute/exec/Calls", "fib")
@@ -23,7 +23,7 @@ def testadd(interpreter):
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert testint1 +testint2 == res
+    assert testint1 +testint2 == res, str(testint1) + " " + str(testint2) + " " + str(res)
 
 def testfactorial(interpreter):
     case = ("dtu/compute/exec/Simple", "factorial")
@@ -31,28 +31,28 @@ def testfactorial(interpreter):
     testint1 = 3
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert math.factorial(testint1) == res
+    assert math.factorial(testint1) == res, str(testint1) + " " + str(res)
 def testNoop(interpreter):
     case = ("dtu/compute/exec/Simple", "noop")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == None
+    assert res == None, str(res) + " " + str(None)
 def testZero(interpreter):
     case = ("dtu/compute/exec/Simple", "zero")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == 0
+    assert res == 0, str(res) + " " + str(0)
 def testHundredAndTwo(interpreter):
     case = ("dtu/compute/exec/Simple", "hundredAndTwo")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert res == 102
+    assert res == 102, str(res) + " " + str(102)
 def testIdentity(interpreter):
     case = ("dtu/compute/exec/Simple", "identity")
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert res == testint1
+    assert res == testint1, str(res) + " " + str(testint1)
 
 def alwaysThrows1(interpreter,exceptiontype):
     
@@ -163,4 +163,3 @@ def runConcrete(interpreter):
     testZero(interpreter)
     testHundredAndTwo(interpreter)
     testIdentity(interpreter)
-    
