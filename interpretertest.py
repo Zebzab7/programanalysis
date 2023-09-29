@@ -55,21 +55,20 @@ def testIdentity(interpreter):
     assert res == testint1, str(res) + " " + str(testint1)
 
 def alwaysThrows1(interpreter,exceptiontype):
-    
-    case = ("eu/bogoe/dtu/Arithmetic", "alwaysThrows1")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory,[("int", testint)])
+    type_,res = interpreter.interpret(case, 0, print, memory,[])
     assert "Yes" == res, "Yes " + res
 
 def alwaysThrows2(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "alwaysThrows2")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint = random.randint(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert "Yes" == res, "Yes " + res
 
 def alwaysThrows3(interpreter,exceptiontype): ##Why does this always throw
-    case = ("eu/bogoe/dtu/Arithmetic", "alwaysThrows3")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testfloat1 = float(random.randint(-sys.maxsize,sys.maxsize))
     testfloat2 = float(random.randint(-sys.maxsize,sys.maxsize))
@@ -77,7 +76,7 @@ def alwaysThrows3(interpreter,exceptiontype): ##Why does this always throw
     assert "Yes" == res, "Yes " + res
 
 def alwaysThrows4(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "alwaysThrows4")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = 0
@@ -85,7 +84,7 @@ def alwaysThrows4(interpreter,exceptiontype):
     assert "Yes" == res, "Yes " + res
 
 def alwaysThrows5(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "alwaysThrows5")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
@@ -93,19 +92,19 @@ def alwaysThrows5(interpreter,exceptiontype):
     assert "Yes" == res, res
 
 def itDependsOnLattice1(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "itDependsOnLattice1")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert "Yes" == res | "No" == res, "Both " + res
 
 def itDependsOnlattice2(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "itDependsOnLattice2")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert "Yes" == res | "No" == res, "Both " + res
 
 def itDependsOnlattice3(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "itDependsOnLattice3")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(1001,sys.maxsize)
     testint2 = random.randint(11,sys.maxsize)
@@ -113,20 +112,20 @@ def itDependsOnlattice3(interpreter,exceptiontype):
     assert "Yes" == res | "No" == res, "Both " + res
 
 def neverThrows1(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "neverThrows1")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert "No" == res, "No " + res
 
 def neverThrows2(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "neverThrows2")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
     assert "No" == res, "No " + res
 
 def neverThrows3(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "neverThrows3")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(1,sys.maxsize)
     testint2 = 0
@@ -134,14 +133,14 @@ def neverThrows3(interpreter,exceptiontype):
     assert "No" == res, "No " + res
 
 def neverThrows4(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "neverThrows4")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
     assert "No" == res, "No " + res
 
 def neverThrows5(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "neverThrows5")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
@@ -149,7 +148,7 @@ def neverThrows5(interpreter,exceptiontype):
     assert "No" == res, "No " + res
 
 def speedVsPrecision(interpreter,exceptiontype):
-    case = ("eu/bogoe/dtu/Arithmetic", "speedVsPrecision")
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "speedVsPrecision")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert "Yes" == res | "No" == res, "Both " + res
@@ -163,3 +162,6 @@ def runConcrete(interpreter):
     testZero(interpreter)
     testHundredAndTwo(interpreter)
     testIdentity(interpreter)
+
+def runAbstract(interpreter):
+    alwaysThrows1(interpreter,Exception)

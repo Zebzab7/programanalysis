@@ -4,7 +4,7 @@ from logging import log
 import json
 from interpretertest import *
 
-class Interpreter:
+class AbstractInterpreter:
     def __init__(self):
         self.classes = {}
         self.memory = {}
@@ -77,6 +77,15 @@ class Interpreter:
         else:
             local_stack[1].append(get_field["name"])
         return result
+    
+    # Translate concrete representation to abstract representation
+    # def alpha(self, state):
+    #     (local_variables, operational_stack, (absolute_method, pc)) = state
+    #     pass
+
+    def abstract_step(self, bc, state):
+        (local_variables, operational_stack, (absolute_method, pc)) = state
+        pass
 
     def interpret(self, absolute_method, pc, log, memory, args):
         print("Absolute method: ", absolute_method)
@@ -238,24 +247,24 @@ class Interpreter:
         return None
 
 def traverse_files():
-    path = Path("bin/course-examples/json")
+    path = Path("bin/course-examples/json/")
     files = []
-    for f in path.glob("**/*.json"):
+    for f in path.glob("**/Arithmetics.json"):
         files.append(f)
     return files
 
 def tests(interpreter):
-    runConcrete(interpreter)
+    runAbstract(interpreter)
     print("all tests fine :D")
     return
 
 def main():
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     files = traverse_files()
-    interpreter = Interpreter()
+    abstract_interpreter = AbstractInterpreter()
     for f in files:
-        data = interpreter.get_json(f)
-        interpreter.get_class(data)
-    # tests(interpreter)
+        data = abstract_interpreter.get_json(f)
+        abstract_interpreter.get_class(data)
+    tests(abstract_interpreter)
 
 main()
