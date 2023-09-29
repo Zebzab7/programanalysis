@@ -260,4 +260,3 @@ def main():
     tests(interpreter)
 
 main()
-
