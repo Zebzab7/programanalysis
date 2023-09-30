@@ -1,251 +1,154 @@
 from pathlib import Path
 from logging import log
 
+from AbstractInterpreter import AbstractInterpreter
+
 import json
 from interpretertest import *
 
-class AbstractInterpreter:
-    def __init__(self):
-        self.classes = {}
-        self.memory = {}
+class Ranges():
+    def __init__(self,start,end):
+        self.start = start
+        self.end = end
+    def toString(self):
+        return "start:" + str(self.start) + " end:" + str(self.end)
+    
+class Comparison():
+    def _eq(a,b):
+        return a==b
+    def _ne(a,b):
+        return a!=b
+    def _ge(a,b):
+        return a>=b
+    def _gt(a,b):
+        return a>b
+    def _lt(a,b):
+        return a<b
+    #THESE two are not supported in java
+    def _is(a,b):
+        return a is b
+    def _isnot(a,b):
+        return a is not b
+    
+#if a,b
+#ifz a,0
+class AbstractComparison():
+    def _eq(a,b):
+        return (a.start == b.start and a.end == b.end)
+    def _ne(a,b):
+        return (a.start != b.start and a.end != b.end)
+    def _ge(a,b):
+        return (a.start >= b.start and a.end >= b.end)
+    def _gt(a,b):
+        return (a.start > b.start and a.end > b.end)
+    def _lt(a,b):
+        return (a.start < b.start and a.end < b.end)    
+    #These are not supported in java, also what would they do in a abstract sense?
+    def _is(a,b):
+        print("Not supported, IS")
+    def _isnot(a,b):
+        print("Not supported, Is Not")
 
-    def get_json(self, json_file):
-        with open(json_file) as f:
-            data = json.load(f)
-        return data
+class ArithmeticOperations():
+    def _add(a,b):
+        return a+b
+    def _sub(a,b):
+        return a-b
+    def _mul(a,b):
+        return a*b
+    def _div(a,b):
+        return a//b
+    def _mod(a,b):
+        return a%b
+    #Not supported in java
+    def _expo(a,b):
+        return a**b
     
-    #Get all class names 
-    def get_class(self, data):
-        self.classes[data["name"]] = data
-        self.classes = self.classes
-    
-    # Get methods in classes for a particular class
-    def get_methods(self):
-        methods = {}
-        for clas in self.classes.values():
-            for method in clas["methods"]:
-                methods[method["name"]] = method
-        return methods
-    
-    #Get all annotations in methods for a particular method
-    def get_annotations(self, methods):
-        annotations = {}
-        for method in methods.values():
-            for annotation in method["annotations"]:
-                annotations[annotation["type"]] = annotation
-        return annotations
-    
-    def get_classes_methods(self, classes, methods):
-        classes_methods = set()
-        for clas in classes.values():
-            for method in clas["methods"]:
-                classes_methods.add((clas["name"], method["name"]))
-        return classes_methods
-    
-    def get_bytecodes(self, methods):
-        bytecode = {}
-        for method in methods.values():
-            for annotation in method["annotations"]:
-                    if annotation["type"] == "dtu/compute/exec/Case":
-                        bytecode[method["name"]] = method["code"]["bytecode"]
-        return bytecode
-    
-    def find_method(self, absolute_method):
-        if absolute_method[0] not in self.classes:
-            return absolute_method[1]
-        methods = self.classes[absolute_method[0]]["methods"]
-        for method in methods:
-            print("method name: ", method["name"])
-            if method["name"] == absolute_method[1]:
-                return method
-    
-    def ifstack(self, boolean, target,pc):
-        if boolean:
-            return target-1 #Get's the one before and then incremented
-        return pc
-    
-    def incrementPc(self,local_stack):
-        absolute_method = local_stack[2][0]
-        return (local_stack[0], local_stack[1], (absolute_method, local_stack[2][1] + 1))
+class AbstractArithmeticOperations():
+    def _add(a,b):
+        return Ranges(a.start+b.start,a.end+b.end)
+    def _sub(a,b):
+        return Ranges(a.start-b.end,a.end-b.start)
+    def _mul(a,b):
+        products =[a.start*b.start,a.start*b.end,a.end*b.start,a.end*b.end]
+        return Ranges(min(products),max(products))
+    def _div(a,b):
+        if b.start <=0 and b.end >=0:
+            raise Exception("Arithmetic Exception")
+        quotients =[a.start/b.start,a.start/b.end,a.end/b.start,a.end/b.end]
+        return Ranges(min(quotients),max(quotients))
+    def _mod(a,b): 
+        if b.start > 0:  # entirely positive
+            return Ranges(0, b.end - 1)
+        elif b.end < 0:  # entirely negative
+            return Ranges(b.end + 1, 0)
+        else:  # spans zero
+            return Ranges(b.start + 1, b.end - 1)
 
-    def get_from_bytecode(self, bytecode, local_stack):
-        result = None
+class AbstractOperations():
 
-        get_field = bytecode["field"]
-        if "type" in get_field:
-            local_stack[1].append(get_field["type"]["name"] + get_field["name"])
-        else:
-            local_stack[1].append(get_field["name"])
-        return result
-    
-    # Translate concrete representation to abstract representation
-    # def alpha(self, state):
-    #     (local_variables, operational_stack, (absolute_method, pc)) = state
-    #     pass
-
-    def abstract_step(self, bc, state):
-        (local_variables, operational_stack, (absolute_method, pc)) = state
+    def _return(self,byte,local_stack):
+        
         pass
-
-    def interpret(self, absolute_method, pc, log, memory, args):
-        print("Absolute method: ", absolute_method)
-        # λ,σ,ι
-        local_stack = ([],[],(absolute_method, pc))
-        method = self.find_method(absolute_method)
-        if method == absolute_method[1]:
-            log("executing method: ", absolute_method[1], " with arguments: ", args)
-            # return None,None
-
-        # Load in arguments
-        for arg in args:
-            local_stack[0].append(arg)
-
-        bytecode_statements = method["code"]["bytecode"]
-        length = len(bytecode_statements)
-        while local_stack[2][1]<length: #(i,seq[0])
-            pc = local_stack[2][1] #PC
-            bytecode = bytecode_statements[pc]
-            print(bytecode)
-            if bytecode["opr"] == "return":
-                if bytecode["type"] == None:
-                    log("(return) None")
-                    return None,None
-                elif bytecode["type"] == "int":
-                    log("(return) int: ", local_stack[1][-1])
-                    return local_stack[1][-1] #Returns the last element in the opr. stack
-                else:
-                    log("return type not implemented "+ bytecode["type"])
-                log(local_stack)
-            elif bytecode["opr"] == "push":
-                log("(push)")
-                local_stack[1].append((bytecode["value"]["type"], bytecode["value"]["value"]))
-                log(local_stack)
-            elif bytecode["opr"] == "load":  
-                log("(load)")
-                lv_type, value = local_stack[0][bytecode["index"]]
-                local_stack[1].append((lv_type, value))
-                log(local_stack)
-            elif bytecode["opr"] == "binary": 
-                if bytecode["operant"] == 'add':
-                    log("(add)")
-                    lv_type1, var1 = local_stack[1].pop()
-                    lv_type2, var2 = local_stack[1].pop()
-                    local_stack[1].append((lv_type1, var1 + var2))
-                    log(local_stack)
-                elif bytecode["operant"] == 'mul':
-                    log("(mul)")
-                    lv_type1, var1 = local_stack[1].pop()
-                    lv_type2, var2 = local_stack[1].pop()
-                    local_stack[1].append((lv_type1, var1 * var2))
-                    log(local_stack)
-                elif bytecode["operant"] == 'sub':
-                    log("(sub)")
-                    lv_type1, var1 = local_stack[1].pop()
-                    lv_type2, var2 = local_stack[1].pop()
-                    local_stack[1].append((lv_type1, var2 - var1))
-                    log(local_stack)
-                else:
-                    print("operant not supported " + bytecode["operant"])
-            elif bytecode["opr"] == "store":
-                log("(store)")
-                lv_type, val = local_stack[1].pop()
-                
-                if bytecode["index"] < len(local_stack[0]):
-                    local_stack[0][bytecode["index"]] = (lv_type, val)
-                else: 
-                    local_stack[0].append((lv_type, val))
-                log(local_stack)
-                
-            elif bytecode["opr"] == "incr":   
-                log("(incr)")
-                lv_type, value = local_stack[0][bytecode["index"]]
-                local_stack[0][bytecode["index"]] = (lv_type, value + bytecode["amount"])
-                log(local_stack)
-            elif bytecode["opr"] == "goto": 
-                log("(goto)")
-                local_stack = (local_stack[0], local_stack[1], (absolute_method, bytecode["target"]-1))
-                log(local_stack)
-            elif bytecode["opr"] == "if": #Collin
-                log("(if)")
-                log(bytecode["condition"])
-                left,left_val = local_stack[1][-2]
-                right,right_val = local_stack[1][-1]
-                if bytecode["condition"] == "gt":
-                    gt = left_val > right_val
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(gt, bytecode["target"],pc)))
-                    log(local_stack)
-                elif bytecode["condition"] == "lt":
-                    lt = left_val < right_val
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lt, bytecode["target"],pc)))
-                    log(local_stack)
-                elif bytecode["condition"] == "eq":
-                    eq = left_val == right_val
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(eq, bytecode["target"],pc)))  
-                    log(local_stack)
-                elif bytecode["condition"] == "ge":
-                    ge = left_val >= right_val
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(ge, bytecode["target"],pc)))  
-                    log(local_stack)
-                else:
-                    print("if type not implemented" + str(bytecode["condition"]))
-                local_stack[1].pop()
-                local_stack[1].pop()
-            elif bytecode["opr"] == 'ifz': #if zero
-                log("(ifz)")
-                lv_type,val = local_stack[1][-1]
-                if bytecode["condition"] == "lz":
-                    lz = (val == 0)
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(lz, bytecode["target"],pc)))
-                    log(local_stack)
-                elif bytecode["condition"] == "le":
-                    le = (val <= 0)
-                    local_stack = (local_stack[0], local_stack[1], (absolute_method, self.ifstack(le, bytecode["target"],pc)))
-                    log(local_stack)
-                else:
-                    print("ifz type not implemented" + str(bytecode["condition"]))
-                local_stack[1].pop()
-            elif bytecode["opr"] == "get":
-                log("(get)")
-                if 'Array' in str(bytecode["field"]["class"]):
-                    memory["array"].append(bytecode)
-                    log(memory)
-                elif 'class' in bytecode["field"]["class"]:
-                    cn = bytecode["field"]["type"]["name"]
-                    fs = None
-                    memory["class"].append((cn, fs))
-                    log(memory)
-                else:
-                    print("get type not implemented" + str(bytecode["field"]))
-            elif bytecode["opr"] == "invoke":
-                log("(invoke)")
-                if bytecode["access"] == "virtual" or bytecode["access"] == "static":
-                    args_type = bytecode["method"]["args"] #Kind, Name 
-                    args = []
-                    for args_type in args_type:
-                        args.append(local_stack[1].pop())
-                    args.reverse()
-                    am = (bytecode["method"]["ref"]["name"], bytecode["method"]["name"])
-                    
-                    # absolute_method, pc, log, memory, args
-                    returned_element = self.interpret(am, 0, print, memory, args)
-                    if returned_element != None:
-                        local_stack[1].append(returned_element)
-                        log(local_stack)
-                # elif bytecode["access"]=="dynamic":
-                #     if bytecode["method"]["args"] is not None:  
-                elif bytecode["access"] == "special":
-                    if bytecode["method"]["name"] == "<init>":
-                        local_stack[1].append(bytecode["method"]["name"])
-                        log(local_stack)
-                else:
-                    print("Invoke type not supported" + bytecode["access"])
-            else:
-                print("bytecode opr not implemented" + str(bytecode["opr"]))
-                
-                log(local_stack)
-            local_stack=self.incrementPc(local_stack)
-        return None
-
+    
+    def _push(self,byte,local_stack):
+        value = byte["value"]["value"]
+        btype = byte["value"]["type"]
+        value = Ranges(value["value"],value["value"])
+        return (local_stack[0],local_stack[1].append((btype, value)),local_stack[2])
+    
+    def _load(self,byte,local_stack):
+        lv_type, value = local_stack[0][byte["index"]]
+        return (local_stack[0].append((lv_type,value)),local_stack[1],local_stack[2])
+    
+    def _binary(self,byte,local_stack):
+        byte = byte["opr"]
+        lv_type1,var1 = local_stack[1].pop()
+        lv_type2,var2 = local_stack[1].pop()
+        if hasattr(self,"_"+byte["operant"]):
+            result = getattr(self,"_"+byte["operant"])(var1,var2)
+            return (local_stack[0], local_stack[1].append(lv_type1,result), local_stack[2])
+        raise Exception("Binary Operant not supported " + byte["operant"])
+    
+    def _store(self,byte,local_stack):
+        lv_type, val = local_stack[1].pop()
+        if byte["index"] < len(local_stack[0]):
+            new_local_var = local_stack[0][byte["index"]] = (lv_type, val)
+            return (new_local_var, local_stack[1], local_stack[2])
+        else: 
+            new_local_var = local_stack[0].append((lv_type, val))
+            return (new_local_var, local_stack[1], local_stack[2])
+    
+    def _incr(self,byte,local_stack):
+        lv_type, value = local_stack[0][byte["index"]]
+        value.start = value.start + byte["amount"]
+        value.end = value.end + byte["amount"]
+        local_stack[0][byte["index"]] =(lv_type,value)
+        return local_stack
+    
+    def _get(self,byte,local_stack):
+        print("Not implemented get")
+        pass
+    
+    def _goto(self,byte,local_stack):
+        return (local_stack[0],local_stack[1],(local_stack[2][0],byte["target"]-1))
+            
+    def _if(self,byte,local_stack):
+        lv_type1,var1 = local_stack[1].pop()
+        lv_type2,var2 = local_stack[1].pop()
+        if hasattr(self,"_"+byte["opr"]):
+            result = getattr(self,"_"+byte["opr"])(var1,var2)
+            return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1])))
+        raise Exception("If operant not supported " + byte["opr"])
+    
+    def _ifz(self,byte,local_stack):
+        lv_type1,var1 = local_stack[1].pop()
+        var2 = Ranges(0,0)
+        if hasattr(self,"_"+byte["opr"]):
+            result = getattr(self,"_"+byte["opr"])(var1,var2)
+            return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1]))) 
+        raise Exception("Ifz operant not supported " + byte["opr"])
+    
 def traverse_files():
     path = Path("bin/course-examples/json/")
     files = []
@@ -265,6 +168,7 @@ def main():
     for f in files:
         data = abstract_interpreter.get_json(f)
         abstract_interpreter.get_class(data)
+    print("Before tests")
     tests(abstract_interpreter)
 
 main()

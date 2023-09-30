@@ -196,6 +196,7 @@ class Interpreter:
                 else:
                     print("ifz type not implemented" + str(bytecode["condition"]))
                 local_stack[1].pop()
+                
             elif bytecode["opr"] == "get":
                 log("(get)")
                 if 'Array' in str(bytecode["field"]["class"]):
