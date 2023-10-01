@@ -174,5 +174,5 @@ def runConcrete(interpreter):
 
 def runAbstract(interpreter):
     #alwaysThrows1(interpreter)
-    alwaysThrows2(interpreter)
-    #alwaysThrows3(interpreter)
+    #alwaysThrows2(interpreter)
+    alwaysThrows3(interpreter)

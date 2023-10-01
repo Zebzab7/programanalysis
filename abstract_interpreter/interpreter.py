@@ -110,15 +110,9 @@ class AbstractInterpreter:
             bytecode = bytecode_statements[pc]
             if bytecode["opr"] == "return":
                 log("(return)")
-                if bytecode["type"] == None:
-                    log("(return) None")
-                    return None
-                elif bytecode["type"] == "int":
-                    log("(return) int: ", local_stack[1][-1])
-                    return local_stack[1][-1] #Returns the last element in the opr. stack
-                else:
-                    log("return type not implemented "+ bytecode["type"])
+                local_stack = AbstractOperations._return(self, bytecode, local_stack)
                 log(local_stack)
+                return local_stack
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack = AbstractOperations._push(self, bytecode, local_stack)
@@ -227,8 +221,6 @@ class AbstractArithmeticOperations():
         products =[a.start*b.start,a.start*b.end,a.end*b.start,a.end*b.end]
         return Ranges_abstract(min(products),max(products))
     def _div(a,b):
-        print("a " + a.toString())
-        print("b " + b.toString())
         if b.start <=0 and b.end >=0:
             return 'Arithmetic exception raised'
         quotients =[a.start//b.start,a.start//b.end,a.end//b.start,a.end//b.end]
@@ -244,7 +236,17 @@ class AbstractArithmeticOperations():
 class AbstractOperations():
 
     def _return(self,byte,local_stack):
-        
+        if byte["type"] == None:
+            log("(return) None")
+            return None
+        elif byte["type"] == "int":
+            log("(return) int: ", local_stack[1][-1])
+            return local_stack[1][-1] #Returns the last element in the opr. stack
+        elif byte["type"] == "float":
+            log("(return) float: ", local_stack[1][-1])
+            return local_stack[1][-1]
+        else:
+            log("return type not implemented "+ byte["type"])
         pass
     
     def _push(self,byte,local_stack):
