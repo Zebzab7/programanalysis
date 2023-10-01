@@ -295,13 +295,17 @@ class AbstractOperations():
         raise Exception("Ifz operant not supported " + byte["opr"])
     
 def traverse_files():
-    source_to_files = "bin/course-examples/json/"
+    source_to_files = "../bin/course-examples/json/"
     working_path = Path(__file__).parent
     json_files = (working_path / source_to_files).resolve()
     path = Path(json_files)
+    print(path)
     files = []
     for f in path.glob("**/Arithmetics.json"):
         files.append(f)
+    if len(files) == 0:
+        print("No files found")
+        sys.exit()
     return files
 
 def tests(interpreter):

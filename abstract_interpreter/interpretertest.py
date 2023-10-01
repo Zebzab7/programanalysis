@@ -43,11 +43,13 @@ def testZero(interpreter):
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert res == 0, str(res) + " " + str(0)
+
 def testHundredAndTwo(interpreter):
     case = ("dtu/compute/exec/Simple", "hundredAndTwo")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert res == 102, str(res) + " " + str(102)
+    
 def testIdentity(interpreter):
     case = ("dtu/compute/exec/Simple", "identity")
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
