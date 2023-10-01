@@ -85,14 +85,14 @@ class AbstractInterpreter:
     def interpret(self, absolute_method, pc, log, memory, args):
         print("Absolute method: ", absolute_method)
         
-        # local_variables = []
+        local_variables = []
 
-        # for i in range(10):
-        #     local_variables.append(None)
+        for i in range(10):
+            local_variables.append(None)
 
 
         # λ,σ,ι
-        local_stack = ([None, None], [],(absolute_method, pc))
+        local_stack = (local_variables, [],(absolute_method, pc))
         method = self.find_method(absolute_method)
         if method == absolute_method[1]:
             log("executing method: ", absolute_method[1], " with arguments: ", args)
@@ -105,6 +105,8 @@ class AbstractInterpreter:
 
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
+
+        self.kCounter =0
         while local_stack[2][1]<length: #(i,seq[0])
             pc = local_stack[2][1] #PC
             bytecode = bytecode_statements[pc]
@@ -112,7 +114,8 @@ class AbstractInterpreter:
                 log("(return)")
                 local_stack = AbstractOperations._return(self, bytecode, local_stack)
                 log(local_stack)
-                return local_stack
+                # return local_stack
+                return None, "No Exception Raised"
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack = AbstractOperations._push(self, bytecode, local_stack)
@@ -148,15 +151,21 @@ class AbstractInterpreter:
                 log(local_stack)
             elif bytecode["opr"] == "get":
                 log("(get)")
-                local_stack = AbstractOperations._get(self, bytecode, local_stack)
+                local_stack = AbstractOperations._get(self,bytecode_statements,local_stack)
                 log(local_stack)
             elif bytecode["opr"] == "invoke":
                 log("(invoke)")
                 local_stack = AbstractOperations._invoke(self, bytecode, local_stack)
                 log(local_stack)
+            elif bytecode["opr"] == "negate":
+                log("(negate)")
+                local_stack = AbstractOperations._negate(self, bytecode, local_stack)
+                log(local_stack)
+            else:
+                raise Exception("Bytecode not supported" + bytecode["opr"])
             local_stack=self.incrementPc(local_stack)
             if(self.kCounter==self.kCounterMax):
-                return self.kCounter, "K counter reached"
+                return self.kCounter, "Maybe"
             self.kCounter = self.kCounter + 1 
         return None
     
@@ -171,6 +180,8 @@ class Comparison():
         return a>b
     def _lt(a,b):
         return a<b
+    def _le(a,b):
+        return a<=b
     #THESE two are not supported in java
     def _is(a,b):
         return a is b
@@ -190,6 +201,8 @@ class AbstractComparison():
         return (a.start > b.start and a.end > b.end)
     def _lt(a,b):
         return (a.start < b.start and a.end < b.end)    
+    def _le(a,b):
+        return (a.start <= b.start and a.end <= b.end)
     #These are not supported in java, also what would they do in a abstract sense?
     def _is(a,b):
         print("Not supported, IS")
@@ -237,17 +250,16 @@ class AbstractOperations():
 
     def _return(self,byte,local_stack):
         if byte["type"] == None:
-            log("(return) None")
+            print("(return) None")
             return None
         elif byte["type"] == "int":
-            log("(return) int: ", local_stack[1][-1])
+            print("(return) int: ", local_stack[1][-1])
             return local_stack[1][-1] #Returns the last element in the opr. stack
         elif byte["type"] == "float":
-            log("(return) float: ", local_stack[1][-1])
+            print("(return) float: ", local_stack[1][-1])
             return local_stack[1][-1]
         else:
-            log("return type not implemented "+ byte["type"])
-        pass
+            print("return type not implemented "+ byte["type"])
     
     def _push(self,byte,local_stack):
         value = byte["value"]["value"]
@@ -258,7 +270,7 @@ class AbstractOperations():
         return local_stack
     
     def _load(self,byte,local_stack):
-        print(local_stack[0])
+
         print(byte["index"])
         lv_type, value = local_stack[0][byte["index"]]
         local_stack[1].append((lv_type,value))
@@ -289,35 +301,51 @@ class AbstractOperations():
         local_stack[0][byte["index"]] =(lv_type,value)
         return local_stack
     
-    def _get(self,byte,local_stack):
+    def _get(self,bytecode_statements,local_stack):
+        pc = local_stack[2][1]
+        byte = bytecode_statements[pc]
+        print(byte)
+        if byte["field"]["name"] == "$assertionsDisabled":
+            i = pc
+            while bytecode_statements[i]["opr"] != "throw":
+                i += 1
+            return (local_stack[0],local_stack[1],(local_stack[2][0],i))
+        
         print("Not implemented get")
-        pass
     
     def _goto(self,byte,local_stack):
         return (local_stack[0],local_stack[1],(local_stack[2][0],byte["target"]-1))
+
+    # -1 to 100, -100 to 1          2000 to -2000
+    def _negate(self,byte,local_stack): 
+        lv_type,var = local_stack[1].pop()
+        start = var.start
+        end = var.end
+        var.start = -1*end
+        var.end = -1*start
+        return (local_stack[0],local_stack[1].append((lv_type,var)),local_stack[2])
             
     def _if(self,byte,local_stack):
         lv_type1,var1 = local_stack[1].pop()
         lv_type2,var2 = local_stack[1].pop()
-        if hasattr(self,"_"+byte["opr"]):
-            result = getattr(self,"_"+byte["opr"])(var1,var2)
+        if hasattr(AbstractComparison,"_"+byte["condition"]):
+            result = getattr(AbstractComparison,"_"+byte["condition"])(var1,var2)
             return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1])))
-        raise Exception("If operant not supported " + byte["opr"])
+        raise Exception("If operant not supported " + byte["condition"])
     
     def _ifz(self,byte,local_stack):
         lv_type1,var1 = local_stack[1].pop()
         var2 = Ranges_abstract(0,0)
-        if hasattr(self,"_"+byte["opr"]):
-            result = getattr(self,"_"+byte["opr"])(var1,var2)
+        if hasattr(AbstractComparison,"_"+byte["condition"]):
+            result = getattr(AbstractComparison,"_"+byte["condition"])(var1,var2)
             return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1]))) 
-        raise Exception("Ifz operant not supported " + byte["opr"])
+        raise Exception("Ifz operant not supported " + byte["condition"])
     
 def traverse_files():
     source_to_files = "../bin/course-examples/json/"
     working_path = Path(__file__).parent
     json_files = (working_path / source_to_files).resolve()
     path = Path(json_files)
-    print(path)
     files = []
     for f in path.glob("**/Arithmetics.json"):
         files.append(f)
@@ -334,7 +362,7 @@ def tests(interpreter):
 def main():
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     files = traverse_files()
-    k= 1000
+    k = 1000
     abstract_interpreter = AbstractInterpreter(k)
     for f in files:
         data = abstract_interpreter.get_json(f)
@@ -342,7 +370,6 @@ def main():
         
     print("Before tests")
     tests(abstract_interpreter)
-    
 
 main()
 

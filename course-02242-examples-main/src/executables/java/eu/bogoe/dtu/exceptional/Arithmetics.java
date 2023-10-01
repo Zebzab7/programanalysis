@@ -53,8 +53,8 @@ public class Arithmetics {
 
 	@Case
 	public static int itDependsOnLattice3(int i, int j) {
-		assert i > 1000;
-		assert j > 10;
+		assert i > 1000; //skip -inf to inf
+		assert j > 10; //skip -inf to inf
 		for (int k = 0; k < 10; k++) {
 			i -= j;
 		}

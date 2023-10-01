@@ -64,7 +64,7 @@ def alwaysThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory,[])
-    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def alwaysThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows2")
@@ -72,95 +72,103 @@ def alwaysThrows2(interpreter):
     testint = random.randint(-sys.maxsize,sys.maxsize)
     range_ = Ranges_abstract(testint, testint)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
-    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def alwaysThrows3(interpreter): ##Why does this always throw
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testfloat1 = float(random.randint(-sys.maxsize,sys.maxsize))
-    testfloat2 = float(random.randint(-sys.maxsize,sys.maxsize))
-    range1_ = Ranges_abstract(testfloat1, testfloat1)
-    range2_ = Ranges_abstract(testfloat2, testfloat2)
+    range1_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
+    range2_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
     type_,res = interpreter.interpret(case, 0, print, memory, [("float", range1_),("float", range2_)])
-    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def alwaysThrows4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    testint2 = 0
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
+    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def alwaysThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    testint2 = random.randint(-sys.maxsize,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
+    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def itDependsOnLattice1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "Yes" == res | "No" == res, "Both " + res
+    assert "No Exception Raised" == res, "Both " + res
 
 def itDependsOnlattice2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "Yes" == res | "No" == res, "Both " + res
+    assert "No Exception Raised" == res, "Both " + res
 
 def itDependsOnlattice3(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(1001,sys.maxsize)
     testint2 = random.randint(11,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert "Yes" == res | "No" == res, "Both " + res
+    range1_ = Ranges_abstract(testint1,sys.maxsize)
+    range2_ = Ranges_abstract(testint2,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
+    assert "No Exception Raised" == res, "Both " + res
+
+def itDependsOnlattice4(interpreter):
+    case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice4")
+    memory = {'class': [], 'array': [], 'int': [], 'float': []}
+    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [])
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def neverThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "No" == res, "No " + res
+    assert "No Exception Raised" == res, "Both " + res
 
 def neverThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert "No" == res, "No " + res
+    range_ = Ranges_abstract(1,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
+    assert "No Exception Raised" == res, "Both " + res
 
 def neverThrows3(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(1,sys.maxsize)
-    testint2 = 0
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert "No" == res, "No " + res
+    range_1 = Ranges_abstract(1,sys.maxsize)
+    range_2 = Ranges_abstract(0,0)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_1),("int", range_2)])
+    assert "No Exception Raised" == res, "Both " + res
 
 def neverThrows4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
-    assert "No" == res, "No " + res
+    range_ = Ranges_abstract(0,0)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
+    assert "No Exception Raised" == res, "Both " + res
 
 def neverThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    testint1 = random.randint(-sys.maxsize,sys.maxsize)
-    testint2 = random.randint(-sys.maxsize,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert "No" == res, "No " + res
+    range_1 = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range_2 = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_1),("int", range_2)])
+    assert "No Exception Raised" == res, "Both " + res
 
 def speedVsPrecision(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "speedVsPrecision")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "Yes" == res | "No" == res, "Both " + res
+    assert "Maybe" == res , "Maybe " + res
 
 def runConcrete(interpreter):
     testmin(interpreter)
@@ -173,6 +181,18 @@ def runConcrete(interpreter):
     testIdentity(interpreter)
 
 def runAbstract(interpreter):
-    #alwaysThrows1(interpreter)
-    #alwaysThrows2(interpreter)
+    alwaysThrows1(interpreter)
+    alwaysThrows2(interpreter)
     alwaysThrows3(interpreter)
+    alwaysThrows4(interpreter)
+    alwaysThrows5(interpreter)
+    itDependsOnLattice1(interpreter)
+    itDependsOnlattice2(interpreter)
+    itDependsOnlattice3(interpreter)
+    itDependsOnlattice4(interpreter)
+    neverThrows1(interpreter)
+    neverThrows2(interpreter)
+    neverThrows3(interpreter)
+    # neverThrows4(interpreter)
+    # neverThrows5(interpreter)
+    speedVsPrecision(interpreter)
