@@ -2,6 +2,7 @@ import sys
 import math
 import sympy
 import random
+from RangesR import Ranges_abstract
 
 def testmin(interpreter):
     case = ("dtu/compute/exec/Simple", "min")
@@ -33,11 +34,13 @@ def testfactorial(interpreter):
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1)])
     assert math.factorial(testint1) == res, str(testint1) + " " + str(res)
+    
 def testNoop(interpreter):
     case = ("dtu/compute/exec/Simple", "noop")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert res == None, str(res) + " " + str(None)
+
 def testZero(interpreter):
     case = ("dtu/compute/exec/Simple", "zero")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
@@ -61,22 +64,25 @@ def alwaysThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory,[])
-    assert "Yes" == res, "Yes " + res
+    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
 
 def alwaysThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint = random.randint(-sys.maxsize,sys.maxsize)
-    type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "Yes" == res, "Yes " + res
+    range_ = Ranges_abstract(testint, testint)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
+    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
 
 def alwaysThrows3(interpreter): ##Why does this always throw
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testfloat1 = float(random.randint(-sys.maxsize,sys.maxsize))
     testfloat2 = float(random.randint(-sys.maxsize,sys.maxsize))
-    type_,res = interpreter.interpret(case, 0, print, memory, [("float", testfloat1),("float", testfloat2)])
-    assert "Yes" == res, "Yes " + res
+    range1_ = Ranges_abstract(testfloat1, testfloat1)
+    range2_ = Ranges_abstract(testfloat2, testfloat2)
+    type_,res = interpreter.interpret(case, 0, print, memory, [("float", range1_),("float", range2_)])
+    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
 
 def alwaysThrows4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows4")
@@ -84,7 +90,7 @@ def alwaysThrows4(interpreter):
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = 0
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert "Yes" == res, "Yes " + res
+    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
 
 def alwaysThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows5")
@@ -92,7 +98,7 @@ def alwaysThrows5(interpreter):
     testint1 = random.randint(-sys.maxsize,sys.maxsize)
     testint2 = random.randint(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", testint1),("int", testint2)])
-    assert "Yes" == res, res
+    assert (res == "Arithmetic Exception Raised"), "Yes " + res.toString()
 
 def itDependsOnLattice1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice1")
@@ -167,4 +173,6 @@ def runConcrete(interpreter):
     testIdentity(interpreter)
 
 def runAbstract(interpreter):
-    alwaysThrows1(interpreter)
+    #alwaysThrows1(interpreter)
+    alwaysThrows2(interpreter)
+    #alwaysThrows3(interpreter)

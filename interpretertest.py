@@ -58,7 +58,8 @@ def alwaysThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory,[])
-    assert "Yes" == res, "Yes " + res
+    print(res)
+    assert "Yes" == res, "Yes " + str(res)
 
 def alwaysThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows2")

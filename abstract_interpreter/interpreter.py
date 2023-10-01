@@ -2,12 +2,16 @@ import json
 from pathlib import Path
 from logging import log
 from interpretertest import *
+import sys
+from RangesR import Ranges_abstract
 
 class AbstractInterpreter:
 
-    def __init__(self):
+    def __init__(self,k):
         self.classes = {}
         self.memory = {}
+        self.kCounterMax = k
+        self.kCounter = 0
 
     def get_json(self, json_file):
         with open(json_file) as f:
@@ -80,17 +84,24 @@ class AbstractInterpreter:
     
     def interpret(self, absolute_method, pc, log, memory, args):
         print("Absolute method: ", absolute_method)
+        
+        # local_variables = []
+
+        # for i in range(10):
+        #     local_variables.append(None)
+
 
         # λ,σ,ι
-        local_stack = ([],[],(absolute_method, pc))
+        local_stack = ([None, None], [],(absolute_method, pc))
         method = self.find_method(absolute_method)
         if method == absolute_method[1]:
             log("executing method: ", absolute_method[1], " with arguments: ", args)
             # return None,None
 
         # Load in arguments
-        for arg in args:
-            local_stack[0].append(arg)
+        # if len(args) <= 2:
+        for i in range(len(args)):
+            local_stack[0][i] = args[i]
 
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
@@ -111,7 +122,6 @@ class AbstractInterpreter:
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack = AbstractOperations._push(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "load":  
                 log("(load)")
                 local_stack = AbstractOperations._load(self, bytecode, local_stack)
@@ -119,6 +129,8 @@ class AbstractInterpreter:
             elif bytecode["opr"] == "binary": 
                 log("(binary)")
                 local_stack = AbstractOperations._binary(self, bytecode, local_stack)
+                if(local_stack == None):
+                    return None, "Arithmetic Exception Raised"
                 log(local_stack)
             elif bytecode["opr"] == "store":
                 log("(store)")
@@ -149,14 +161,10 @@ class AbstractInterpreter:
                 local_stack = AbstractOperations._invoke(self, bytecode, local_stack)
                 log(local_stack)
             local_stack=self.incrementPc(local_stack)
+            if(self.kCounter==self.kCounterMax):
+                return self.kCounter, "K counter reached"
+            self.kCounter = self.kCounter + 1 
         return None
-    
-class Ranges():
-    def __init__(self,start,end):
-        self.start = start
-        self.end = end
-    def toString(self):
-        return "start:" + str(self.start) + " end:" + str(self.end)
     
 class Comparison():
     def _eq(a,b):
@@ -211,24 +219,27 @@ class ArithmeticOperations():
     
 class AbstractArithmeticOperations():
     def _add(a,b):
-        return Ranges(a.start+b.start,a.end+b.end)
+        return Ranges_abstract(a.start+b.start,a.end+b.end)
     def _sub(a,b):
-        return Ranges(a.start-b.end,a.end-b.start)
+        newrange = Ranges_abstract(a.start-b.end,a.end-b.start)
+        return newrange
     def _mul(a,b):
         products =[a.start*b.start,a.start*b.end,a.end*b.start,a.end*b.end]
-        return Ranges(min(products),max(products))
+        return Ranges_abstract(min(products),max(products))
     def _div(a,b):
+        print("a " + a.toString())
+        print("b " + b.toString())
         if b.start <=0 and b.end >=0:
-            raise Exception("Arithmetic Exception")
-        quotients =[a.start/b.start,a.start/b.end,a.end/b.start,a.end/b.end]
-        return Ranges(min(quotients),max(quotients))
+            return 'Arithmetic exception raised'
+        quotients =[a.start//b.start,a.start//b.end,a.end//b.start,a.end//b.end]
+        return Ranges_abstract(min(quotients),max(quotients))
     def _mod(a,b): 
         if b.start > 0:  # entirely positive
-            return Ranges(0, b.end - 1)
+            return Ranges_abstract(0, b.end - 1)
         elif b.end < 0:  # entirely negative
-            return Ranges(b.end + 1, 0)
+            return Ranges_abstract(b.end + 1, 0)
         else:  # spans zero
-            return Ranges(b.start + 1, b.end - 1)
+            return Ranges_abstract(b.start + 1, b.end - 1)
 
 class AbstractOperations():
 
@@ -239,30 +250,35 @@ class AbstractOperations():
     def _push(self,byte,local_stack):
         value = byte["value"]["value"]
         btype = byte["value"]["type"]
-        value = Ranges(value["value"],value["value"])
-        return (local_stack[0],local_stack[1].append((btype, value)),local_stack[2])
+        value = Ranges_abstract(value,value)
+        local_stack[1].append((btype, value))
+        print(local_stack)
+        return local_stack
     
     def _load(self,byte,local_stack):
+        print(local_stack[0])
+        print(byte["index"])
         lv_type, value = local_stack[0][byte["index"]]
-        return (local_stack[0].append((lv_type,value)),local_stack[1],local_stack[2])
+        local_stack[1].append((lv_type,value))
+        print(local_stack)
+        return local_stack
     
     def _binary(self,byte,local_stack):
-        byte = byte["opr"]
-        lv_type1,var1 = local_stack[1].pop()
-        lv_type2,var2 = local_stack[1].pop()
-        if hasattr(self,"_"+byte["operant"]):
-            result = getattr(self,"_"+byte["operant"])(var1,var2)
-            return (local_stack[0], local_stack[1].append(lv_type1,result), local_stack[2])
+        lv_type1,var2 = local_stack[1].pop()
+        lv_type2,var1 = local_stack[1].pop()
+        if hasattr(AbstractArithmeticOperations,"_"+byte["operant"]):
+            print(var1.toString(),var2.toString())
+            result = getattr(AbstractArithmeticOperations,"_"+byte["operant"])(var1,var2)
+            if(result == 'Arithmetic exception raised'):
+                return None
+            local_stack[1].append((lv_type1,result))
+            return local_stack
         raise Exception("Binary Operant not supported " + byte["operant"])
     
     def _store(self,byte,local_stack):
-        lv_type, val = local_stack[1].pop()
-        if byte["index"] < len(local_stack[0]):
-            new_local_var = local_stack[0][byte["index"]] = (lv_type, val)
-            return (new_local_var, local_stack[1], local_stack[2])
-        else: 
-            new_local_var = local_stack[0].append((lv_type, val))
-            return (new_local_var, local_stack[1], local_stack[2])
+        lv_type, val = local_stack[1].pop()      
+        local_stack[0][byte["index"]] = (lv_type, val)
+        return local_stack
     
     def _incr(self,byte,local_stack):
         lv_type, value = local_stack[0][byte["index"]]
@@ -288,7 +304,7 @@ class AbstractOperations():
     
     def _ifz(self,byte,local_stack):
         lv_type1,var1 = local_stack[1].pop()
-        var2 = Ranges(0,0)
+        var2 = Ranges_abstract(0,0)
         if hasattr(self,"_"+byte["opr"]):
             result = getattr(self,"_"+byte["opr"])(var1,var2)
             return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1]))) 
@@ -316,11 +332,15 @@ def tests(interpreter):
 def main():
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     files = traverse_files()
-    abstract_interpreter = AbstractInterpreter()
+    k= 1000
+    abstract_interpreter = AbstractInterpreter(k)
     for f in files:
         data = abstract_interpreter.get_json(f)
         abstract_interpreter.get_class(data)
+        
     print("Before tests")
     tests(abstract_interpreter)
+    
 
 main()
+
