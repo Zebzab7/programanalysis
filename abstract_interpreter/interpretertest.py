@@ -63,7 +63,7 @@ def testIdentity(interpreter):
 def alwaysThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    type_,res = interpreter.interpret(case, 0, print, memory,[])
+    type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
 def alwaysThrows2(interpreter):
@@ -168,7 +168,7 @@ def speedVsPrecision(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "speedVsPrecision")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert "Maybe" == res , "Maybe " + res
+    assert "Arithmetic Exception Raised" == res , "Res: " + res
 
 def runConcrete(interpreter):
     testmin(interpreter)

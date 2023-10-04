@@ -1,4 +1,5 @@
 import json
+import copy
 from pathlib import Path
 from logging import log
 from interpretertest import *
@@ -7,11 +8,10 @@ from RangesR import Ranges_abstract
 
 class AbstractInterpreter:
 
-    def __init__(self,k):
+    def __init__(self):
         self.classes = {}
         self.memory = {}
-        self.kCounterMax = k
-        self.kCounter = 0
+
 
     def get_json(self, json_file):
         with open(json_file) as f:
@@ -82,14 +82,52 @@ class AbstractInterpreter:
             local_stack[1].append(get_field["name"])
         return result
     
+    def widen_stacks(self, old_stack, current_stack, integer_constants):
+        min_elements = min(len(old_stack[0]), len(current_stack[0]))
+        res = ([], current_stack[1], current_stack[2])
+        for i in range(min_elements):
+            res[0].append(self.widen_operation(old_stack[0][i], current_stack[0][i], integer_constants))
+        return res
+    
+    def widen_operation(self, range_one, range_two, integer_constants):
+        range_one = range_one[1]
+        range_two = range_two[1]
+
+        # First determine the candidates
+        l0 = range_one.start
+        h0 = range_one.end
+        lower_candidates = [x for x in integer_constants if x < range_two.start]+[l0 if l0 < range_two.start else None, float('-inf') if float('-inf') < range_two.start else None]
+        upper_candidates = [x for x in integer_constants if x > range_two.end]+[h0 if h0 > range_two.end else None, float('inf') if float('inf') > range_two.end else None]
+
+        # Filter out the None values
+        lower_candidates = [x for x in lower_candidates if x is not None]
+        upper_candidates = [x for x in upper_candidates if x is not None]
+        return ('int', Ranges_abstract(max(lower_candidates), min(upper_candidates)))
+
+    # def narrow_operation(self, range_one, range_two, integer_constants):
+    #     l0 = range_one.start
+    #     h0 = range_one.end
+    #     return Ranges_abstract(max(lower_candidates), min(upper_candidates))
+
+    # Check only local variables (for now)
+    def stacks_equal(self, stack_one, stack_two):
+        if (len(stack_one[0]) != len(stack_two[0]) or len(stack_one[1]) != len(stack_two[1])):
+            return False
+        for i in range(len(stack_one)):
+            if stack_one[0][i] != stack_two[0][i]:
+                return False
+        for i in range(len(stack_one[1])):
+            if stack_one[1][i] != stack_two[1][i]:
+                return False
+        return True
+    
     def interpret(self, absolute_method, pc, log, memory, args):
         print("Absolute method: ", absolute_method)
-        
+        integer_constants = []
         local_variables = []
 
-        for i in range(10):
-            local_variables.append(None)
-
+        # for i in range(10):
+        #     local_variables.append(None)
 
         # λ,σ,ι
         local_stack = (local_variables, [],(absolute_method, pc))
@@ -101,14 +139,18 @@ class AbstractInterpreter:
         # Load in arguments
         # if len(args) <= 2:
         for i in range(len(args)):
-            local_stack[0][i] = args[i]
+            local_stack[0].append(args[i])
 
         bytecode_statements = method["code"]["bytecode"]
         length = len(bytecode_statements)
 
-        self.kCounter =0
-        while local_stack[2][1]<length: #(i,seq[0])
-            pc = local_stack[2][1] #PC
+        S = {0 : (copy.deepcopy(local_stack[0]), copy.deepcopy(local_stack[1]), copy.deepcopy(local_stack[2]))}
+        wl = [0]
+        
+        # while local_stack[2][1]<length: #(i,seq[0])
+        while len(wl) > 0:
+            # pc = local_stack[2][1] #PC
+            pc = wl.pop()
             bytecode = bytecode_statements[pc]
             if bytecode["opr"] == "return":
                 log("(return)")
@@ -119,6 +161,7 @@ class AbstractInterpreter:
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack = AbstractOperations._push(self, bytecode, local_stack)
+                # log(local_stack)
             elif bytecode["opr"] == "load":  
                 log("(load)")
                 local_stack = AbstractOperations._load(self, bytecode, local_stack)
@@ -161,12 +204,18 @@ class AbstractInterpreter:
                 log("(negate)")
                 local_stack = AbstractOperations._negate(self, bytecode, local_stack)
                 log(local_stack)
+            elif bytecode["opr"] == "invoke":
+                log("(Invoke)")
+                local_stack = AbstractInterpreter._invoke(self,bytecode,local_stack)
+                log(local_stack)
             else:
                 raise Exception("Bytecode not supported" + bytecode["opr"])
             local_stack=self.incrementPc(local_stack)
-            if(self.kCounter==self.kCounterMax):
-                return self.kCounter, "Maybe"
-            self.kCounter = self.kCounter + 1 
+
+            widened_stack = self.widen_stacks(S[pc], local_stack, integer_constants)
+            if (not self.stacks_equal(S[pc], widened_stack)):
+                S[widened_stack[2][1]] = (copy.deepcopy(widened_stack[0]), copy.deepcopy(widened_stack[1]), copy.deepcopy(widened_stack[2]))
+                wl.insert(0, widened_stack[2][1])
         return None
     
 class Comparison():
@@ -290,8 +339,13 @@ class AbstractOperations():
         raise Exception("Binary Operant not supported " + byte["operant"])
     
     def _store(self,byte,local_stack):
-        lv_type, val = local_stack[1].pop()      
-        local_stack[0][byte["index"]] = (lv_type, val)
+        lv_type, val = local_stack[1].pop()
+        # local_stack[0][byte["index"]] = (lv_type, val)
+        # If index does not exist, just append at the end:
+        if (byte["index"] >= len(local_stack[0])):
+            local_stack[0].append((lv_type, val))
+        else:
+            local_stack[0][byte["index"]] = (lv_type, val)
         return local_stack
     
     def _incr(self,byte,local_stack):
@@ -340,9 +394,32 @@ class AbstractOperations():
             result = getattr(AbstractComparison,"_"+byte["condition"])(var1,var2)
             return (local_stack[0], local_stack[1], (local_stack[2][0], self.ifstack(result, byte["target"],local_stack[2][1]))) 
         raise Exception("Ifz operant not supported " + byte["condition"])
+    def _invoke(self,byte,local_stack):
+        if byte["access"] == "virtual" or byte["access"] == "static":
+                    args_type = byte["method"]["args"] #args (int)
+                    args = []
+                    for args_type in args_type:
+                        args.append(local_stack[1].pop())
+                    
+                    am = (byte["method"]["ref"]["name"], byte["method"]["name"]) #type, func
+                    
+                    # absolute_method, pc, log, memory, args
+                    returned_element = self.interpret(am, 0, print, [], args)
+                    if returned_element != None:
+                        local_stack[1].append(returned_element)
+                        log(local_stack)
+
+        else:
+            print("access type not supported")
+    def _return(self,byte,local_stack):
+        if byte["type"] == None:
+            return None
+        else: 
+            return local_stack[1] #(type,Range)  
+        
     
 def traverse_files():
-    source_to_files = "../bin/course-examples/json/"
+    source_to_files = "../output/course-examples/json/"
     working_path = Path(__file__).parent
     json_files = (working_path / source_to_files).resolve()
     path = Path(json_files)
@@ -362,8 +439,8 @@ def tests(interpreter):
 def main():
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     files = traverse_files()
-    k = 1000
-    abstract_interpreter = AbstractInterpreter(k)
+
+    abstract_interpreter = AbstractInterpreter()
     for f in files:
         data = abstract_interpreter.get_json(f)
         abstract_interpreter.get_class(data)
@@ -371,5 +448,13 @@ def main():
     print("Before tests")
     tests(abstract_interpreter)
 
+def test_equals():
+    abstract_interpreter = AbstractInterpreter()
+    stack_one = ([Ranges_abstract(1, 1), Ranges_abstract(2, 6)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
+    stack_two = ([Ranges_abstract(1, 1), Ranges_abstract(2, 5)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
+    print(abstract_interpreter.stacks_equal(stack_one, stack_two))
+
+# test_equals()
 main()
+
 
