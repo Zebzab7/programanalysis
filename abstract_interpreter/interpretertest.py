@@ -93,8 +93,11 @@ def alwaysThrows4(interpreter):
 def alwaysThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
-    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    #from minus inf to inf
+    range1_ = Ranges_abstract(float('-inf'), float('inf'))
+    range2_ = Ranges_abstract(float('-inf'), float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
     assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 

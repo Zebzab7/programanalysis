@@ -90,19 +90,32 @@ class AbstractInterpreter:
         return res
     
     def widen_operation(self, range_one, range_two, integer_constants):
-        range_one = range_one[1]
-        range_two = range_two[1]
+        # Check if ranges are tuples
+        if (isinstance(range_one, tuple) and isinstance(range_two, tuple)):
+            range_one = range_one[1]
+            range_two = range_two[1]
 
         # First determine the candidates
         l0 = range_one.start
         h0 = range_one.end
-        lower_candidates = [x for x in integer_constants if x < range_two.start]+[l0 if l0 < range_two.start else None, float('-inf') if float('-inf') < range_two.start else None]
-        upper_candidates = [x for x in integer_constants if x > range_two.end]+[h0 if h0 > range_two.end else None, float('inf') if float('inf') > range_two.end else None]
+        lower_candidates = [x for x in integer_constants]+[l0, float('-inf')]
+        upper_candidates = [x for x in integer_constants]+[h0, float('inf')]
 
-        # Filter out the None values
-        lower_candidates = [x for x in lower_candidates if x is not None]
-        upper_candidates = [x for x in upper_candidates if x is not None]
-        return ('int', Ranges_abstract(max(lower_candidates), min(upper_candidates)))
+        # Set lower bound
+        if(range_two.start == float('-inf')):
+            lower_bound = float('-inf')
+        else:
+            lower_candidates = [x for x in lower_candidates if x < range_two.start]
+            lower_bound = max(lower_candidates)
+
+        # Set upper bound
+        if(range_two.end == float('inf')):
+            upper_bound = float('inf')
+        else:
+            upper_candidates = [x for x in upper_candidates if x > range_two.end]
+            upper_bound = min(upper_candidates)
+
+        return ('int', Ranges_abstract(lower_bound, upper_bound))
 
     # def narrow_operation(self, range_one, range_two, integer_constants):
     #     l0 = range_one.start
@@ -146,6 +159,8 @@ class AbstractInterpreter:
 
         S = {0 : (copy.deepcopy(local_stack[0]), copy.deepcopy(local_stack[1]), copy.deepcopy(local_stack[2]))}
         wl = [0]
+
+        log("Initial stack: ", str(local_stack))
         
         # while local_stack[2][1]<length: #(i,seq[0])
         while len(wl) > 0:
@@ -155,67 +170,59 @@ class AbstractInterpreter:
             if bytecode["opr"] == "return":
                 log("(return)")
                 local_stack = AbstractOperations._return(self, bytecode, local_stack)
-                log(local_stack)
                 # return local_stack
                 return None, "No Exception Raised"
             elif bytecode["opr"] == "push":
                 log("(push)")
                 local_stack = AbstractOperations._push(self, bytecode, local_stack)
-                # log(local_stack)
             elif bytecode["opr"] == "load":  
                 log("(load)")
                 local_stack = AbstractOperations._load(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "binary": 
                 log("(binary)")
                 local_stack = AbstractOperations._binary(self, bytecode, local_stack)
                 if(local_stack == None):
                     return None, "Arithmetic Exception Raised"
-                log(local_stack)
             elif bytecode["opr"] == "store":
                 log("(store)")
                 local_stack = AbstractOperations._store(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "incr":   
                 log("(incr)")
                 local_stack = AbstractOperations._incr(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "goto": 
                 log("(goto)")
                 local_stack = AbstractOperations._goto(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "if": #Collin
                 log("(if)")
                 local_stack = AbstractOperations._if(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == 'ifz': #if zero
                 log("(ifz)")
                 local_stack = AbstractOperations._ifz(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "get":
                 log("(get)")
                 local_stack = AbstractOperations._get(self,bytecode_statements,local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "invoke":
                 log("(invoke)")
                 local_stack = AbstractOperations._invoke(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "negate":
                 log("(negate)")
                 local_stack = AbstractOperations._negate(self, bytecode, local_stack)
-                log(local_stack)
             elif bytecode["opr"] == "invoke":
                 log("(Invoke)")
                 local_stack = AbstractInterpreter._invoke(self,bytecode,local_stack)
-                log(local_stack)
             else:
                 raise Exception("Bytecode not supported" + bytecode["opr"])
             local_stack=self.incrementPc(local_stack)
+
+            log("Stack: ", str(local_stack))
 
             widened_stack = self.widen_stacks(S[pc], local_stack, integer_constants)
             if (not self.stacks_equal(S[pc], widened_stack)):
                 S[widened_stack[2][1]] = (copy.deepcopy(widened_stack[0]), copy.deepcopy(widened_stack[1]), copy.deepcopy(widened_stack[2]))
                 wl.insert(0, widened_stack[2][1])
+            else:
+                print("Stacks are equal")
+                print("Stacks: ", S[pc], widened_stack)
         return None, "No Exception Raised And Nothing returned"
     
 class Comparison():
@@ -315,22 +322,21 @@ class AbstractOperations():
         btype = byte["value"]["type"]
         value = Ranges_abstract(value,value)
         local_stack[1].append((btype, value))
-        print(local_stack)
+        # print(local_stack)
         return local_stack
     
     def _load(self,byte,local_stack):
-
         print(byte["index"])
         lv_type, value = local_stack[0][byte["index"]]
         local_stack[1].append((lv_type,value))
-        print(local_stack)
+        # print(local_stack)
         return local_stack
     
     def _binary(self,byte,local_stack):
         lv_type1,var2 = local_stack[1].pop()
         lv_type2,var1 = local_stack[1].pop()
         if hasattr(AbstractArithmeticOperations,"_"+byte["operant"]):
-            print(var1.toString(),var2.toString())
+            # print(var1.toString(),var2.toString())
             result = getattr(AbstractArithmeticOperations,"_"+byte["operant"])(var1,var2)
             if(result == 'Arithmetic exception raised'):
                 return None
@@ -459,13 +465,18 @@ def main():
     print("Before tests")
     tests(abstract_interpreter)
 
-def test_equals():
+def test():
     abstract_interpreter = AbstractInterpreter()
-    stack_one = ([Ranges_abstract(1, 1), Ranges_abstract(2, 6)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
-    stack_two = ([Ranges_abstract(1, 1), Ranges_abstract(2, 5)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
-    print(abstract_interpreter.stacks_equal(stack_one, stack_two))
+    # stack_one = ([Ranges_abstract(1, 1), Ranges_abstract(2, 6)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
+    # stack_two = ([Ranges_abstract(1, 1), Ranges_abstract(2, 5)], [], ("eu/bogoe/dtu/exceptional/Arithmetics", 0))
 
-# test_equals()
+    # Define two arbitrary ranges and widen:
+    range_one = Ranges_abstract(1, 1)
+    range_two = Ranges_abstract(-2, 6)
+    res = abstract_interpreter.widen_operation(range_one, range_two, [])
+    print(res)
+
+# test()
 main()
 
 
