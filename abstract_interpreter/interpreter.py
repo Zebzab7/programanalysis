@@ -364,6 +364,9 @@ class AbstractOperations():
             while bytecode_statements[i]["opr"] != "throw":
                 i += 1
             return (local_stack[0],local_stack[1],(local_stack[2][0],i))
+        if(byte["field"]["name"] == "out" and byte["field"]["type"]["name"] == "java/io/PrintStream"){
+            print("getting print")
+        }
         
         print("Not implemented get")
     
@@ -396,6 +399,13 @@ class AbstractOperations():
         raise Exception("Ifz operant not supported " + byte["condition"])
     def _invoke(self,byte,local_stack):
         if byte["access"] == "virtual" or byte["access"] == "static":
+                    
+                    #Handles printing
+                    if byte["method"]["ref"]["name"] == "java/io/printstream":
+                        type_, value = local_stack[1].pop
+                        print(value.start)
+                        return
+                    
                     args_type = byte["method"]["args"] #args (int)
                     args = []
                     for args_type in args_type:
