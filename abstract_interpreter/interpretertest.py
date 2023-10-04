@@ -64,7 +64,7 @@ def alwaysThrows1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows1")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     type_,res = interpreter.interpret(case, 0, print, memory, [])
-    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def alwaysThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows2")
@@ -72,7 +72,7 @@ def alwaysThrows2(interpreter):
     testint = random.randint(-sys.maxsize,sys.maxsize)
     range_ = Ranges_abstract(testint, testint)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
-    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def alwaysThrows3(interpreter): ##Why does this always throw
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows3")
@@ -80,7 +80,7 @@ def alwaysThrows3(interpreter): ##Why does this always throw
     range1_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
     range2_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
     type_,res = interpreter.interpret(case, 0, print, memory, [("float", range1_),("float", range2_)])
-    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def alwaysThrows4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows4")
@@ -88,7 +88,7 @@ def alwaysThrows4(interpreter):
     range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
     range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
-    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def alwaysThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows5")
@@ -96,7 +96,7 @@ def alwaysThrows5(interpreter):
     range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
     range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
-    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
+    assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def itDependsOnLattice1(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice1")

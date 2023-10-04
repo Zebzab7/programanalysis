@@ -113,7 +113,7 @@ class AbstractInterpreter:
     def stacks_equal(self, stack_one, stack_two):
         if (len(stack_one[0]) != len(stack_two[0]) or len(stack_one[1]) != len(stack_two[1])):
             return False
-        for i in range(len(stack_one)):
+        for i in range(len(stack_one[0])):
             if stack_one[0][i] != stack_two[0][i]:
                 return False
         for i in range(len(stack_one[1])):
@@ -216,7 +216,7 @@ class AbstractInterpreter:
             if (not self.stacks_equal(S[pc], widened_stack)):
                 S[widened_stack[2][1]] = (copy.deepcopy(widened_stack[0]), copy.deepcopy(widened_stack[1]), copy.deepcopy(widened_stack[2]))
                 wl.insert(0, widened_stack[2][1])
-        return None
+        return None, "No Exception Raised And Nothing returned"
     
 class Comparison():
     def _eq(a,b):
@@ -364,9 +364,10 @@ class AbstractOperations():
             while bytecode_statements[i]["opr"] != "throw":
                 i += 1
             return (local_stack[0],local_stack[1],(local_stack[2][0],i))
-        if(byte["field"]["name"] == "out" and byte["field"]["type"]["name"] == "java/io/PrintStream"){
-            print("getting print")
-        }
+        
+        # if(byte["field"]["name"] == "out" and byte["field"]["type"]["name"] == "java/io/PrintStream"){
+        #     print("getting print")
+        # }
         
         print("Not implemented get")
     
