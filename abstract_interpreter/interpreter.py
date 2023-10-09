@@ -7,11 +7,12 @@ import sys
 from RangesR import Ranges_abstract
 
 class AbstractInterpreter:
+    risky_instructions = ["store", "load", "push", "incr", "negate"]
 
     def __init__(self):
+        # List of instructions that should always be added to work list
         self.classes = {}
         self.memory = {}
-
 
     def get_json(self, json_file):
         with open(json_file) as f:
@@ -87,6 +88,10 @@ class AbstractInterpreter:
         res = ([], current_stack[1], current_stack[2])
         for i in range(min_elements):
             res[0].append(self.widen_operation(old_stack[0][i], current_stack[0][i], integer_constants))
+
+        # max_elements = max(len(old_stack[0]), len(current_stack[0]))
+        # for i in range(min_elements+1, max_elements):
+            
         return res
     
     def widen_operation(self, range_one, range_two, integer_constants):
@@ -216,8 +221,13 @@ class AbstractInterpreter:
 
             log("Stack: ", str(local_stack))
 
-            widened_stack = self.widen_stacks(S[pc], local_stack, integer_constants)
-            if (not self.stacks_equal(S[pc], widened_stack)):
+            if (bytecode["opr"] == "store" or "load"):
+                widened_stack = ((local_stack[0], local_stack[1], local_stack[2]))
+            else:
+                widened_stack = self.widen_stacks(S[pc], local_stack, integer_constants)
+
+            # If it is a risky instruction, then check if stack has changed
+            if ((bytecode["opr"] not in self.risky_instructions) or (not self.stacks_equal(S[pc], widened_stack))):
                 S[widened_stack[2][1]] = (copy.deepcopy(widened_stack[0]), copy.deepcopy(widened_stack[1]), copy.deepcopy(widened_stack[2]))
                 wl.insert(0, widened_stack[2][1])
             else:

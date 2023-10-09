@@ -77,16 +77,20 @@ def alwaysThrows2(interpreter):
 def alwaysThrows3(interpreter): ##Why does this always throw
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range1_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
-    range2_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
+    # range1_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
+    # range2_ = Ranges_abstract(float(-sys.maxsize), float(sys.maxsize))
+    range1_ = Ranges_abstract(float('-inf'), float('inf'))
+    range2_ = Ranges_abstract(float('-inf'), float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("float", range1_),("float", range2_)])
     assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
 def alwaysThrows4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "alwaysThrows4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
-    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range1_ = Ranges_abstract(float('-inf'), float('inf'))
+    range2_ = Ranges_abstract(float('-inf'), float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
     assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res
 
@@ -118,16 +122,18 @@ def itDependsOnlattice3(interpreter):
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
     testint1 = random.randint(1001,sys.maxsize)
     testint2 = random.randint(11,sys.maxsize)
-    range1_ = Ranges_abstract(testint1,sys.maxsize)
-    range2_ = Ranges_abstract(testint2,sys.maxsize)
+    range1_ = Ranges_abstract(testint1,float('inf'))
+    range2_ = Ranges_abstract(testint2,float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range1_),("int", range2_)])
     assert "No Exception Raised" == res, "Both " + res
 
 def itDependsOnlattice4(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "itDependsOnLattice4")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
-    range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range1_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range2_ = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range1_ = Ranges_abstract(float('-inf'), float('inf'))
+    range2_ = Ranges_abstract(float('-inf'), float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [])
     assert (res == "Arithmetic Exception Raised"), "Arithmetic Exception Raised " + res.toString()
 
@@ -140,14 +146,14 @@ def neverThrows1(interpreter):
 def neverThrows2(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows2")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range_ = Ranges_abstract(1,sys.maxsize)
+    range_ = Ranges_abstract(1,float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_)])
     assert "No Exception Raised" == res, "Both " + res
 
 def neverThrows3(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows3")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range_1 = Ranges_abstract(1,sys.maxsize)
+    range_1 = Ranges_abstract(1,float('inf'))
     range_2 = Ranges_abstract(0,0)
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_1),("int", range_2)])
     assert "No Exception Raised" == res, "Both " + res
@@ -162,8 +168,10 @@ def neverThrows4(interpreter):
 def neverThrows5(interpreter):
     case = ("eu/bogoe/dtu/exceptional/Arithmetics", "neverThrows5")
     memory = {'class': [], 'array': [], 'int': [], 'float': []}
-    range_1 = Ranges_abstract(-sys.maxsize,sys.maxsize)
-    range_2 = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range_1 = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    # range_2 = Ranges_abstract(-sys.maxsize,sys.maxsize)
+    range1_ = Ranges_abstract(float('-inf'), float('inf'))
+    range2_ = Ranges_abstract(float('-inf'), float('inf'))
     type_,res = interpreter.interpret(case, 0, print, memory, [("int", range_1),("int", range_2)])
     assert "No Exception Raised" == res, "Both " + res
 
@@ -198,4 +206,4 @@ def runAbstract(interpreter):
     neverThrows3(interpreter)
     # neverThrows4(interpreter)
     # neverThrows5(interpreter)
-    speedVsPrecision(interpreter)
+    # speedVsPrecision(interpreter)
